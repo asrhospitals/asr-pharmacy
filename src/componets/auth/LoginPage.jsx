@@ -1,17 +1,45 @@
-import { useState } from 'react';
-import { useAuth } from '../../hooks/useAuth';
+import { useState } from "react";
+import { useLoginMutation } from "../../services/authApi";
+import { useDispatch } from "react-redux";
+import { setUser } from "../../services/userSlice";
+import { useNavigation } from "../../hooks/useNavigation";
+import { Eye, EyeOff } from "lucide-react";
+import Input from '../common/Input';
+import Select from '../common/Select';
+import Button from '../common/Button';
 
 const LoginPage = () => {
-  const { login } = useAuth();
-  const [selectedRole, setSelectedRole] = useState('admin');
+  const dispatch = useDispatch();
+  const { navigateTo } = useNavigation();
+  const [selectedRole, setSelectedRole] = useState("admin");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [login, { isLoading }] = useLoginMutation();
+  const [error, setError] = useState("");
 
-  const handleLogin = () => {
-    login({
-      name: selectedRole === 'admin' ? 'Admin User' : selectedRole === 'manager' ? 'Manager User' : 'Regular User',
-      email: `${selectedRole}@asrpharmacy.com`,
-      role: selectedRole,
-      avatar: selectedRole === 'admin' ? 'AU' : selectedRole === 'manager' ? 'MU' : 'RU'
-    });
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError("");
+    try {
+      // Demo: use role as username, password as 'password'
+      const credentials = {
+        uname: username || `${selectedRole}`,
+        pwd: password || "password",
+      };
+      const response = await login(credentials).unwrap();
+      
+      const user = {
+        id: response.id,
+        role: response.role,
+        module: response.module,
+        username: response.username,
+      };
+      dispatch(setUser({ user, token: response.token }));
+      navigateTo("/dashboard", "Dashboard");
+    } catch (err) {
+      setError(err?.data?.message || "Login failed");
+    }
   };
 
   return (
@@ -24,34 +52,71 @@ const LoginPage = () => {
           <h2 className="text-2xl font-bold text-gray-900">ASR Pharmacy</h2>
           <p className="text-gray-600 mt-2">Sign in to your account</p>
         </div>
-        
-        <div className="space-y-4">
+        <form className="space-y-4" onSubmit={handleLogin}>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Select Role (Demo)
             </label>
-            <select 
+            <Select 
               value={selectedRole} 
               onChange={(e) => setSelectedRole(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="admin">Admin - Full Access</option>
-              <option value="manager">Manager - Limited Access</option>
-              <option value="user">User - Basic Access</option>
-            </select>
+              options={[
+                { value: "admin", label: "Admin - Full Access" },
+                { value: "manager", label: "Manager - Limited Access" },
+                { value: "user", label: "User - Basic Access" },
+              ]}
+            />
           </div>
-
-          <button
-            onClick={handleLogin}
-            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-4 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 font-medium"
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Username
+            </label>
+            <Input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Username (or use role for demo)"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Password
+            </label>
+            <div className="relative">
+              <Input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Password (default: password)"
+              />
+              <Button
+                type="icon"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-blue-600 bg-blue-50 rounded hover:bg-blue-100 focus:outline-none"
+                tabIndex={-1}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </Button>
+            </div>
+          </div>
+          {error && <div className="text-red-500 text-sm">{error}</div>}
+          <Button
+            type="submit"
+            disabled={isLoading}
+            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-4 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-200 font-medium disabled:opacity-60"
           >
-            Sign In as {selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1)}
-          </button>
-        </div>
-        
+            {isLoading
+              ? "Signing In..."
+              : `Sign In as ${
+                  selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1)
+                }`}
+          </Button>
+        </form>
         <div className="mt-6 p-4 bg-blue-50 rounded-lg">
           <p className="text-xs text-blue-700 text-center">
-            <strong>Demo Application:</strong> Different roles display different menu items and permissions.
+            <strong>Demo Application:</strong> Different roles display different
+            menu items and permissions.
           </p>
         </div>
       </div>

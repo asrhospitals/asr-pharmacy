@@ -1,5 +1,10 @@
 import { useState } from 'react';
 import { ArrowLeft, Plus } from 'lucide-react';
+import Input from '../../../../componets/common/Input';
+import Select from '../../../../componets/common/Select';
+import Button from '../../../../componets/common/Button';
+import Modal from '../../../../componets/common/Modal';
+import Loader from '../../../../componets/common/Loader';
 
 export default function PartyLedger (){
 
@@ -63,7 +68,7 @@ export default function PartyLedger (){
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Party Name <span className="text-red-500">*</span>
                     </label>
-                    <input
+                    <Input
                       type="text"
                       value={formData.partyName}
                       onChange={(e) => handleInputChange('partyName', e.target.value)}
@@ -76,7 +81,7 @@ export default function PartyLedger (){
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Account Group <span className="text-red-500">*</span>
                     </label>
-                    <input
+                    <Input
                       type="text"
                       value={formData.accountGroup}
                       onChange={(e) => handleInputChange('accountGroup', e.target.value)}
@@ -93,7 +98,7 @@ export default function PartyLedger (){
                       Station <span className="text-red-500">*</span>
                     </label>
                     <div className="relative">
-                      <input
+                      <Input
                         type="text"
                         placeholder="Search here.."
                         value={formData.station}
@@ -107,7 +112,7 @@ export default function PartyLedger (){
                   
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Mail to</label>
-                    <input
+                    <Input
                       type="text"
                       value={formData.mailTo}
                       onChange={(e) => handleInputChange('mailTo', e.target.value)}
@@ -131,7 +136,7 @@ export default function PartyLedger (){
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Country <span className="text-red-500">*</span>
                     </label>
-                    <input
+                    <Input
                       type="text"
                       value={formData.country}
                       onChange={(e) => handleInputChange('country', e.target.value)}
@@ -144,7 +149,7 @@ export default function PartyLedger (){
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       State <span className="text-red-500">*</span>
                     </label>
-                    <input
+                    <Input
                       type="text"
                       value={formData.state}
                       onChange={(e) => handleInputChange('state', e.target.value)}
@@ -155,7 +160,7 @@ export default function PartyLedger (){
                   
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">City</label>
-                    <input
+                    <Input
                       type="text"
                       value={formData.city}
                       onChange={(e) => handleInputChange('city', e.target.value)}
@@ -167,7 +172,7 @@ export default function PartyLedger (){
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Pincode</label>
-                    <input
+                    <Input
                       type="text"
                       value={formData.pincode}
                       onChange={(e) => handleInputChange('pincode', e.target.value)}
@@ -177,7 +182,7 @@ export default function PartyLedger (){
                   
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Currency</label>
-                    <select
+                    <Select
                       value={formData.currency}
                       onChange={(e) => handleInputChange('currency', e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -186,13 +191,13 @@ export default function PartyLedger (){
                       <option value="INR">INR</option>
                       <option value="USD">USD</option>
                       <option value="EUR">EUR</option>
-                    </select>
+                    </Select>
                   </div>
                   
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Parent Ledger</label>
                     <div className="relative">
-                      <input
+                      <Input
                         type="text"
                         placeholder="Search here.."
                         value={formData.parentLedger}
@@ -213,36 +218,36 @@ export default function PartyLedger (){
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Balancing Method</label>
-                    <select
+                    <Select
                       value={formData.balancingMethod}
                       onChange={(e) => handleInputChange('balancingMethod', e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
                       <option value="Bill By Bill">Bill By Bill</option>
                       <option value="On Account">On Account</option>
-                    </select>
+                    </Select>
                   </div>
                   
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Opening Balance</label>
                     <div className="flex">
                       <span className="inline-flex items-center px-3 py-2 border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm rounded-l-md">₹</span>
-                      <input
+                      <Input
                         type="text"
                         value={formData.openingBalance}
                         onChange={(e) => handleInputChange('openingBalance', e.target.value)}
                         className="flex-1 px-3 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
-                      <select className="px-3 py-2 border border-l-0 border-gray-300 rounded-r-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                      <Select className="px-3 py-2 border border-l-0 border-gray-300 rounded-r-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                         <option value="Dr">Dr</option>
                         <option value="Cr">Cr</option>
-                      </select>
+                      </Select>
                     </div>
                   </div>
                   
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Credit Days</label>
-                    <input
+                    <Input
                       type="text"
                       value={formData.creditDays}
                       onChange={(e) => handleInputChange('creditDays', e.target.value)}
@@ -258,7 +263,7 @@ export default function PartyLedger (){
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Phone No.(Office)</label>
-                    <input
+                    <Input
                       type="text"
                       value={formData.phoneOffice}
                       onChange={(e) => handleInputChange('phoneOffice', e.target.value)}
@@ -271,7 +276,7 @@ export default function PartyLedger (){
                       Mobile No. 1 <span className="text-red-500">*</span>
                     </label>
                     <div className="flex items-center">
-                      <input
+                      <Input
                         type="text"
                         value={formData.mobileNo}
                         onChange={(e) => handleInputChange('mobileNo', e.target.value)}
@@ -283,15 +288,15 @@ export default function PartyLedger (){
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">WhatsApp No</label>
                     <div className="flex items-center">
-                      <input
+                      <Input
                         type="text"
                         value={formData.whatsappNo}
                         onChange={(e) => handleInputChange('whatsappNo', e.target.value)}
                         className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
-                      <button className="ml-2 p-2 text-green-600 hover:bg-green-50 rounded-md">
+                      <Button className="ml-2 p-2 text-green-600 hover:bg-green-50 rounded-md">
                         <Plus className="w-4 h-4" />
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 </div>
@@ -303,7 +308,7 @@ export default function PartyLedger (){
           <div className="border-t border-gray-200">
             <div className="flex">
               {tabs.map((tab) => (
-                <button
+                <Button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
                   className={`px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
@@ -313,7 +318,7 @@ export default function PartyLedger (){
                   }`}
                 >
                   {tab}
-                </button>
+                </Button>
               ))}
             </div>
 
@@ -324,32 +329,32 @@ export default function PartyLedger (){
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">Ledger Type</label>
-                      <select
+                      <Select
                         value={formData.ledgerType}
                         onChange={(e) => handleInputChange('ledgerType', e.target.value)}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       >
                         <option value="Unregistered">Unregistered</option>
                         <option value="Registered">Registered</option>
-                      </select>
+                      </Select>
                     </div>
                     
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">TDS Applicable</label>
-                      <select
+                      <Select
                         value={formData.tdsApplicable}
                         onChange={(e) => handleInputChange('tdsApplicable', e.target.value)}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       >
                         <option value="No">No</option>
                         <option value="Yes">Yes</option>
-                      </select>
+                      </Select>
                     </div>
                   </div>
                   
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">PAN No.</label>
-                    <input
+                    <Input
                       type="text"
                       value={formData.panNo}
                       onChange={(e) => handleInputChange('panNo', e.target.value)}
@@ -375,32 +380,32 @@ export default function PartyLedger (){
                   <span className="px-2 py-1 bg-gray-100 rounded text-xs">F4</span>
                   Switch Tab
                 </div>
-                <button className="px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700 transition-colors">
+                <Button className="px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700 transition-colors">
                   GST Verification
-                </button>
+                </Button>
               </div>
               
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <span className="px-2 py-1 bg-gray-100 rounded text-xs">F10</span>
-                  <button className="px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700 transition-colors flex items-center gap-2">
+                  <Button className="px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700 transition-colors flex items-center gap-2">
                     Save
                     <span className="text-xs">📄</span>
-                  </button>
+                  </Button>
                 </div>
                 
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <span className="px-2 py-1 bg-gray-100 rounded text-xs">F9</span>
-                  <button className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
+                  <Button className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
                     Clear
-                  </button>
+                  </Button>
                 </div>
                 
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <span className="px-2 py-1 bg-gray-100 rounded text-xs">Esc</span>
-                  <button className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
+                  <Button className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
                     Close ✕
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>

@@ -1,3 +1,4 @@
+import Input from './Input';
 
 export default function TableView ({onChange}){
 
@@ -6,27 +7,27 @@ export default function TableView ({onChange}){
         <tbody>
         <tr className="border-b border-gray-200 hover:bg-gray-50">
           <td className="px-1  border-r border-gray-200">
-            <input
+            <Input
               className="w-full px-1 py-1 border-0 focus:ring-0 focus:outline-none text-xs"
               onChange={onChange}
             />
           </td>
           <td className="px-1  border-r border-gray-200">
-            <input
+            <Input
               className="w-full px-1 py-1 border-0 focus:ring-0 focus:outline-none text-xs"
               onChange={onChange}
               
             />
           </td>
           <td className="px-1 py-1 border-r border-gray-200">
-            <input
+            <Input
               className="w-full px-1 py-1 border-0 focus:ring-0 focus:outline-none text-xs"
               onChange={onChange}
              
             />
           </td>
           <td className="px-1 py-1 border-r border-gray-200">
-            <input
+            <Input
               type="text"
               className="w-full px-1 py-1 border-0 focus:ring-0 focus:outline-none text-xs"
               onChange={onChange}
@@ -34,7 +35,7 @@ export default function TableView ({onChange}){
             />
           </td>
           <td className="px-1 py-1 border-r border-gray-200">
-            <input
+            <Input
               type="number"
               className="w-full px-1 py-1 border-0 focus:ring-0 focus:outline-none text-xs text-center"
               onChange={onChange}
@@ -42,7 +43,7 @@ export default function TableView ({onChange}){
             />
           </td>
           <td className="px-1 py-1 border-r border-gray-200">
-            <input
+            <Input
               type="number"
               className="w-full px-1 py-1 border-0 focus:ring-0 focus:outline-none text-xs text-center"
               onChange={onChange}
@@ -50,7 +51,7 @@ export default function TableView ({onChange}){
             />
           </td>
           <td className="px-1 py-1 border-r border-gray-200">
-            <input
+            <Input
               type="number"
               className="w-full px-1 py-1 border-0 focus:ring-0 focus:outline-none text-xs text-right"
               onChange={onChange}
@@ -58,7 +59,7 @@ export default function TableView ({onChange}){
             />
           </td>
           <td className="px-1 py-1 border-r border-gray-200">
-            <input
+            <Input
               type="number"
               className="w-full px-1 py-1 border-0 focus:ring-0 focus:outline-none text-xs text-center"
               onChange={onChange}
@@ -66,7 +67,7 @@ export default function TableView ({onChange}){
             />
           </td>
           <td className="px-1 py-1 border-r border-gray-200">
-            <input
+            <Input
               type="number"
               className="w-full px-1 py-1 border-0 focus:ring-0 focus:outline-none bg-gray-50 text-xs text-right font-medium"
               onChange={onChange}

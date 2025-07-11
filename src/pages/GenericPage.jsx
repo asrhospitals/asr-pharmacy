@@ -1,42 +1,49 @@
 
 import { Package } from "lucide-react";
-const GenericPage = ({ title, description, path }) => (
-    <div className="p-6">
-      <div className="mb-4">
-        <h1 className="text-3xl font-bold text-gray-900">{title}</h1>
-        <p className="text-sm text-gray-500 mt-1">Path: {path}</p>
+import { useSelector } from "react-redux";
+import { useNavigation } from "../hooks/useNavigation";
+
+const GenericPage = ({ title, path }) => {
+  const user = useSelector((state) => state.user.user);
+  const { currentPath } = useNavigation();
+
+  if (currentPath === "/profile") {
+    return (
+      <div className="p-8 max-w-xl mx-auto">
+        <h1 className="text-2xl font-bold mb-4">Profile</h1>
+        <div className="bg-white rounded-lg shadow p-6">
+          <div className="mb-2"><strong>Name:</strong> {user?.username}</div>
+          <div className="mb-2"><strong>Role:</strong> {user?.role}</div>
+          <div className="mb-2"><strong>ID:</strong> {user?.id}</div>
+          <div className="mb-2"><strong>Module(s):</strong> {user?.module?.join(", ")}</div>
+        </div>
       </div>
-      
-      <div className="bg-white rounded-lg shadow">
-        <div className="p-6 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">Page Content</h2>
+    );
+  }
+  if (currentPath === "/help") {
+    return (
+      <div className="p-8 max-w-xl mx-auto">
+        <h1 className="text-2xl font-bold mb-4">Help & FAQ</h1>
+        <div className="bg-white rounded-lg shadow p-6">
+          <h2 className="font-semibold mb-2">How do I use the app?</h2>
+          <p className="mb-4">Navigate using the sidebar. Your access is based on your role. Contact admin for more help.</p>
+          <h2 className="font-semibold mb-2">How do I logout?</h2>
+          <p className="mb-4">Click your avatar in the top right and select "Logout".</p>
+          <h2 className="font-semibold mb-2">Who do I contact for support?</h2>
+          <p>Email: support@asrpharmacy.com</p>
         </div>
-        <div className="p-6">
-          <p className="text-gray-600 mb-4">
-            {description || `This is the ${title} page. Content will be implemented here based on your business requirements.`}
-          </p>
-          
-          <div className="bg-gray-50 rounded-lg p-6">
-            <div className="text-center">
-              <Package className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Content Area</h3>
-              <p className="text-gray-500">
-                This section will contain the main functionality for {title.toLowerCase()}.
-              </p>
-            </div>
-          </div>
-          
-          <div className="mt-6 flex gap-3">
-            <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-              Primary Action
-            </button>
-            <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-              Secondary Action
-            </button>
-          </div>
-        </div>
+      </div>
+    );
+  }
+  // fallback for other generic pages
+  return (
+    <div className="p-8 max-w-xl mx-auto">
+      <h1 className="text-2xl font-bold mb-4">{title}</h1>
+      <div className="bg-white rounded-lg shadow p-6">
+        <p>Content for {title} ({path})</p>
       </div>
     </div>
   );
+};
 
-  export default GenericPage;
+export default GenericPage;

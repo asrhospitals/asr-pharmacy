@@ -1,103 +1,69 @@
-import React, { useState,useEffect } from "react";
+import React, { useState } from "react";
 import DataTable from "../../../../componets/common/DataTable";
 import PageHeader from "../../../../componets/common/PageHeader";
 import { Plus,RefreshCw } from "lucide-react";
-import axios from "axios"
-import AddMFR from './AddMFR'
+import AddMFR from './AddMFR';
+import { useGetManufacturersQuery } from '../../../../services/mfrApi';
+import Button from '../../../../componets/common/Button';
+import Modal from '../../../../componets/common/Modal';
+import Loader from '../../../../componets/common/Loader';
 
 const MFRPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [mfr, setMFR] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
-
+  const { data: mfr, error, isLoading, refetch } = useGetManufacturersQuery();
 
   const columns = [
     { key: "mfrname", title: "Company Name" },
-   
-    ]; 
-  
-    const handleAddItem = () => {
-      setIsModalOpen(true);
-    };
-  
-    const handleCloseModal = () => {
-      setIsModalOpen(false);
-    };
+  ];
 
-    const handleLoadMFR=async()=>{
-      setIsLoading(true);
-      setError('');
+  const handleAddItem = () => {
+    setIsModalOpen(true);
+  };
 
-      try {
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    refetch(); // Refetch manufacturers after closing modal (in case a new manufacturer was added)
+  };
 
-        const response = await axios.get('http://localhost:3000/pharmacy/master/inventory/manu/v1/get-manufacturer');
-        if(response.status===200) {
-        const mfrData =  response.data || [];
-        setMFR(mfrData);
-
-       
-        }
-        
-      } catch (error) {
-        setError(error.response?.message || 'Failed to load MFR');
-      } finally{
-        setIsLoading(false);
-      }
-    }
-
-    useEffect(() => {
-      handleLoadMFR();
-    }, []);
-  
-    return (
-      <div className="space-y-6">
-        <PageHeader
-          title="Manufacturer Management"
-          subtitle="Manage your Manufacturer"
-          actions={[
-            <button
-              key="add"
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700"
-              onClick={handleAddItem}
-            >
-              <Plus className="w-4 h-4" />Add Manufacturer
-            </button>,
-          ]}
-        />
-        
-   
-{/* Error Message */}
-{error && (
-  <div className="bg-red-50 border border-red-200 rounded-lg p-4 max-w-md mx-auto">
-    <div className="flex items-center justify-between">
-      <div className="text-red-600 text-sm">{error}</div>
-      <button onClick={() => setError('')} className="text-red-400 hover:text-red-600 text-lg font-bold ml-4">
-        ×
-      </button>
-    </div>
-  </div>
-)}
-
+  return (
+    <div className="space-y-6">
+      <PageHeader
+        title="Manufacturer Management"
+        subtitle="Manage your Manufacturer"
+        actions={[
+          <Button
+            key="add"
+            onClick={handleAddItem}
+          >
+            <Plus className="w-4 h-4" />Add Manufacturer
+          </Button>,
+        ]}
+      />
+      {/* Error Message */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 max-w-md mx-auto">
+          <div className="flex items-center justify-between">
+            <div className="text-red-600 text-sm">{error?.data?.message || 'Failed to load manufacturers'}</div>
+            <Button onClick={() => {}} className="text-red-400 hover:text-red-600 text-lg font-bold ml-4">
+              ×
+            </Button>
+          </div>
+        </div>
+      )}
       <div className="p-6">
         {isLoading ? (
-          <div className="flex items-center justify-center py-12">
-            <div className="text-center">
-              <RefreshCw className="animate-spin mx-auto mb-4 text-gray-400" size={32} />
-              <p className="text-gray-500">Loading manufacturers...</p>
-            </div>
-          </div>
-        ) : mfr.length === 0 ? (
+          <Loader />
+        ) : (!mfr || mfr.length === 0) ? (
           <div className="text-center py-12 bg-white rounded-lg shadow-sm border border-gray-200">
             <div className="text-gray-400 mb-4">
               No Manufacturer available.
             </div>
-            <button
+            <Button
               onClick={handleAddItem}
               className="text-blue-600 hover:text-blue-700 font-medium"
             >
               Add your first Manufacturers
-            </button>
+            </Button>
           </div>
         ) : (
           <DataTable
@@ -108,17 +74,17 @@ const MFRPage = () => {
           />
         )}
       </div>
-
-      
-        
-        {/* Modal */}
+      {/* Modal */}
+      <Modal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      >
         <AddMFR
-          isOpen={isModalOpen} 
-          onClose={handleCloseModal} 
+          onClose={handleCloseModal}
         />
-      </div>
-    );
-  
+      </Modal>
+    </div>
+  );
 }
 
 export default MFRPage;

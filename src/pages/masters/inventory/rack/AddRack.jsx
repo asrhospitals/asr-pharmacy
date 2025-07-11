@@ -1,6 +1,8 @@
-import axios from "axios";
 import { useState } from "react";
-import DefaultFooter from "../../../../componets/common/Footer";
+import { useAddRackMutation } from '../../../../services/rackApi';
+import Modal from "../../../../componets/common/Modal";
+import Input from "../../../../componets/common/Input";
+import Button from "../../../../componets/common/Button";
 
 export default function AddRack({ isOpen = true, onClose = () => {} }) {
   const [formData, setFormData] = useState({
@@ -9,8 +11,7 @@ export default function AddRack({ isOpen = true, onClose = () => {} }) {
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-
-  if (!isOpen) return null;
+  const [addRack, { isLoading }] = useAddRackMutation();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,76 +25,48 @@ export default function AddRack({ isOpen = true, onClose = () => {} }) {
     e.preventDefault();
     setError("");
     setSuccess("");
-
     try {
-      const response = await axios.post(
-        "http://localhost:3000/pharmacy/master/inventory/rack/v1/add-rack",
-        formData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (response.status === 201)
-        return setSuccess("Rack created successfully!");
+      await addRack(formData).unwrap();
+      setSuccess("Rack created successfully!");
+      setFormData({ storename: "", rackname: "" });
     } catch (err) {
-      setError(err.response?.data?.message);
+      setError(err?.data?.message || 'Failed to create rack');
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-grey  backdrop-blur-xs flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[95vh] flex flex-col">
-        {/* Header */}
-        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200 px-6 py-5 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-800">Create Rack</h2>
+    <Modal open={isOpen} onClose={onClose} title="Create Rack">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">Store Name</label>
+          <Input
+            type="text"
+            name="storename"
+            value={formData.storename}
+            onChange={handleChange}
+            className="bg-yellow-50"
+            required
+          />
         </div>
-
-        {/* Modal Content - Scrollable */}
-        <div className="flex-1 overflow-y-auto p-6">
-          <div className="flex">
-            {/* Main Form */}
-            <div className="col-span-2 mb-2">
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Store Name
-              </label>
-              <div className="flex gap-3">
-                <input
-                  type="text"
-                  name="storename"
-                  value={formData.storename}
-                  onChange={handleChange}
-                  className="flex-1 px-2 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-yellow-50 transition-colors duration-200"
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Rack Name <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="rackname"
-                  value={formData.rackname}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
-                  required
-                />
-              </div>
-            </div>
-            {error && <div className="text-red-500 mb-4">{error}</div>}
-            {success && <div className="text-green-500 mb-4">{success}</div>}
-          </div>
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            Rack Name <span className="text-red-500">*</span>
+          </label>
+          <Input
+            type="text"
+            name="rackname"
+            value={formData.rackname}
+            onChange={handleChange}
+            required
+          />
         </div>
-
-        {/* Footer */}
-        <DefaultFooter onSave={handleSubmit} onClose={onClose} />
-      </div>
-    </div>
+        {error && <div className="text-red-500 mb-4">{error}</div>}
+        {success && <div className="text-green-500 mb-4">{success}</div>}
+        <div className="flex gap-2 mt-6">
+          <Button type="submit" variant="primary" disabled={isLoading}>Save</Button>
+          <Button type="button" variant="danger" onClick={onClose}>Close</Button>
+        </div>
+      </form>
+    </Modal>
   );
 }

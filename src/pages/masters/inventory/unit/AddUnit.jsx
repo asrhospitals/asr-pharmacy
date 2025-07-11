@@ -1,18 +1,17 @@
 import React, { useState } from "react";
-import Header from "../../../../componets/common/Header";
-import axios from "axios";
-import Footer from "../../../../componets/common/Footer";
+import { useAddUnitMutation } from '../../../../services/unitApi';
+import Modal from "../../../../componets/common/Modal";
+import Input from "../../../../componets/common/Input";
+import Button from "../../../../componets/common/Button";
 
 export default function CreateUnitForm({ isOpen = true, onClose = () => {} }) {
   const [formData, setFormData] = useState({
     unitName: "",
     uqc: "",
   });
-
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-
-  if (!isOpen) return null;
+  const [addUnit, { isLoading }] = useAddUnitMutation();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -26,75 +25,52 @@ export default function CreateUnitForm({ isOpen = true, onClose = () => {} }) {
     e.preventDefault();
     setError("");
     setSuccess("");
-
     try {
-      const response = await axios.post(
-        "http://localhost:3000/pharmacy/master/inventory/unit/v1/add-unit",
-        formData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (response.status === 201)
-        return setSuccess("Store created successfully!");
+      await addUnit(formData).unwrap();
+      setSuccess("Unit created successfully!");
+      setFormData({ unitName: "", uqc: "" });
     } catch (err) {
-      setError(err.response?.data?.message);
+      setError(err?.data?.message || 'Failed to create unit');
     }
   };
 
   const handleClear = () => {
-    setFormData({
-      unitName: "",
-      uqc: "",
-    });
+    setFormData({ unitName: "", uqc: "" });
   };
 
   return (
-    <div className="fixed inset-0 bg-grey backdrop-blur-xs flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[95vh] flex flex-col">
-        <Header title="Create Unit" />
-
-        {/* Form Content */}
-        <div className="p-8 space-y-6">
-          {/* Unit Name */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Unit Name <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              name="unitName"
-              value={formData.unitName}
-              onChange={handleChange}
-              className="w-full px-3 py-2 bg-yellow-100 border border-yellow-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
-              required
-            />
-          </div>
-
-          {/* UQC */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              UQC
-            </label>
-            <input
-              type="text"
-              name="uqc"
-              value={formData.uqc}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
+    <Modal open={isOpen} onClose={onClose} title="Create Unit">
+      <form onSubmit={handleSave} className="space-y-6">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Unit Name <span className="text-red-500">*</span>
+          </label>
+          <Input
+            type="text"
+            name="unitName"
+            value={formData.unitName}
+            onChange={handleChange}
+            className="bg-yellow-100 border-yellow-300"
+            required
+          />
         </div>
-
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">UQC</label>
+          <Input
+            type="text"
+            name="uqc"
+            value={formData.uqc}
+            onChange={handleChange}
+          />
+        </div>
         {error && <div className="text-red-500 mb-4">{error}</div>}
         {success && <div className="text-green-500 mb-4">{success}</div>}
-
-        {/* Footer */}
-        <Footer onSave={handleSave} onClear={handleClear} onClose={onClose} />
-      </div>
-    </div>
+        <div className="flex gap-2 mt-6">
+          <Button type="submit" variant="primary" disabled={isLoading}>Save</Button>
+          <Button type="button" variant="secondary" onClick={handleClear}>Clear</Button>
+          <Button type="button" variant="danger" onClick={onClose}>Close</Button>
+        </div>
+      </form>
+    </Modal>
   );
 }

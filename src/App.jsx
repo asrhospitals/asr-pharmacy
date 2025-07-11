@@ -1,12 +1,12 @@
-import  AuthProvider  from './contexts/AuthProvider';
-import  NavigationProvider  from './contexts/NavigationProvider';
+import NavigationProvider from './contexts/NavigationProvider';
 import AppLayout from './componets/layout/AppLayout';
 import LoginPage from './componets/auth/LoginPage';
-import { useAuth } from './hooks/useAuth';
+import { useSelector } from 'react-redux';
 
 const App = () => {
-  const { isAuthenticated } = useAuth();
-  
+  const isAuthenticated = useSelector((state) => state.user.isAuthenticated);
+  // const role = useSelector((state) => state.user.user?.role); // For RBAC
+
   return (
     <div className="h-screen">
       {!isAuthenticated ? <LoginPage /> : <AppLayout />}
@@ -17,11 +17,9 @@ const App = () => {
 // Root App with Providers
 const AppWithProviders = () => {
   return (
-    <AuthProvider>
-      <NavigationProvider>
-        <App />
-      </NavigationProvider>
-    </AuthProvider>
+    <NavigationProvider>
+      <App />
+    </NavigationProvider>
   );
 };
 
