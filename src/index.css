@@ -1,1 +1,32 @@
 @import "tailwindcss";
+
+* {
+    --sb-track-color: #ffffff;
+    --sb-thumb-color: #5764d8;
+    --sb-size: 6px;
+  }
+  
+  *::-webkit-scrollbar {
+    width: var(--sb-size);
+  }
+  
+  *::-webkit-scrollbar-track {
+    background: var(--sb-track-color);
+    border-radius: 5px;
+  }
+  
+  *::-webkit-scrollbar-thumb {
+    background: var(--sb-thumb-color);
+    border-radius: 5px;
+  }
+  
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  
