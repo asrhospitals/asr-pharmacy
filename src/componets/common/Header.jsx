@@ -1,7 +1,7 @@
 // import { Menu, Bell, HelpCircle, Settings, User } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 import { logout as logoutAction } from "../../services/userSlice";
-import { useNavigation } from "../../hooks/useNavigation";
+import { useNavigate } from "react-router-dom";
 import { User, LogOut, HelpCircle, Menu, Bell, Settings } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import Button from "./Button";
@@ -10,7 +10,7 @@ import Card from "./Card";
 export default function DefaultHeader({ title, onMenuClick }) {
   const user = useSelector((state) => state.user.user);
   const dispatch = useDispatch();
-  const { navigateTo } = useNavigation();
+  const navigate = useNavigate();
   const [cardOpen, setCardOpen] = useState(false);
   const cardRef = useRef(null);
 

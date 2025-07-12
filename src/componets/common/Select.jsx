@@ -9,7 +9,7 @@ const Select = forwardRef(
       value={value}
       onChange={onChange}
       ref={ref}
-      className={`w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${className}`.trim()}
+      className={`${className} w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent`.trim()}
       {...props}
     >
       {options

@@ -4,7 +4,8 @@ const variants = {
   secondary: "bg-gray-100 text-gray-800 hover:bg-gray-200",
   danger: "bg-red-600 text-white hover:bg-red-700",
 };
-const iconButton = "p-2 rounded-full bg-transparent hover:bg-gray-100 focus:outline-none flex items-center justify-center";
+const iconButton =
+  "p-2 rounded-full bg-transparent hover:bg-gray-100 focus:outline-none flex items-center justify-center";
 
 const Button = ({
   children,
@@ -15,19 +16,21 @@ const Button = ({
   endIcon,
   ...props
 }) => {
-  const isIcon = type === 'icon';
+  const isIcon = type === "icon";
   return (
     <button
-      type={isIcon ? 'button' : type}
+      type={isIcon ? "button" : type}
       className={
         isIcon
           ? `${iconButton} ${className}`.trim()
-          : `${base} ${className} ${variants[variant] || ""}`.trim()
+          : `${base} ${className} ${
+              variants[variant] || ""
+            } flex items-center cursor-pointer`.trim()
       }
       {...props}
     >
       {startIcon && <span className="mr-2 flex items-center">{startIcon}</span>}
-      {children}
+      <span className="flex items-center">{children}</span>
       {endIcon && <span className="ml-2 flex items-center">{endIcon}</span>}
     </button>
   );

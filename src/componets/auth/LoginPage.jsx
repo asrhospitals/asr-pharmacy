@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useLoginMutation } from "../../services/authApi";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../services/userSlice";
-import { useNavigation } from "../../hooks/useNavigation";
+import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import Input from '../common/Input';
 import Select from '../common/Select';
@@ -10,7 +10,7 @@ import Button from '../common/Button';
 
 const LoginPage = () => {
   const dispatch = useDispatch();
-  const { navigateTo } = useNavigation();
+  const navigate = useNavigate();
   const [selectedRole, setSelectedRole] = useState("admin");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -36,7 +36,7 @@ const LoginPage = () => {
         username: response.username,
       };
       dispatch(setUser({ user, token: response.token }));
-      navigateTo("/dashboard", "Dashboard");
+      navigate("/dashboard", { replace: true });
     } catch (err) {
       setError(err?.data?.message || "Login failed");
     }

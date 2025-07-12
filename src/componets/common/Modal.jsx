@@ -18,7 +18,7 @@ const Modal = ({ open, onClose, title, children }) => {
 
   if (!open) return null;
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm" onClick={onClose}>
       <div
         className="bg-white rounded-xl shadow-xl p-6 w-full max-w-lg relative"
         tabIndex={-1}

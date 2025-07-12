@@ -7,10 +7,12 @@ import { useGetItemsQuery } from "../../../../services/itemApi";
 import Button from '../../../../componets/common/Button';
 import Modal from '../../../../componets/common/Modal';
 import Loader from '../../../../componets/common/Loader';
+import { useNavigate } from "react-router-dom";
 
 const ItemsPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { data: items, error, isLoading, refetch } = useGetItemsQuery();
+  const navigate = useNavigate();
 
   const columns = [
     { key: "productname", title: "Item Name" },
@@ -22,12 +24,18 @@ const ItemsPage = () => {
   ];
 
   const handleAddItem = () => {
-    setIsModalOpen(true);
+    navigate("/master/inventory/items/create");
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    refetch(); // Refetch items after closing modal (in case a new item was added)
+    refetch();
+  };
+
+  const handleRowClick = (row) => {
+    if (row && row.id) {
+      navigate(`/master/inventory/items/${row.id}`);
+    }
   };
 
   return (
@@ -63,20 +71,13 @@ const ItemsPage = () => {
       <div className="p-6">
         {isLoading ? (
           <Loader />
-        ) : !items || items.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded-lg shadow-sm border border-gray-200">
-            <div className="text-gray-400 mb-4">No Items available.</div>
-            <Button
-              onClick={handleAddItem}
-              className="text-blue-600 hover:text-blue-700 font-medium"
-            >
-              Add your first Item
-            </Button>
-          </div>
         ) : (
           <DataTable
             columns={columns}
             data={items}
+            title={"Item"}
+            handleAddItem={handleAddItem}
+            onRowClick={handleRowClick}
             onEdit={(row) => console.log("Edit:", row)}
             onDelete={(row) => console.log("Delete:", row)}
           />

@@ -1,6 +1,21 @@
-import { inventoryBaseApi } from './inventoryBaseApi';
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-export const saltApi = inventoryBaseApi.injectEndpoints({
+const baseQueryWithAuth = fetchBaseQuery({
+  baseUrl: import.meta.env.VITE_BACKEND_BASE_URL
+    ? `${import.meta.env.VITE_BACKEND_BASE_URL}/admin/master/inventory`
+    : '/api/inventory',
+  prepareHeaders: (headers, { getState }) => {
+    const token = getState()?.user?.token || localStorage.getItem('token');
+    if (token) {
+      headers.set('Authorization', `Bearer ${token}`);
+    }
+    return headers;
+  },
+});
+
+export const saltApi = createApi({
+  reducerPath: 'saltApi',
+  baseQuery: baseQueryWithAuth,
   endpoints: (builder) => ({
     getSalts: builder.query({
       query: () => ({

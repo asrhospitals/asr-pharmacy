@@ -4,9 +4,20 @@ const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL
   ? `${import.meta.env.VITE_BACKEND_BASE_URL}/pharmacy/master/inventory/hsn/v1`
   : '/api/bill';
 
+const baseQueryWithAuth = fetchBaseQuery({
+  baseUrl,
+  prepareHeaders: (headers, { getState }) => {
+    const token = getState()?.user?.token || localStorage.getItem('token');
+    if (token) {
+      headers.set('Authorization', `Bearer ${token}`);
+    }
+    return headers;
+  },
+});
+
 export const billApi = createApi({
   reducerPath: 'billApi',
-  baseQuery: fetchBaseQuery({ baseUrl }),
+  baseQuery: baseQueryWithAuth,
   endpoints: (builder) => ({
     getBills: builder.query({
       query: () => ({

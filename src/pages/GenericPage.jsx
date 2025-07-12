@@ -1,13 +1,13 @@
 
 import { Package } from "lucide-react";
 import { useSelector } from "react-redux";
-import { useNavigation } from "../hooks/useNavigation";
+import { useLocation } from "react-router-dom";
 
-const GenericPage = ({ title, path }) => {
+const GenericPage = (props) => {
   const user = useSelector((state) => state.user.user);
-  const { currentPath } = useNavigation();
+  const location = useLocation();
 
-  if (currentPath === "/profile") {
+  if (location.pathname === "/profile") {
     return (
       <div className="p-8 max-w-xl mx-auto">
         <h1 className="text-2xl font-bold mb-4">Profile</h1>
@@ -20,7 +20,7 @@ const GenericPage = ({ title, path }) => {
       </div>
     );
   }
-  if (currentPath === "/help") {
+  if (location.pathname === "/help") {
     return (
       <div className="p-8 max-w-xl mx-auto">
         <h1 className="text-2xl font-bold mb-4">Help & FAQ</h1>
@@ -38,9 +38,9 @@ const GenericPage = ({ title, path }) => {
   // fallback for other generic pages
   return (
     <div className="p-8 max-w-xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">{title}</h1>
+      <h1 className="text-2xl font-bold mb-4">{props.title}</h1>
       <div className="bg-white rounded-lg shadow p-6">
-        <p>Content for {title} ({path})</p>
+        <p>Content for {props.title} ({props.path})</p>
       </div>
     </div>
   );

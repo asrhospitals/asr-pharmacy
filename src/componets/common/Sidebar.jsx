@@ -10,7 +10,7 @@ import {
   Bell,
 } from "lucide-react";
 // import { useAuth } from "../../hooks/useAuth";
-import { useNavigation } from "../../hooks/useNavigation";
+import { useLocation, useNavigate } from "react-router-dom";
 import { menuConfig } from "../../data/menuData";
 import { useSelector, useDispatch } from "react-redux";
 import { logout as logoutAction } from "../../services/userSlice";
@@ -107,7 +107,8 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
   
   const dispatch = useDispatch();
   const logout = () => dispatch(logoutAction());
-  const { currentPath, navigateTo } = useNavigation();
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const menuItems = filterMenuByPermission(menuConfig[user?.role] || [], user?.role);
 
@@ -121,12 +122,12 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
 
   const handleItemClick = (title, path) => {
     if (path) {
-      navigateTo(path, title);
+      navigate(path, { state: { title } });
     }
   };
 
   const isItemActive = (item) => {
-    if (item.path === currentPath) return true;
+    if (item.path === location.pathname) return true;
     if (item.children) {
       return item.children.some((child) => isItemActive(child));
     }
@@ -138,7 +139,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
     const hasChildren = item.children && item.children.length > 0;
     const isExpanded = expandedItems.includes(item.title);
     const isActive = isItemActive(item);
-    const isDirectActive = currentPath === item.path;
+    const isDirectActive = location.pathname === item.path;
 
     const indentClass =
       level === 0 ? "" : level === 1 ? "ml-4" : level === 2 ? "ml-8" : "ml-12";
