@@ -32,8 +32,16 @@ export const hsnApi = createApi({
       }),
       invalidatesTags: ['HSN'],
     }),
+    editHSN: builder.mutation({
+      query: ({ id, ...hsnData }) => ({
+        url: `/hsn/v1/update-hsn/${id}`,
+        method: 'PUT',
+        body: hsnData,
+      }),
+      invalidatesTags: ['HSN'],
+    }),
   }),
   overrideExisting: false,
 });
 
-export const { useGetHSNsQuery, useAddHSNMutation } = hsnApi; 
+export const { useGetHSNsQuery, useAddHSNMutation, useEditHSNMutation } = hsnApi; 

@@ -14,67 +14,67 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { menuConfig } from "../../data/menuData";
 import { useSelector, useDispatch } from "react-redux";
 import { logout as logoutAction } from "../../services/userSlice";
-import Input from './Input';
-import { hasPermission } from '../../data/permissions';
+import Input from "./Input";
+import { hasPermission } from "../../data/permissions";
 
 // Map menu item paths to permission keys (should match routePermissions in Routes.jsx)
 const pathToPermission = {
-  '/dashboard': 'dashboard',
-  '/master/accounts/ledger': 'reports',
-  '/master/accounts/group': 'reports',
-  '/master/accounts/sale': 'gst_billing',
-  '/master/accounts/purchase': 'purchase_orders',
-  '/master/inventory/items': 'inventory',
-  '/master/inventory/stores': 'inventory',
-  '/master/inventory/units': 'inventory',
-  '/master/inventory/racks': 'inventory',
-  '/master/inventory/companys': 'inventory',
-  '/master/inventory/salts': 'inventory',
-  '/master/inventory/sacs': 'inventory',
-  '/master/inventory/manufacturers': 'inventory',
-  '/sales/orders': 'gst_billing',
-  '/sales/bill': 'gst_billing',
-  '/sales/quotation': 'gst_billing',
-  '/sales/countersale': 'gst_billing',
-  '/sales/stockissue': 'inventory',
-  '/purchase/order': 'purchase_orders',
-  '/purchase/bill': 'gst_billing',
-  '/purchase/stockreceive': 'inventory',
-  '/purchase/return': 'return_expiry',
-  '/purchase/brkexp': 'return_expiry',
-  '/master/rates/pricelist': 'inventory',
-  '/discount/agency': 'gst_billing',
-  '/discount/itemwise': 'gst_billing',
-  '/other/patient': 'inventory',
-  '/other/prescription': 'view_prescription',
-  '/other/station': 'inventory',
-  '/opening/ledger': 'inventory',
-  '/opening/stock': 'inventory',
-  '/tds': 'financial_reports',
-  '/currency/multicurrency': 'inventory',
-  '/currency/exchangerate': 'inventory',
-  '/accounting/receipt': 'financial_reports',
-  '/accounting/payment': 'financial_reports',
-  '/accounting/debitnote': 'financial_reports',
-  '/accounting/creditnote': 'financial_reports',
-  '/accounting/contra': 'financial_reports',
-  '/accounting/journal': 'financial_reports',
-  '/accounting/bankreconciliation': 'financial_reports',
-  '/stock/transfer': 'inventory',
-  '/stock/physical': 'inventory',
-  '/cashbook/openclose': 'financial_reports',
-  '/cashbook/deposits': 'financial_reports',
-  '/cashbook/approvals': 'financial_reports',
-  '/cashbook/transfer': 'financial_reports',
-  '/banking/onlinepayment': 'financial_reports',
-  '/banking/onlinestatement': 'financial_reports',
-  '/banking/chequemanagement': 'financial_reports',
-  '/report': 'reports',
-  '/otherproducts': 'inventory',
-  '/utilities': 'settings',
-  '/onlinestore': 'inventory',
-  '/crm/homedelivery': 'inventory',
-  '/crm/prescriptionreminder': 'inventory',
+  "/dashboard": "dashboard",
+  "/master/accounts/ledger": "reports",
+  "/master/accounts/group": "reports",
+  "/master/accounts/sale": "gst_billing",
+  "/master/accounts/purchase": "purchase_orders",
+  "/master/inventory/items": "inventory",
+  "/master/inventory/stores": "inventory",
+  "/master/inventory/units": "inventory",
+  "/master/inventory/racks": "inventory",
+  "/master/inventory/companys": "inventory",
+  "/master/inventory/salts": "inventory",
+  "/master/inventory/sacs": "inventory",
+  "/master/inventory/manufacturers": "inventory",
+  "/sales/orders": "gst_billing",
+  "/sales/bill": "gst_billing",
+  "/sales/quotation": "gst_billing",
+  "/sales/countersale": "gst_billing",
+  "/sales/stockissue": "inventory",
+  "/purchase/order": "purchase_orders",
+  "/purchase/bill": "gst_billing",
+  "/purchase/stockreceive": "inventory",
+  "/purchase/return": "return_expiry",
+  "/purchase/brkexp": "return_expiry",
+  "/master/rates/pricelist": "inventory",
+  "/discount/agency": "gst_billing",
+  "/discount/itemwise": "gst_billing",
+  "/other/patient": "inventory",
+  "/other/prescription": "view_prescription",
+  "/other/station": "inventory",
+  "/opening/ledger": "inventory",
+  "/opening/stock": "inventory",
+  "/tds": "financial_reports",
+  "/currency/multicurrency": "inventory",
+  "/currency/exchangerate": "inventory",
+  "/accounting/receipt": "financial_reports",
+  "/accounting/payment": "financial_reports",
+  "/accounting/debitnote": "financial_reports",
+  "/accounting/creditnote": "financial_reports",
+  "/accounting/contra": "financial_reports",
+  "/accounting/journal": "financial_reports",
+  "/accounting/bankreconciliation": "financial_reports",
+  "/stock/transfer": "inventory",
+  "/stock/physical": "inventory",
+  "/cashbook/openclose": "financial_reports",
+  "/cashbook/deposits": "financial_reports",
+  "/cashbook/approvals": "financial_reports",
+  "/cashbook/transfer": "financial_reports",
+  "/banking/onlinepayment": "financial_reports",
+  "/banking/onlinestatement": "financial_reports",
+  "/banking/chequemanagement": "financial_reports",
+  "/report": "reports",
+  "/otherproducts": "inventory",
+  "/utilities": "settings",
+  "/onlinestore": "inventory",
+  "/crm/homedelivery": "inventory",
+  "/crm/prescriptionreminder": "inventory",
 };
 
 // Recursively filter menu items based on RBAC
@@ -89,8 +89,8 @@ function filterMenuByPermission(items, role) {
         return null;
       }
       if (item.path) {
-        const permKey = pathToPermission[item.path] || 'dashboard';
-        if (hasPermission(role, permKey, 'V')) {
+        const permKey = pathToPermission[item.path] || "dashboard";
+        if (hasPermission(role, permKey, "V")) {
           return item;
         }
         return null;
@@ -104,13 +104,16 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
   const [expandedItems, setExpandedItems] = useState(["Dashboard"]);
   const user = useSelector((state) => state.user.user);
   console.log(user);
-  
+
   const dispatch = useDispatch();
   const logout = () => dispatch(logoutAction());
   const location = useLocation();
   const navigate = useNavigate();
 
-  const menuItems = filterMenuByPermission(menuConfig[user?.role] || [], user?.role);
+  const menuItems = filterMenuByPermission(
+    menuConfig[user?.role] || [],
+    user?.role
+  );
 
   const toggleExpanded = (title) => {
     setExpandedItems((prev) =>
@@ -258,11 +261,14 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
         {!isCollapsed && (
           <div className="p-4">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
               <Input
+                label="Search"
                 type="text"
-                placeholder="Search..."
-                className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                startIcon={
+                  <Search className="w-4 h-4 text-gray-400" />
+                }
+                className="w-full"
+                // className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
               />
             </div>
           </div>

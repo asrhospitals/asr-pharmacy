@@ -1,77 +1,96 @@
-import React, { useState } from "react";
-import { useAddHSNMutation } from '../../../../services/hsnApi';
+import React, { useState, useEffect } from "react";
+import { useAddHSNMutation } from "../../../../services/hsnApi";
 import Modal from "../../../../componets/common/Modal";
 import Input from "../../../../componets/common/Input";
 import Button from "../../../../componets/common/Button";
+import { TextField } from "../../../../componets/common/Fields"
+import { useForm } from "react-hook-form";
 
-export default function CreateHsnSacForm({ isOpen = true, onClose = () => {} }) {
-  const [formData, setFormData] = useState({
-    hsnSacCode: "",
-    hsnsacname: "",
-  });
+export default function CreateHsnSacForm({
+  isOpen = true,
+  onClose = () => {},
+  initialData = null,
+  onSave,
+}) {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [addHSN, { isLoading }] = useAddHSNMutation();
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    defaultValues: initialData || {
+      hsnSacCode: "",
+      hsnsacname: "",
+    },
+  });
 
-  const handleSave = async (e) => {
-    e.preventDefault();
+  useEffect(() => {
+    if (initialData) {
+      reset(initialData);
+    } else {
+      reset({ hsnSacCode: "", hsnsacname: "" });
+    }
+  }, [initialData, isOpen, reset]);
+
+  const handleSave = async (data) => {
     setError("");
     setSuccess("");
     try {
-      await addHSN(formData).unwrap();
-      setSuccess("HSN created successfully!");
-      setFormData({ hsnSacCode: "", hsnsacname: "" });
+      if (onSave) {
+        await onSave(data);
+        setSuccess("HSN saved successfully!");
+        reset();
+        onClose();
+      } else {
+        await addHSN(data).unwrap();
+        setSuccess("HSN created successfully!");
+        reset();
+        onClose();
+      }
     } catch (err) {
-      setError(err?.data?.message || 'Failed to create HSN');
+      setError(err?.data?.message || "Failed to save HSN");
     }
   };
 
   const handleClear = () => {
-    setFormData({
-      hsnSacCode: "",
-      hsnsacname: "",
-    });
+    reset();
   };
 
   return (
     <Modal open={isOpen} onClose={onClose} title="Create HSN/SAC">
-      <form onSubmit={handleSave} className="space-y-4">
+      <form onSubmit={handleSubmit(handleSave)} className="space-y-4">
+        <TextField
+          label="HSN/SAC Code"
+          name="hsnSacCode"
+          register={register}
+          errors={errors}
+          required
+          message="HSN/SAC Code is required"
+          noStyle={true}
+          noHeight={true}
+        />
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            HSN/SAC Code <span className="text-red-500">*</span>
+            HSN/SAC name
           </label>
-          <Input
-            type="text"
-            name="hsnSacCode"
-            value={formData.hsnSacCode}
-            onChange={handleChange}
-            className="bg-yellow-100 border-yellow-300"
-            required
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">HSN/SAC name</label>
-          <Input
-            type="text"
-            name="hsnsacname"
-            value={formData.hsnsacname}
-            onChange={handleChange}
-          />
+          <Input type="text" {...register("hsnsacname")} />
         </div>
         {error && <div className="text-red-500 mb-4">{error}</div>}
         {success && <div className="text-green-500 mb-4">{success}</div>}
         <div className="flex gap-2 mt-6">
-          <Button type="submit" variant="primary" disabled={isLoading}>Save</Button>
-          <Button type="button" variant="secondary" onClick={handleClear}>Clear</Button>
-          <Button type="button" variant="danger" onClick={onClose}>Close</Button>
+          <Button type="submit" variant="primary" disabled={isLoading}>
+            Save
+          </Button>
+          <Button type="button" variant="secondary" onClick={handleClear}>
+            Clear
+          </Button>
+          <Button type="button" variant="danger" onClick={onClose}>
+            Close
+          </Button>
         </div>
       </form>
     </Modal>

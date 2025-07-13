@@ -30,7 +30,7 @@ export default function DefaultHeader({ title, onMenuClick }) {
   };
 
   return (
-    <header className="bg-white p-4 border-b border-l border-gray-200 flex items-center justify-between">
+    <header className="sticky top-0 z-50 bg-white p-4 border-b border-l border-gray-200 flex items-center justify-between">
       {/* Left: Logo, Hamburger, Company Name */}
       <div className="flex items-center gap-3">
         <button className="rounded-md hover:bg-gray-100" onClick={onMenuClick}>

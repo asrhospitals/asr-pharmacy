@@ -29,7 +29,12 @@ export default function CreateCompanyPage() {
 
   // Email & Website modal state
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
-  const [emailWebsite, setEmailWebsite] = useState({ main: "", cc: "", bcc: "", url: "" });
+  const [emailWebsite, setEmailWebsite] = useState({
+    main: "",
+    cc: "",
+    bcc: "",
+    url: "",
+  });
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -60,6 +65,7 @@ export default function CreateCompanyPage() {
         storeroom: 1,
       });
       setEmailWebsite({ main: "", cc: "", bcc: "", url: "" });
+      navigate('/master/inventory/companys')
     } catch (err) {
       setError(err?.data?.message || "Failed to create company");
     }
@@ -123,138 +129,146 @@ export default function CreateCompanyPage() {
               More Option
             </label>
           </div>
-          {showMoreOptions && (
-            <>
-              <hr className="my-4" />
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Print Remark
-                </label>
-                <Input
-                  type="text"
-                  name="printremark"
-                  value={formData.printremark}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-4">
-                <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">
-                    Status
+          <div
+            className={`transition-all duration-500 overflow-hidden ${showMoreOptions ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}
+          >
+            {showMoreOptions && (
+              <>
+                <hr className="my-4" />
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Print Remark
                   </label>
-                  <Select
-                    name="status"
-                    value={formData.status}
+                  <Input
+                    type="text"
+                    name="printremark"
+                    value={formData.printremark}
                     onChange={handleChange}
+                  />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-4">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                      Status
+                    </label>
+                    <Select
+                      name="status"
+                      value={formData.status}
+                      onChange={handleChange}
+                    >
+                      <option value="Continue">Continue</option>
+                      <option value="Discontinued">Discontinued</option>
+                    </Select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                      Reorder Preferences
+                    </label>
+                    <Input
+                      type="number"
+                      name="recorderprefrence"
+                      value={formData.recorderprefrence}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                      Store Room No.
+                    </label>
+                    <Input
+                      type="number"
+                      name="storeroom"
+                      value={formData.storeroom}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                      Prohibit
+                    </label>
+                    <Select
+                      name="prohibited"
+                      value={formData.prohibited}
+                      onChange={handleChange}
+                    >
+                      <option value="No">No</option>
+                      <option value="Yes">Yes</option>
+                    </Select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                      Invoice Printing Index
+                    </label>
+                    <Input
+                      type="number"
+                      name="invoiceprintindex"
+                      value={formData.invoiceprintindex}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                      Expiry Receive Upto
+                    </label>
+                    <Input
+                      type="number"
+                      name="expiredays"
+                      value={formData.expiredays}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                      Dump Days
+                    </label>
+                    <Input
+                      type="number"
+                      name="dumpdays"
+                      value={formData.dumpdays}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                      Reorder Formula
+                    </label>
+                    <Input
+                      type="number"
+                      name="recorderformula"
+                      value={formData.recorderformula}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-700 mb-1">
+                      Minimum Margin
+                    </label>
+                    <Input
+                      type="number"
+                      name="minimummargin"
+                      value={formData.minimummargin}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
+                <div className="mb-4">
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={() => setDetailsModalOpen(true)}
                   >
-                    <option value="Continue">Continue</option>
-                    <option value="Discontinued">Discontinued</option>
-                  </Select>
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">
-                    Reorder Preferences
-                  </label>
-                  <Input
-                    type="number"
-                    name="recorderprefrence"
-                    value={formData.recorderprefrence}
-                    onChange={handleChange}
+                    + Add Details
+                  </Button>
+                  <EmailWebsiteModal
+                    open={detailsModalOpen}
+                    onClose={() => setDetailsModalOpen(false)}
+                    onSave={setEmailWebsite}
+                    initialData={emailWebsite}
                   />
                 </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">
-                    Store Room No.
-                  </label>
-                  <Input
-                    type="number"
-                    name="storeroom"
-                    value={formData.storeroom}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">
-                    Prohibit
-                  </label>
-                  <Select
-                    name="prohibited"
-                    value={formData.prohibited}
-                    onChange={handleChange}
-                  >
-                    <option value="No">No</option>
-                    <option value="Yes">Yes</option>
-                  </Select>
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">
-                    Invoice Printing Index
-                  </label>
-                  <Input
-                    type="number"
-                    name="invoiceprintindex"
-                    value={formData.invoiceprintindex}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">
-                    Expiry Receive Upto
-                  </label>
-                  <Input
-                    type="number"
-                    name="expiredays"
-                    value={formData.expiredays}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">
-                    Dump Days
-                  </label>
-                  <Input
-                    type="number"
-                    name="dumpdays"
-                    value={formData.dumpdays}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">
-                    Reorder Formula
-                  </label>
-                  <Input
-                    type="number"
-                    name="recorderformula"
-                    value={formData.recorderformula}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">
-                    Minimum Margin
-                  </label>
-                  <Input
-                    type="number"
-                    name="minimummargin"
-                    value={formData.minimummargin}
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
-              <div className="mb-4">
-                <Button type="button" variant="secondary" onClick={() => setDetailsModalOpen(true)}>
-                  + Add Details
-                </Button>
-                <EmailWebsiteModal
-                  open={detailsModalOpen}
-                  onClose={() => setDetailsModalOpen(false)}
-                  onSave={setEmailWebsite}
-                  initialData={emailWebsite}
-                />
-              </div>
-            </>
-          )}
+              </>
+            )}
+          </div>
           {/* Error, Success, and Buttons */}
           {error && <div className="text-red-500 mb-2">{error}</div>}
           {success && <div className="text-green-500 mb-2">{success}</div>}

@@ -23,7 +23,7 @@ const RackPage = () => {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    refetch(); // Refetch racks after closing modal (in case a new rack was added)
+    refetch();
   };
 
   return (
@@ -41,7 +41,7 @@ const RackPage = () => {
         ]}
       />
       {/* Error Message */}
-      {error && (
+      {/* {error && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-4">
           <div className="flex items-center justify-between">
             <div className="text-red-600 text-sm">{error?.data?.message || 'Failed to load racks'}</div>
@@ -53,38 +53,23 @@ const RackPage = () => {
             </Button>
           </div>
         </div>
-      )}
+      )} */}
       <div className="p-6">
         {isLoading ? (
           <Loader />
-        ) : (!racks || racks.length === 0) ? (
-          <div className="text-center py-12 bg-white rounded-lg shadow-sm border border-gray-200">
-            <div className="text-gray-400 mb-4">
-              No racks available.
-            </div>
-            <Button
-              onClick={handleAddItem}
-              className="text-blue-600 hover:text-blue-700 font-medium"
-            >
-              Add your first rack
-            </Button>
-          </div>
         ) : (
           <DataTable
+            title={"Rack"}
             columns={columns}
             data={racks?.data}
+            handleAddItem={handleAddItem}
             onEdit={(row) => console.log("Edit:", row)}
             onDelete={(row) => console.log("Delete:", row)}
           />
         )}
       </div>
       {/* Modal */}
-      <Modal
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-      >
-        <AddRack />
-      </Modal>
+        <AddRack isOpen={isModalOpen} onClose={handleCloseModal} />
     </div>
   );
 }

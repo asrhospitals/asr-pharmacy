@@ -6,6 +6,9 @@ import Button from "../../../../componets/common/Button";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { SelectField, TextField } from "../../../../componets/common/Fields";
+import LeftColumn from "./components/LeftColumn";
+import RightColumn from "./components/RightColumn";
 
 const ADVANCE_TABS = ["Discount", "Quantity", "Other Info"];
 
@@ -51,7 +54,6 @@ export default function CreateItemPage() {
       discountType: "Applicable",
       itemDisc1: "",
       maxDisc: "",
-      // ...add more as needed
     },
   });
 
@@ -85,7 +87,7 @@ export default function CreateItemPage() {
               showAdvance ? "w-3/4" : "w-full"
             } bg-white rounded shadow p-4 transition-all duration-500`}
           >
-            <div className=" flex items-center justify-between sticky top-0 z-10">
+            <div className="flex items-center justify-between sticky top-0 z-10">
               <h1 className="text-xl font-bold">Create Item</h1>
               <Button type="button" variant="secondary" onClick={handleBack}>
                 &#8592; Back
@@ -99,233 +101,58 @@ export default function CreateItemPage() {
                 <div className="flex items-center">
                   <Input
                     type="checkbox"
-                    width="w-4"
-                    checked={showAdvance}
+                    {...register("advance")}
                     onChange={(e) => setShowAdvance(e.target.checked)}
-                    className="h-4 w-4 mr-2"
+                    className="mr-1"
                   />
-                  <span className="font-semibold text-sm">Advance Info</span>
+                  <span className="font-semibold text-sm min-w-fit">
+                    Advance Info
+                  </span>
                 </div>
               </div>
             </div>
 
             {/* Main Grid: 4 columns, compact */}
-            <div className="grid grid-cols-4 gap-3 text-xs">
-              <div>
-                <label className="block font-medium mb-1">Product *</label>
-                <Input
-                  className="h-8 text-xs"
-                  {...register("productname", {
-                    required: "Product Name is required",
-                  })}
-                />
-                {errors.productname && (
-                  <span className="text-xs text-red-500">
-                    {errors.productname.message}
-                  </span>
-                )}
+            <div className="space-y-4 text-xs">
+              {/* Top Row: Product and Goods */}
+              <div className="flex gap-4">
+                <div className="flex-1">
+                  <label className="block font-medium mb-1">Product *</label>
+                  <Input
+                    className="h-8 w-full text-xs"
+                    {...register("productname", {
+                      required: "Product Name is required",
+                    })}
+                  />
+                  {errors.productname && (
+                    <span className="text-xs text-red-500">
+                      {errors.productname.message}
+                    </span>
+                  )}
+                </div>
+                <div className="w-40">
+                  <label className="block font-medium mb-1">Goods</label>
+                  <Select
+                    noPadding
+                    className="h-8 w-full text-xs"
+                    {...register("goods")}
+                  >
+                    <option value="Goods">Goods</option>
+                    <option value="Services">Services</option>
+                  </Select>
+                </div>
               </div>
-              <div>
-                <label className="block font-medium mb-1">Goods</label>
-                <Select className="h-8 p-1 text-xs" {...register("goods")}>
-                  {" "}
-                  <option value="Goods">Goods</option>{" "}
-                  <option value="Services">Services</option>{" "}
-                </Select>
-              </div>
-              <div>
-                <label className="block font-medium mb-1">Packing</label>
-                <Input className="h-8 text-xs" {...register("packing")} />
-              </div>
-              <div>
-                <label className="block font-medium mb-1">M.R.P</label>
-                <Input
-                  className="h-8 text-xs"
-                  type="number"
-                  {...register("price")}
-                />
-              </div>
-              <div>
-                <label className="block font-medium mb-1">Unit 1st *</label>
-                <Input
-                  className="h-8 text-xs"
-                  {...register("unit1", { required: "Unit 1st is required" })}
-                />
-                {errors.unit1 && (
-                  <span className="text-xs text-red-500">
-                    {errors.unit1.message}
-                  </span>
-                )}
-              </div>
-              <div>
-                <label className="block font-medium mb-1">Purchase Rate</label>
-                <Input
-                  className="h-8 text-xs"
-                  type="number"
-                  {...register("purchasePrice")}
-                />
-              </div>
-              <div>
-                <label className="block font-medium mb-1">Unit-2</label>
-                <Input className="h-8 text-xs" {...register("unit2")} />
-              </div>
-              <div>
-                <label className="block font-medium mb-1">Cost</label>
-                <Input
-                  className="h-8 text-xs"
-                  type="number"
-                  {...register("cost")}
-                />
-              </div>
-              <div>
-                <label className="block font-medium mb-1">Conversion *</label>
-                <Input
-                  className="h-8 text-xs"
-                  {...register("conversion", {
-                    required: "Conversion is required",
-                  })}
-                />
-                {errors.conversion && (
-                  <span className="text-xs text-red-500">
-                    {errors.conversion.message}
-                  </span>
-                )}
-              </div>
-              <div>
-                <label className="block font-medium mb-1">S.Rate</label>
-                <Input
-                  className="h-8 text-xs"
-                  type="number"
-                  {...register("salerate")}
-                />
-              </div>
-              <div>
-                <label className="block font-medium mb-1">
-                  Unit in Decimal
-                </label>
-                <Select className="h-8 text-xs" {...register("unitindecimal")}>
-                  {" "}
-                  <option value="No">No</option>{" "}
-                  <option value="Yes">Yes</option>{" "}
-                </Select>
-              </div>
-              <div>
-                <label className="block font-medium mb-1">Narcotics</label>
-                <Select className="h-8 text-xs" {...register("narcotic")}>
-                  {" "}
-                  <option value="No">No</option>{" "}
-                  <option value="Yes">Yes</option>{" "}
-                </Select>
-              </div>
-              <div>
-                <label className="block font-medium mb-1">HSN/SAC*</label>
-                <Input
-                  className="h-8 text-xs"
-                  {...register("hsnsac", { required: "HSN/SAC is required" })}
-                />
-                {errors.hsnsac && (
-                  <span className="text-xs text-red-500">
-                    {errors.hsnsac.message}
-                  </span>
-                )}
-              </div>
-              <div>
-                <label className="block font-medium mb-1">Schedule H</label>
-                <Select className="h-8 text-xs" {...register("scheduleH")}>
-                  {" "}
-                  <option value="No">No</option>{" "}
-                  <option value="Yes">Yes</option>{" "}
-                </Select>
-              </div>
-              <div>
-                <label className="block font-medium mb-1">Tax Category*</label>
-                <Input
-                  className="h-8 text-xs"
-                  {...register("taxcategory", {
-                    required: "Tax Category is required",
-                  })}
-                />
-                {errors.taxcategory && (
-                  <span className="text-xs text-red-500">
-                    {errors.taxcategory.message}
-                  </span>
-                )}
-              </div>
-              <div>
-                <label className="block font-medium mb-1">Schedule H1</label>
-                <Select className="h-8 text-xs" {...register("scheduleH1")}>
-                  {" "}
-                  <option value="No">No</option>{" "}
-                  <option value="Yes">Yes</option>{" "}
-                </Select>
-              </div>
-              <div>
-                <label className="block font-medium mb-1">Company *</label>
-                <Input
-                  className="h-8 text-xs"
-                  {...register("company", { required: "Company is required" })}
-                />
-                {errors.company && (
-                  <span className="text-xs text-red-500">
-                    {errors.company.message}
-                  </span>
-                )}
-              </div>
-              <div>
-                <label className="block font-medium mb-1">Schedule Drug</label>
-                <Select className="h-8 text-xs" {...register("scheduledrug")}>
-                  {" "}
-                  <option value="No">No</option>{" "}
-                  <option value="Yes">Yes</option>{" "}
-                </Select>
-              </div>
-              <div>
-                <label className="block font-medium mb-1">Salt</label>
-                <Input className="h-8 text-xs" {...register("salt")} />
-              </div>
-              <div>
-                <label className="block font-medium mb-1">
-                  Presc. Required
-                </label>
-                <Select className="h-8 text-xs" {...register("prescription")}>
-                  {" "}
-                  <option value="No">No</option>{" "}
-                  <option value="Yes">Yes</option>{" "}
-                </Select>
-              </div>
-              <div>
-                <label className="block font-medium mb-1">Rack</label>
-                <Input className="h-8 text-xs" {...register("rack")} />
-              </div>
-              <div>
-                <label className="block font-medium mb-1">Storage Type</label>
-                <Select className="h-8 text-xs" {...register("storagetype")}>
-                  {" "}
-                  <option value="Normal">Normal</option>{" "}
-                  <option value="Cold">Cold</option>{" "}
-                </Select>
-              </div>
-              <div>
-                <label className="block font-medium mb-1">Color Type</label>
-                <Input className="h-8 text-xs" {...register("colortype")} />
-              </div>
-              <div>
-                <label className="block font-medium mb-1">Status</label>
-                <Select className="h-8 text-xs" {...register("status")}>
-                  {" "}
-                  <option value="Continue">Continue</option>{" "}
-                  <option value="Discontinued">Discontinued</option>{" "}
-                </Select>
-              </div>
-              <div>
-                <label className="block font-medium mb-1">TB Item</label>
-                <Select className="h-8 text-xs" {...register("tbitem")}>
-                  {" "}
-                  <option value="Normal">Normal</option>{" "}
-                  <option value="Special">Special</option>{" "}
-                </Select>
+
+              {/* Two Column Layout Starts */}
+              <div className="grid grid-cols-2 gap-6">
+                {/* LEFT COLUMN */}
+                <LeftColumn register={register} errors={errors} />
+
+                {/* RIGHT COLUMN */}
+                <RightColumn register={register} errors={errors} />
               </div>
             </div>
+
             {/* Advance Info Section */}
             <div className="bg-white h-10 py-2 flex items-center gap-2 justify-end z-10 sticky bottom-0 text-xs">
               <Button type="button" variant="secondary" onClick={handleBack}>
@@ -371,6 +198,7 @@ export default function CreateItemPage() {
                     <div>
                       <label className="block font-medium mb-1">Discount</label>
                       <Select
+                        noPadding={true}
                         className="h-8 text-xs"
                         {...register("discountType")}
                       >

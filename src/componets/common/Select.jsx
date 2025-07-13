@@ -2,14 +2,16 @@ import React, { forwardRef } from "react";
 
 const Select = forwardRef(
   (
-    { className = "", value, onChange, options, children, ...props },
+    { className = "", value, onChange, options, children, noPadding, ...props },
     ref
   ) => (
     <select
       value={value}
       onChange={onChange}
       ref={ref}
-      className={`${className} w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent`.trim()}
+      className={`${className} w-full ${
+        noPadding ? "" : "p-2"
+      } border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`.trim()}
       {...props}
     >
       {options

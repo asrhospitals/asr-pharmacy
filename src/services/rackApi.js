@@ -32,8 +32,16 @@ export const rackApi = createApi({
       }),
       invalidatesTags: ['Rack'],
     }),
+    editRack: builder.mutation({
+      query: ({ id, ...rackData }) => ({
+        url: `/rack/v1/update-rack/${id}`,
+        method: 'PUT',
+        body: rackData,
+      }),
+      invalidatesTags: ['Rack'],
+    }),
   }),
   overrideExisting: false,
 });
 
-export const { useGetRacksQuery, useAddRackMutation } = rackApi; 
+export const { useGetRacksQuery, useAddRackMutation, useEditRackMutation } = rackApi; 

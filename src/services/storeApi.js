@@ -32,8 +32,28 @@ export const storeApi = createApi({
       }),
       invalidatesTags: ['Store'],
     }),
+    deleteStore: builder.mutation({
+      query: (id) => ({
+        url: `/store/v1/delete-store/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Store'],
+    }),
+    editStore: builder.mutation({
+      query: ({ id, ...storeData }) => ({
+        url: `/store/v1/update-store/${id}`,
+        method: 'PUT',
+        body: storeData,
+      }),
+      invalidatesTags: ['Store'],
+    }),
   }),
   overrideExisting: false,
 });
 
-export const { useGetStoresQuery, useAddStoreMutation } = storeApi; 
+export const {
+  useGetStoresQuery,
+  useAddStoreMutation,
+  useDeleteStoreMutation,
+  useEditStoreMutation
+} = storeApi; 

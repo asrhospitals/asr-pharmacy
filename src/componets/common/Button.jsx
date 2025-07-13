@@ -1,4 +1,4 @@
-const base = "px-4 py-2 rounded font-medium transition focus:outline-none";
+const base = "px-2 py-1 rounded font-medium transition focus:outline-none";
 const variants = {
   primary: "bg-blue-600 text-white hover:bg-blue-700",
   secondary: "bg-gray-100 text-gray-800 hover:bg-gray-200",

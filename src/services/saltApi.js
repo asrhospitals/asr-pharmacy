@@ -32,8 +32,16 @@ export const saltApi = createApi({
       }),
       invalidatesTags: ['Salt'],
     }),
+    editSalt: builder.mutation({
+      query: ({ id, ...saltData }) => ({
+        url: `/salt/v1/update-salt/${id}`,
+        method: 'PUT',
+        body: saltData,
+      }),
+      invalidatesTags: ['Salt'],
+    }),
   }),
   overrideExisting: false,
 });
 
-export const { useGetSaltsQuery, useAddSaltMutation } = saltApi; 
+export const { useGetSaltsQuery, useAddSaltMutation, useEditSaltMutation } = saltApi; 

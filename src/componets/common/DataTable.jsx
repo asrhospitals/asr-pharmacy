@@ -10,6 +10,8 @@ const DataTable = ({
   onDelete,
   onView,
   handleAddItem,
+  selectedRow,
+  onRowSelect,
 }) => {
   if (!Array.isArray(data) || data.length === 0) {
     return (
@@ -49,7 +51,11 @@ const DataTable = ({
           <tbody className="bg-white divide-y divide-gray-200">
             {Array.isArray(data) && data.length > 0 ? (
               data.map((row, index) => (
-                <tr key={row.id || index} className="hover:bg-gray-50">
+                <tr
+                  key={row.id || index}
+                  className={`hover:bg-gray-50 cursor-pointer ${selectedRow && (selectedRow.id === row.id) ? 'bg-yellow-100' : ''}`}
+                  onClick={() => onRowSelect && onRowSelect(row)}
+                >
                   {columns.map((column, idx) => (
                     <td
                       key={idx}

@@ -58,7 +58,8 @@ const LoginPage = () => {
               Select Role (Demo)
             </label>
             <Select 
-              value={selectedRole} 
+              className="w-full"
+              value={selectedRole}
               onChange={(e) => setSelectedRole(e.target.value)}
               options={[
                 { value: "admin", label: "Admin - Full Access" },

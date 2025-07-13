@@ -17,6 +17,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import Unauthorized from "../pages/Unauthorized";
 import CreateCompanyPage from "../pages/masters/inventory/company/CreateCompanyPage";
 import CreateItemPage from "../pages/masters/inventory/Item/CreateItemPage";
+import CreateSaltPage from "../pages/masters/inventory/salt/AddSalt";
 
 const AppRoutes = () => (
   <Routes>
@@ -129,6 +130,14 @@ const AppRoutes = () => (
       element={
         <ProtectedRoute module="inventory" action="V">
           <SaltPage />
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/master/inventory/salt/create"
+      element={
+        <ProtectedRoute module="inventory" action="C">
+          <CreateSaltPage />
         </ProtectedRoute>
       }
     />

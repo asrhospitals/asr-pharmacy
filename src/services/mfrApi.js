@@ -32,8 +32,16 @@ export const mfrApi = createApi({
       }),
       invalidatesTags: ['Manufacturer'],
     }),
+    editManufacturer: builder.mutation({
+      query: ({ id, ...mfrData }) => ({
+        url: `/manu/v1/update-manufacturer/${id}`,
+        method: 'PUT',
+        body: mfrData,
+      }),
+      invalidatesTags: ['Manufacturer'],
+    }),
   }),
   overrideExisting: false,
 });
 
-export const { useGetManufacturersQuery, useAddManufacturerMutation } = mfrApi; 
+export const { useGetManufacturersQuery, useAddManufacturerMutation, useEditManufacturerMutation } = mfrApi; 

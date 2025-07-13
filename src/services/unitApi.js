@@ -32,8 +32,16 @@ export const unitApi = createApi({
       }),
       invalidatesTags: ['Unit'],
     }),
+    editUnit: builder.mutation({
+      query: ({ id, ...unitData }) => ({
+        url: `/unit/v1/update-unit/${id}`,
+        method: 'PUT',
+        body: unitData,
+      }),
+      invalidatesTags: ['Unit'],
+    }),
   }),
   overrideExisting: false,
 });
 
-export const { useGetUnitsQuery, useAddUnitMutation } = unitApi; 
+export const { useGetUnitsQuery, useAddUnitMutation, useEditUnitMutation } = unitApi; 

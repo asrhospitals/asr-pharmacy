@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+:root {
+  font-size: 16px;
+}
 * {
     --sb-track-color: #ffffff;
     --sb-thumb-color: #5764d8;
