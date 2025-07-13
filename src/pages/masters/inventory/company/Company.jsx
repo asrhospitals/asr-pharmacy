@@ -26,7 +26,7 @@ const CompanyPage = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6 px-2 sm:px-4 md:px-8 max-w-full">
       <PageHeader
         title="Company Management"
         subtitle="Manage your Comapany"
@@ -35,6 +35,7 @@ const CompanyPage = () => {
             key="add"
             onClick={handleAddItem}
             startIcon={<Plus className="w-4 h-4" />}
+            className="w-full sm:w-auto"
           >
             Add Company
           </Button>,
@@ -56,7 +57,7 @@ const CompanyPage = () => {
           </div>
         </div>
       )} */}
-      <div className="p-6">
+      <div className="p-2 sm:p-4 md:p-6">
         {isLoading ? (
           <Loader />
         ) : (

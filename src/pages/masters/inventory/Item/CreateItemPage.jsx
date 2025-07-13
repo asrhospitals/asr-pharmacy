@@ -81,19 +81,24 @@ export default function CreateItemPage() {
         onSubmit={handleSubmit(handleSave)}
         className="flex-1 flex flex-col relative"
       >
-        <div className="flex flex-row gap-4 p-1">
+        <div className="flex flex-col lg:flex-row gap-4 p-1">
+          {/* Left Panel (Main Form) */}
           <div
-            className={`${
-              showAdvance ? "w-3/4" : "w-full"
-            } bg-white rounded shadow p-4 transition-all duration-500`}
+            className={`
+          bg-white rounded shadow p-4 transition-all duration-500
+          ${showAdvance ? "lg:w-3/4" : "lg:w-full"} w-full
+        `}
           >
-            <div className="flex items-center justify-between sticky top-0 z-10">
+            {/* Header */}
+            <div className="flex items-center justify-between sticky top-0 z-10 bg-white">
               <h1 className="text-xl font-bold">Create Item</h1>
               <Button type="button" variant="secondary" onClick={handleBack}>
                 &#8592; Back
               </Button>
             </div>
-            <div className="flex mb-2 pb-2  border-b justify-between align-center">
+
+            {/* Basic Info Header */}
+            <div className="flex mb-2 pb-2 border-b justify-between items-center">
               <div className="flex items-center gap-4">
                 <span className="font-semibold text-base border-b-2 border-black pb-1">
                   Basic Info
@@ -112,10 +117,10 @@ export default function CreateItemPage() {
               </div>
             </div>
 
-            {/* Main Grid: 4 columns, compact */}
+            {/* Main Grid */}
             <div className="space-y-4 text-xs">
-              {/* Top Row: Product and Goods */}
-              <div className="flex gap-4">
+              {/* Product and Goods */}
+              <div className="flex flex-col sm:flex-row gap-4">
                 <div className="flex-1">
                   <label className="block font-medium mb-1">Product *</label>
                   <Input
@@ -130,7 +135,7 @@ export default function CreateItemPage() {
                     </span>
                   )}
                 </div>
-                <div className="w-40">
+                <div className="sm:w-40 w-full">
                   <label className="block font-medium mb-1">Goods</label>
                   <Select
                     noPadding
@@ -143,17 +148,14 @@ export default function CreateItemPage() {
                 </div>
               </div>
 
-              {/* Two Column Layout Starts */}
-              <div className="grid grid-cols-2 gap-6">
-                {/* LEFT COLUMN */}
+              {/* Columns */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <LeftColumn register={register} errors={errors} />
-
-                {/* RIGHT COLUMN */}
                 <RightColumn register={register} errors={errors} />
               </div>
             </div>
 
-            {/* Advance Info Section */}
+            {/* Bottom Sticky Buttons */}
             <div className="bg-white h-10 py-2 flex items-center gap-2 justify-end z-10 sticky bottom-0 text-xs">
               <Button type="button" variant="secondary" onClick={handleBack}>
                 F4 Switch Tab
@@ -169,10 +171,14 @@ export default function CreateItemPage() {
               </Button>
             </div>
           </div>
+
+          {/* Right Panel (Advance Tabs) */}
           <div
-            className={`flex-1 transition-all duration-500 ${
-              showAdvance ? "w-1/4" : "w-0"
-            }`}
+            className={`
+          transition-all duration-500
+          ${showAdvance ? "lg:w-1/4 w-full" : "lg:w-0 w-0"}
+          overflow-hidden
+        `}
           >
             {showAdvance && (
               <div className="w-full bg-white rounded border border-gray-300 p-2">
@@ -192,19 +198,19 @@ export default function CreateItemPage() {
                     </button>
                   ))}
                 </div>
+
                 {/* Tab Content */}
                 {activeTab === "Discount" && (
-                  <div className="grid grid-cols-3 gap-2 text-xs">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
                     <div>
                       <label className="block font-medium mb-1">Discount</label>
                       <Select
-                        noPadding={true}
+                        noPadding
                         className="h-8 text-xs"
                         {...register("discountType")}
                       >
-                        {" "}
-                        <option value="Applicable">Applicable</option>{" "}
-                        <option value="Not Applicable">Not Applicable</option>{" "}
+                        <option value="Applicable">Applicable</option>
+                        <option value="Not Applicable">Not Applicable</option>
                       </Select>
                     </div>
                     <div>

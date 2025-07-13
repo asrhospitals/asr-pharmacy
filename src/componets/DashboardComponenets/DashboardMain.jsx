@@ -24,18 +24,20 @@ const DashboardMain = () => {
           </div>
         </div>
         <div className="flex flex-wrap gap-2 items-center">
-          <select className="border rounded px-2 py-1 text-sm">
+          <select className="border rounded px-2 py-1 text-sm w-full sm:w-auto max-w-full truncate">
             <option>Delivery : 1</option>
           </select>
-          <select className="border rounded px-2 py-1 text-sm">
+          <select className="border rounded px-2 py-1 text-sm w-full sm:w-auto max-w-full truncate">
             <option>Last 30 Days</option>
           </select>
-          <Button variant="outline"> 
+          <Button variant="outline" className="w-full sm:w-auto"> 
             Customize
           </Button>
-          <select className="border rounded px-2 py-1 text-sm">
-            <option>Financial Year: 01-04-2025 - 31-03-2026</option>
-          </select>
+          <div className="w-full sm:w-auto max-w-full overflow-x-auto">
+            <select className="border rounded px-2 py-1 text-sm w-full max-w-full truncate">
+              <option className="truncate">Financial Year: 01-04-2025 - 31-03-2026</option>
+            </select>
+          </div>
         </div>
       </div>
 

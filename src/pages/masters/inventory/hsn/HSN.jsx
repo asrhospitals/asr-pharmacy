@@ -27,12 +27,12 @@ const HSNPage = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6 px-2 sm:px-4 md:px-8 max-w-full">
       <PageHeader
         title="HSN Management"
         subtitle="Manage your HSN/SAC"
         actions={[
-          <Button key="add" onClick={handleAddItem}>
+          <Button key="add" onClick={handleAddItem} className="w-full sm:w-auto">
             <Plus className="w-4 h-4" />
             Create HSN/SAC
           </Button>,
@@ -40,21 +40,21 @@ const HSNPage = () => {
       />
       {/* Error Message */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 max-w-md mx-auto">
-          <div className="flex items-center justify-between">
-            <div className="text-red-600 text-sm">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-2 sm:p-4 max-w-full sm:max-w-md mx-auto text-xs sm:text-sm">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+            <div className="text-red-600">
               {error?.data?.message || "Failed to load hsn code"}
             </div>
             <Button
               onClick={() => {}}
-              className="text-red-400 hover:text-red-600 text-lg font-bold ml-4"
+              className="text-red-400 hover:text-red-600 text-lg font-bold ml-0 sm:ml-4"
             >
               ×
             </Button>
           </div>
         </div>
       )}
-      <div className="p-6">
+      <div className="p-2 sm:p-4 md:p-6">
         {isLoading ? (
           <Loader />
         ) : (

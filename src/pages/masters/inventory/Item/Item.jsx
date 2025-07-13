@@ -42,7 +42,7 @@ const ItemsPage = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6 px-2 sm:px-4 md:px-8 max-w-full">
       <PageHeader
         title="Items Management"
         subtitle="Manage your inventory items"
@@ -50,6 +50,7 @@ const ItemsPage = () => {
           <Button
             key="add"
             onClick={handleAddItem}
+            className="w-full sm:w-auto"
           >
             <Plus className="w-4 h-4" /> Add Item
           </Button>,
@@ -71,7 +72,7 @@ const ItemsPage = () => {
           </div>
         </div>
       )} */}
-      <div className="p-6">
+      <div className="p-2 sm:p-4 md:p-6">
         {isLoading ? (
           <Loader />
         ) : (
@@ -89,9 +90,9 @@ const ItemsPage = () => {
       </div>
       {/* Details Section */}
       {selectedRow && (
-        <div className="bg-white rounded-lg shadow-md p-4 mt-4">
-          <h2 className="text-lg font-bold mb-2">Selected Item Details</h2>
-          <div className="grid grid-cols-2 gap-4 text-sm">
+        <div className="bg-white rounded-lg shadow-md p-2 sm:p-4 mt-4">
+          <h2 className="text-base sm:text-lg font-bold mb-2">Selected Item Details</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4 text-xs sm:text-sm">
             <div><strong>Name:</strong> {selectedRow.productname}</div>
             <div><strong>Packing:</strong> {selectedRow.packing}</div>
             <div><strong>Company:</strong> {selectedRow.company}</div>

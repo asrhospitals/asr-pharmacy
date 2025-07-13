@@ -65,7 +65,7 @@ export default function CreateCompanyPage() {
         storeroom: 1,
       });
       setEmailWebsite({ main: "", cc: "", bcc: "", url: "" });
-      navigate('/master/inventory/companys')
+      navigate("/master/inventory/companys");
     } catch (err) {
       setError(err?.data?.message || "Failed to create company");
     }
@@ -111,12 +111,11 @@ export default function CreateCompanyPage() {
               name="companyname"
               value={formData.companyname}
               onChange={handleChange}
-              className="bg-yellow-100"
               placeholder="Enter company name"
               required
             />
           </div>
-          <div className="mb-2">
+          <div className="mb-2 w-fit">
             <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
               <Input
                 width="w-4"
@@ -126,11 +125,15 @@ export default function CreateCompanyPage() {
                 onChange={(e) => setShowMoreOptions(e.target.checked)}
                 className="h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
               />
-              More Option
+              <span className="font-semibold text-sm min-w-fit">More Option</span>
             </label>
           </div>
           <div
-            className={`transition-all duration-500 overflow-hidden ${showMoreOptions ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}
+            className={`transition-all duration-500 overflow-hidden ${
+              showMoreOptions
+                ? "max-h-[1000px] opacity-100"
+                : "max-h-0 opacity-0"
+            }`}
           >
             {showMoreOptions && (
               <>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ChevronDown,
   ChevronRight,
@@ -8,6 +8,7 @@ import {
   HelpCircle,
   LogOut,
   Bell,
+  ChevronLeft,
 } from "lucide-react";
 // import { useAuth } from "../../hooks/useAuth";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -100,8 +101,27 @@ function filterMenuByPermission(items, role) {
     .filter(Boolean);
 }
 
-const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
+const useIsLargeScreen = () => {
+  const [isLarge, setIsLarge] = useState(() => window.innerWidth >= 1024);
+  useEffect(() => {
+    const handler = () => setIsLarge(window.innerWidth >= 1024);
+    window.addEventListener("resize", handler);
+    return () => window.removeEventListener("resize", handler);
+  }, []);
+  return isLarge;
+};
+
+const Sidebar = ({
+  isCollapsed,
+  setIsCollapsed,
+  mobileOpen,
+  setMobileOpen,
+}) => {
   const [expandedItems, setExpandedItems] = useState(["Dashboard"]);
+  const [isHovered, setIsHovered] = useState(false);
+  const isLargeScreen = useIsLargeScreen();
+  // Sidebar is expanded if: (mobile and drawer open) OR (large screen and expanded or hovered)
+  const isSidebarExpanded = (!isLargeScreen && mobileOpen) || (isLargeScreen && (!isCollapsed || isHovered));
   const user = useSelector((state) => state.user.user);
   console.log(user);
 
@@ -194,14 +214,14 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
               />
             )}
 
-            {!isCollapsed && (
+            {isSidebarExpanded && (
               <span className={`font-medium transition-colors text-sm`}>
                 {item.title}
               </span>
             )}
           </div>
 
-          {!isCollapsed && hasChildren && (
+          {isSidebarExpanded && hasChildren && (
             <div className="flex items-center">
               {isExpanded ? (
                 <ChevronDown className="w-4 h-4 text-gray-400" />
@@ -212,7 +232,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
           )}
         </div>
 
-        {!isCollapsed && hasChildren && isExpanded && (
+        {isSidebarExpanded && hasChildren && isExpanded && (
           <div className="mt-1 space-y-1">
             {item.children.map((child) => renderMenuItem(child, level + 1))}
           </div>
@@ -221,68 +241,80 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
     );
   };
 
+  // Overlay and drawer logic for mobile
   return (
-    <div
-      className={`bg-white shadow-lg transition-all duration-300 border-r border-gray-200 ${
-        isCollapsed ? "w-16" : "w-64"
-      }`}
-    >
-      <div className="flex flex-col h-full">
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200">
-          {!isCollapsed ? (
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">ASR</span>
-              </div>
-              <span className="font-bold text-gray-800 text-lg">
-                ASR Pharmacy
-              </span>
-            </div>
-          ) : (
+    <>
+      {/* Overlay for mobile */}
+      <div
+        className={`fixed inset-0 bg-black/30 z-50 transition-opacity duration-300 lg:hidden ${
+          mobileOpen
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none"
+        }`}
+        onClick={() => setMobileOpen(false)}
+        aria-hidden="true"
+      />
+      {/* Sidebar Drawer / Static Sidebar */}
+      <div
+        className={`fixed top-0 left-0 h-full z-60 bg-white shadow-lg border-r border-gray-200 transition-all duration-300 lg:static lg:z-0 lg:translate-x-0 ${
+          mobileOpen ? "translate-x-0" : "-translate-x-full"
+        } ${isLargeScreen ? (isCollapsed ? "w-16 hover:w-64" : "w-64") : "w-64"} overflow-x-hidden`}
+        style={{ maxWidth: "100vw" }}
+        onMouseEnter={() => isLargeScreen && isCollapsed && setIsHovered(true)}
+        onMouseLeave={() => isLargeScreen && isCollapsed && setIsHovered(false)}
+      >
+        <div className="flex flex-col h-full">
+          {/* Header */}
+          <div className="flex items-center gap-2 p-4 border-b border-gray-200">
             <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">ASR</span>
             </div>
-          )}
-        </div>
-
-        {/* User Role Badge */}
-        {!isCollapsed && (
-          <div className="px-4 py-2">
-            <div className="bg-gradient-to-r from-blue-50 to-purple-50 px-3 py-2 rounded-lg">
-              <span className="text-xs font-medium text-blue-700 uppercase tracking-wide">
-                {user?.role?.replace("_", " ")}
+            {isSidebarExpanded && (
+              <span className="font-bold text-gray-800 text-lg">
+                ASR Pharmacy
               </span>
+            )}
+            {/* Mobile close button */}
+            <button
+              className="lg:hidden ml-auto p-2 rounded hover:bg-gray-100 focus:outline-none"
+              onClick={() => setMobileOpen(false)}
+              aria-label="Close sidebar"
+            >
+              <X className="w-6 h-6 text-gray-700" />
+            </button>
+          </div>
+          {/* User Role Badge */}
+          {isSidebarExpanded && (
+            <div className="px-4 py-2">
+              <div className="bg-gradient-to-r from-blue-50 to-purple-50 px-3 py-2 rounded-lg">
+                <span className="text-xs font-medium text-blue-700 uppercase tracking-wide">
+                  {user?.role?.replace("_", " ")}
+                </span>
+              </div>
             </div>
-          </div>
-        )}
-
-        {/* Search */}
-        {!isCollapsed && (
-          <div className="p-4">
-            <div className="relative">
-              <Input
-                label="Search"
-                type="text"
-                startIcon={
-                  <Search className="w-4 h-4 text-gray-400" />
-                }
-                className="w-full"
-                // className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-              />
+          )}
+          {/* Search */}
+          {isSidebarExpanded && (
+            <div className="p-4">
+              <div className="relative">
+                <Input
+                  label="Search"
+                  type="text"
+                  startIcon={<Search className="w-4 h-4 text-gray-400" />}
+                  className="w-full"
+                />
+              </div>
             </div>
-          </div>
-        )}
-
-        {/* Navigation Menu */}
-        <nav className="flex-1 px-2 pt-2 pb-10 overflow-y-auto">
-          <div className="space-y-1">
-            {menuItems.map((item) => renderMenuItem(item))}
-          </div>
-        </nav>
-        {/* Remove User Profile and Actions section here */}
+          )}
+          {/* Navigation Menu */}
+          <nav className="flex-1 px-2 pt-2 pb-10 overflow-y-auto">
+            <div className="space-y-1">
+              {menuItems.map((item) => renderMenuItem(item))}
+            </div>
+          </nav>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 export default Sidebar;

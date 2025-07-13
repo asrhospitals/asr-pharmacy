@@ -62,7 +62,7 @@ export default function CreateHsnSacForm({
 
   return (
     <Modal open={isOpen} onClose={onClose} title="Create HSN/SAC">
-      <form onSubmit={handleSubmit(handleSave)} className="space-y-4">
+      <form onSubmit={handleSubmit(handleSave)} className="space-y-3 sm:space-y-4 px-1 sm:px-2">
         <TextField
           label="HSN/SAC Code"
           name="hsnSacCode"
@@ -77,20 +77,14 @@ export default function CreateHsnSacForm({
           <label className="block text-sm font-medium text-gray-700 mb-1">
             HSN/SAC name
           </label>
-          <Input type="text" {...register("hsnsacname")} />
+          <Input type="text" {...register("hsnsacname")} className="w-full" />
         </div>
-        {error && <div className="text-red-500 mb-4">{error}</div>}
-        {success && <div className="text-green-500 mb-4">{success}</div>}
-        <div className="flex gap-2 mt-6">
-          <Button type="submit" variant="primary" disabled={isLoading}>
-            Save
-          </Button>
-          <Button type="button" variant="secondary" onClick={handleClear}>
-            Clear
-          </Button>
-          <Button type="button" variant="danger" onClick={onClose}>
-            Close
-          </Button>
+        {error && <div className="text-red-500 mb-4 text-xs sm:text-sm">{error}</div>}
+        {success && <div className="text-green-500 mb-4 text-xs sm:text-sm">{success}</div>}
+        <div className="flex flex-col sm:flex-row gap-2 mt-4 sm:mt-6">
+          <Button type="submit" variant="primary" disabled={isLoading} className="w-full sm:w-auto">Save</Button>
+          <Button type="button" variant="secondary" onClick={handleClear} className="w-full sm:w-auto">Clear</Button>
+          <Button type="button" variant="danger" onClick={onClose} className="w-full sm:w-auto">Close</Button>
         </div>
       </form>
     </Modal>
