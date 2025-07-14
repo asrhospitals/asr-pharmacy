@@ -24,7 +24,6 @@ import {
   Clipboard as ClipboardIcon,
 } from "lucide-react";
 
-// Menu Configuration
 const adminMenu = [
   { title: "Dashboard", icon: Home, path: "/dashboard" },
   {

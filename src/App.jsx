@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux';
 
 function App() {
   const isAuthenticated = useSelector((state) => state.user.isAuthenticated);
-  // const role = useSelector((state) => state.user.user?.role); // For RBAC
 
   return (
     <div className="h-screen">
@@ -13,7 +12,6 @@ function App() {
   );
 }
 
-// Root App with Providers
 const AppWithProviders = () => {
   return (
     <App />

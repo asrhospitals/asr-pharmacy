@@ -3,7 +3,7 @@ import DataTable from "../../../../componets/common/DataTable";
 import PageHeader from "../../../../componets/common/PageHeader";
 import { Plus, RefreshCw } from "lucide-react";
 import AddHSN from "./AddHSN";
-import { useGetHSNsQuery } from "../../../../services/hsnApi";
+import { useEditHSNMutation, useGetHSNsQuery } from "../../../../services/hsnApi";
 import Button from "../../../../componets/common/Button";
 import Modal from "../../../../componets/common/Modal";
 import Loader from "../../../../componets/common/Loader";
@@ -13,7 +13,7 @@ const HSNPage = () => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editHSNData, setEditHSNData] = useState(null);
   const { data: hsn, error, isLoading, refetch } = useGetHSNsQuery();
-  const [editHSN, { isLoading: isEditing }] = require('../../../../services/hsnApi').useEditHSNMutation();
+  const [editHSN, { isLoading: isEditing }] = useEditHSNMutation();
 
   const columns = [
     { key: "hsnsacname", title: "Name" },
@@ -26,7 +26,7 @@ const HSNPage = () => {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    refetch(); // Refetch HSNs after closing modal (in case a new HSN was added)
+    refetch();
   };
 
   const handleEdit = (row) => {
@@ -53,7 +53,6 @@ const HSNPage = () => {
           </Button>,
         ]}
       />
-      {/* Error Message */}
       {error && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-2 sm:p-4 max-w-full sm:max-w-md mx-auto text-xs sm:text-sm">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
@@ -83,9 +82,7 @@ const HSNPage = () => {
           />
         )}
       </div>
-      {/* Modal */}
       <AddHSN isOpen={isModalOpen} onClose={handleCloseModal} />
-      {/* Edit Modal */}
       <AddHSN
         initialData={editHSNData}
         onSave={handleEditSave}

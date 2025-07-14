@@ -22,7 +22,6 @@ const LoginPage = () => {
     e.preventDefault();
     setError("");
     try {
-      // Demo: use role as username, password as 'password'
       const credentials = {
         uname: username || `${selectedRole}`,
         pwd: password || "password",

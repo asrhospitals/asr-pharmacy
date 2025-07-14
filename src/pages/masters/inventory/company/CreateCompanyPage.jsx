@@ -40,7 +40,6 @@ export default function CompanyForm({
 
   console.log("companies", companies);
 
-  // Email & Website modal state
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   const [emailWebsite, setEmailWebsite] = useState({
     main: "",

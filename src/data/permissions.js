@@ -1,7 +1,3 @@
-// Pharmacy Software Role-Permission Matrix
-// V = View, C = Create, E = Edit, D = Delete
-// VCED = Full Access
-
 export const permissions = {
   admin: {
     user_management: "VCED",

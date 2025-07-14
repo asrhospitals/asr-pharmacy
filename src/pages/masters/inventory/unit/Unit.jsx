@@ -3,7 +3,7 @@ import DataTable from "../../../../componets/common/DataTable";
 import PageHeader from "../../../../componets/common/PageHeader";
 import { Plus, RefreshCw } from "lucide-react";
 import AddUnit from "../unit/AddUnit";
-import { useGetUnitsQuery } from "../../../../services/unitApi";
+import { useEditUnitMutation, useGetUnitsQuery } from "../../../../services/unitApi";
 import Button from "../../../../componets/common/Button";
 import Modal from "../../../../componets/common/Modal";
 import Loader from "../../../../componets/common/Loader";
@@ -13,7 +13,7 @@ const UnitPage = () => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editUnitData, setEditUnitData] = useState(null);
   const { data: unit, error, isLoading, refetch } = useGetUnitsQuery();
-  const [editUnit, { isLoading: isEditing }] = require('../../../../services/unitApi').useEditUnitMutation();
+  const [editUnit, { isLoading: isEditing }] = useEditUnitMutation();
 
   const columns = [
     { key: "unitName", title: "Unit Name" },
@@ -26,7 +26,7 @@ const UnitPage = () => {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    refetch(); // Refetch units after closing modal (in case a new unit was added)
+    refetch();
   };
 
   const handleEdit = (row) => {
@@ -53,7 +53,6 @@ const UnitPage = () => {
           </Button>,
         ]}
       />
-      {/* Error Message */}
       {error && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-4 max-w-md mx-auto">
           <div className="flex items-center justify-between">
@@ -83,9 +82,7 @@ const UnitPage = () => {
           />
         )}
       </div>
-      {/* Modal */}
       <AddUnit isOpen={isModalOpen} onClose={handleCloseModal} />
-      {/* Edit Modal */}
       <AddUnit
         initialData={editUnitData}
         onSave={handleEditSave}

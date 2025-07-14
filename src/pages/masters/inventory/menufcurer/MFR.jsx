@@ -3,7 +3,7 @@ import DataTable from "../../../../componets/common/DataTable";
 import PageHeader from "../../../../componets/common/PageHeader";
 import { Plus, RefreshCw } from "lucide-react";
 import AddMFR from "./AddMFR";
-import { useGetManufacturersQuery } from "../../../../services/mfrApi";
+import { useEditManufacturerMutation, useGetManufacturersQuery } from "../../../../services/mfrApi";
 import Button from "../../../../componets/common/Button";
 import Modal from "../../../../componets/common/Modal";
 import Loader from "../../../../componets/common/Loader";
@@ -13,7 +13,7 @@ const MFRPage = () => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editMFRData, setEditMFRData] = useState(null);
   const { data: mfr, error, isLoading, refetch } = useGetManufacturersQuery();
-  const [editManufacturer, { isLoading: isEditing }] = require('../../../../services/mfrApi').useEditManufacturerMutation();
+  const [editManufacturer, { isLoading: isEditing }] = useEditManufacturerMutation();
 
   const columns = [{ key: "mfrname", title: "Company Name" }];
 
@@ -23,7 +23,7 @@ const MFRPage = () => {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    refetch(); // Refetch manufacturers after closing modal (in case a new manufacturer was added)
+    refetch();
   };
 
   const handleEdit = (row) => {

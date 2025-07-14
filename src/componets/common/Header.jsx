@@ -1,4 +1,3 @@
-// import { Menu, Bell, HelpCircle, Settings, User } from "lucide-react";
 import { useSelector, useDispatch } from "react-redux";
 import { logout as logoutAction } from "../../services/userSlice";
 import { useNavigate } from "react-router-dom";

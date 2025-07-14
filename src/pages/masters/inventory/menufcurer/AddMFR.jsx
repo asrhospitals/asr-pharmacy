@@ -106,48 +106,36 @@ export default function CreateMFRModal({
         <TextField
           label="Country"
           name={"country"}
-          // required
-          // message="Country is required"
           register={register}
           errors={errors}
         />
         <TextField
           label="State"
           name={"state"}
-          // required
-          // message="State is required"
           register={register}
           errors={errors}
         />
         <TextField
           label="Address"
           name={"address"}
-          // required
-          // message="Address is required"
           register={register}
           errors={errors}
         />
         <TextField
           label="Contact Person"
           name={"contactperson"}
-          // required
-          // message="Contact Person is required"
           register={register}
           errors={errors}
         />
         <TextField
           label="Phone"
           name={"phone"}
-          // required
-          // message="Phone is required"
           register={register}
           errors={errors}
         />
         <TextField
           label="Email"
           name={"email"}
-          // required
-          // message="Email is required"
           register={register}
           errors={errors}
         />

@@ -10,7 +10,6 @@ import {
   Bell,
   ChevronLeft,
 } from "lucide-react";
-// import { useAuth } from "../../hooks/useAuth";
 import { useLocation, useNavigate } from "react-router-dom";
 import { menuConfig } from "../../data/menuData";
 import { useSelector, useDispatch } from "react-redux";
@@ -18,7 +17,6 @@ import { logout as logoutAction } from "../../services/userSlice";
 import Input from "./Input";
 import { hasPermission } from "../../data/permissions";
 
-// Map menu item paths to permission keys (should match routePermissions in Routes.jsx)
 const pathToPermission = {
   "/dashboard": "dashboard",
   "/master/accounts/ledger": "reports",
@@ -54,28 +52,6 @@ const pathToPermission = {
   "/tds": "financial_reports",
   "/currency/multicurrency": "inventory",
   "/currency/exchangerate": "inventory",
-  "/accounting/receipt": "financial_reports",
-  "/accounting/payment": "financial_reports",
-  "/accounting/debitnote": "financial_reports",
-  "/accounting/creditnote": "financial_reports",
-  "/accounting/contra": "financial_reports",
-  "/accounting/journal": "financial_reports",
-  "/accounting/bankreconciliation": "financial_reports",
-  "/stock/transfer": "inventory",
-  "/stock/physical": "inventory",
-  "/cashbook/openclose": "financial_reports",
-  "/cashbook/deposits": "financial_reports",
-  "/cashbook/approvals": "financial_reports",
-  "/cashbook/transfer": "financial_reports",
-  "/banking/onlinepayment": "financial_reports",
-  "/banking/onlinestatement": "financial_reports",
-  "/banking/chequemanagement": "financial_reports",
-  "/report": "reports",
-  "/otherproducts": "inventory",
-  "/utilities": "settings",
-  "/onlinestore": "inventory",
-  "/crm/homedelivery": "inventory",
-  "/crm/prescriptionreminder": "inventory",
 };
 
 function filterMenuByPermission(items, role) {
@@ -119,13 +95,10 @@ const Sidebar = ({
   const [expandedItems, setExpandedItems] = useState(["Dashboard"]);
   const [isHovered, setIsHovered] = useState(false);
   const isLargeScreen = useIsLargeScreen();
-  // Sidebar is expanded if: (mobile and drawer open) OR (large screen and expanded or hovered)
   const isSidebarExpanded =
     (!isLargeScreen && mobileOpen) ||
     (isLargeScreen && (!isCollapsed || isHovered));
   const user = useSelector((state) => state.user.user);
-  console.log(user);
-
   const dispatch = useDispatch();
   const logout = () => dispatch(logoutAction());
   const location = useLocation();
@@ -250,7 +223,6 @@ const Sidebar = ({
     );
   };
 
-  // Overlay and drawer logic for mobile
   return (
     <>
       {/* Overlay for mobile */}

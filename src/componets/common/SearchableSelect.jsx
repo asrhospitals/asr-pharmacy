@@ -25,7 +25,6 @@ export default function SearchableSelect({
         }
   );
 
-  // Filter options by inputValue
   const filteredOptions = normalizedOptions.filter((opt) =>
     opt.label.toLowerCase().includes(inputValue.toLowerCase())
   );

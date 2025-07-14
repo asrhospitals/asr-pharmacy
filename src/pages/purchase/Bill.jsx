@@ -23,7 +23,7 @@ const BillPage = () => {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    refetch(); // Refetch bills after closing modal (in case a new bill was added)
+    refetch();
   };
 
   return (

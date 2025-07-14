@@ -10,7 +10,6 @@ import Modal from '../../../../componets/common/Modal';
 import Loader from '../../../../componets/common/Loader';
 
 const Viewledger = () => {
-  // const [isModalOpen, setIsModalOpen] = useState(false);
   const [ledger, setLedger] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -20,14 +19,6 @@ const Viewledger = () => {
     { key: "companyname", title: "Station" },
     { key: "companyname", title: "Balance" },
   ];
-
-  // const handleAddItem = () => {
-  //   setIsModalOpen(true);
-  // };
-
-  // const handleCloseModal = () => {
-  //   setIsModalOpen(false);
-  // };
 
   const handleLoadLedger = async () => {
     setIsLoading(true);
@@ -63,7 +54,6 @@ const Viewledger = () => {
           <Button
             key="add"
             className="bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700"
-            // onClick={handleAddItem}
           >
             <Plus className="w-4 h-4" />
             Add Ledger
@@ -71,8 +61,6 @@ const Viewledger = () => {
         ]}
       />
 
-      {/* Error Message */}
-      {/* Error Message */}
       {error && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-4 max-w-md mx-auto">
           <div className="flex items-center justify-between">
@@ -94,7 +82,6 @@ const Viewledger = () => {
           <div className="text-center py-12 bg-white rounded-lg shadow-sm border border-gray-200">
             <div className="text-gray-400 mb-4">No Party available.</div>
             <button
-              // onClick={handleAddItem}
               className="text-blue-600 hover:text-blue-700 font-medium"
             >
               Add your first party
@@ -109,12 +96,6 @@ const Viewledger = () => {
           />
         )}
       </div>
-
-      {/* Modal */}
-      {/* <AddLedger
-            isOpen={isModalOpen} 
-            onClose={handleCloseModal} 
-          /> */}
     </div>
   );
 };

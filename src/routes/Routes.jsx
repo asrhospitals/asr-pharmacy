@@ -184,7 +184,6 @@ const AppRoutes = () => (
         </ProtectedRoute>
       }
     />
-    {/* fallback for other inventory types */}
     <Route
       path="/master/inventory/:type"
       element={
@@ -193,7 +192,6 @@ const AppRoutes = () => (
         </ProtectedRoute>
       }
     />
-    {/* ...add other routes as needed, using :param for dynamic segments */}
     <Route
       path="/sales/:type"
       element={

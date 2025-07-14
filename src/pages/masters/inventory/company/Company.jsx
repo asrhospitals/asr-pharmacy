@@ -45,22 +45,6 @@ const CompanyPage = () => {
           </Button>,
         ]}
       />
-      {/* Error Message */}
-      {/* {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 max-w-md mx-auto">
-          <div className="flex items-center justify-between">
-            <div className="text-red-600 text-sm">
-              {error?.data?.message || "Failed to load company"}
-            </div>
-            <Button
-              onClick={() => {}}
-              className="text-red-400 hover:text-red-600 text-lg font-bold ml-4"
-            >
-              ×
-            </Button>
-          </div>
-        </div>
-      )} */}
       <div className="p-2 sm:p-4 md:p-6">
         {isLoading ? (
           <Loader />

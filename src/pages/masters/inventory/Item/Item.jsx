@@ -21,8 +21,6 @@ const ItemsPage = () => {
   const [selectedStore, setSelectedStore] = useState("");
   const { data: stores = [] } = useGetStoresQuery();
 
-  console.log(error);
-  
   const navigate = useNavigate();
 
   const columns = [
@@ -49,11 +47,6 @@ const ItemsPage = () => {
     }
   };
 
-  const handleEdit = (row) => {
-    navigate(`/master/inventory/items/edit/${row.id}`);
-  };
-
-  // Filter items by search and store
   const filteredItems = (items || []).filter((item) => {
     const matchesSearch =
       !search ||
@@ -80,7 +73,6 @@ const ItemsPage = () => {
           </Button>,
         ]}
       />
-      {/* Top Bar (below header) */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-2 justify-between px-6">
         <div className="flex flex-col sm:flex-row gap-2 flex-1">
           <Input
@@ -96,7 +88,6 @@ const ItemsPage = () => {
             onChange={e => setSearchField(e.target.value)}
           >
             <option value="Description">Description</option>
-            {/* Add more fields if needed */}
           </Select>
           <Select
             className="w-full sm:w-40"
@@ -122,17 +113,15 @@ const ItemsPage = () => {
             data={filteredItems}
             title={"Item"}
             handleAddItem={handleAddItem}
-            onEdit={handleEdit}
+            onEdit={(row) => console.log("Edit:", row)}
             onDelete={(row) => console.log("Delete:", row)}
             selectedRow={selectedRow}
             onRowSelect={setSelectedRow}
           />
         )}
       </div>
-      {/* Bottom Info Section */}
       {selectedRow && (
         <div className="w-full grid grid-cols-1 md:grid-cols-4 gap-2 mt-2 text-xs sm:text-sm">
-          {/* Purchase Info */}
           <div className="border rounded bg-white p-2 flex flex-col min-h-[90px]">
             <div className="font-semibold border-b mb-1">Purchase Info</div>
             <div>M.R.P : <b>₹ {selectedRow.price}</b></div>
@@ -141,7 +130,6 @@ const ItemsPage = () => {
             <div>Cost+Tax : <b>₹ {selectedRow.costWithTax || "-"}</b></div>
             <div>Pur. Disc : <b>{selectedRow.purchaseDiscount || "-"}</b></div>
           </div>
-          {/* Sale Info */}
           <div className="border rounded bg-white p-2 flex flex-col min-h-[90px]">
             <div className="font-semibold border-b mb-1">Sale Info</div>
             <div>Rate : <b>₹ {selectedRow.salerate || selectedRow.price || "-"}</b></div>
@@ -149,7 +137,6 @@ const ItemsPage = () => {
             <div>Deal Free : <b>{selectedRow.dealFree || "-"}</b></div>
             <div>W/o Deal : <b>{selectedRow.withoutDeal || "-"}</b></div>
           </div>
-          {/* Tax Info */}
           <div className="border rounded bg-white p-2 flex flex-col min-h-[90px]">
             <div className="font-semibold border-b mb-1">Tax Info</div>
             <div>HSN/SAC : <b>{selectedRow.hsnsac || "-"}</b></div>
@@ -157,7 +144,6 @@ const ItemsPage = () => {
             <div>CGST % : <b>{selectedRow.cgst || "-"}</b></div>
             <div>SGST % : <b>{selectedRow.sgst || "-"}</b></div>
           </div>
-          {/* Other Info */}
           <div className="border rounded bg-white p-2 flex flex-col min-h-[90px]">
             <div className="font-semibold border-b mb-1">Other Info</div>
             <div>Company : <b>{selectedRow.company || "-"}</b></div>

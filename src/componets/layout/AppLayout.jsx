@@ -7,7 +7,6 @@ const AppLayout = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
-  // Handler for hamburger menu in header
   const handleMenuClick = () => {
     if (window.matchMedia('(max-width: 1023px)').matches) {
       setMobileSidebarOpen(true);

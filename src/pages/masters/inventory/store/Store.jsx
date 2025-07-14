@@ -28,7 +28,7 @@ const StorePage = () => {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    refetch(); // Refetch stores after closing modal (in case a new store was added)
+    refetch();
   };
 
   const handleEdit = (row) => {

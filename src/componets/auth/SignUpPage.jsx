@@ -32,8 +32,6 @@ const SignUpPage = () => {
     }
     try {
       const response = await signUp(form).unwrap();
-      // Optionally auto-login after signup:
-      // dispatch(setUser({ user: response.user, token: response.token }));
       setSuccess('Account created! You can now log in.');
       setForm({ name: '', email: '', password: '', role: 'user' });
     } catch (err) {
