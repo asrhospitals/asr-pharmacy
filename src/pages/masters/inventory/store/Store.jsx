@@ -1,24 +1,34 @@
-import React, { useState } from "react";
-import DataTable from "../../../../componets/common/DataTable";
-import PageHeader from "../../../../componets/common/PageHeader";
+import React, { useState, useEffect, useRef } from "react";
 import AddStore from "./AddStore";
 import Button from "../../../../componets/common/Button";
-import Modal from "../../../../componets/common/Modal";
-import { Plus, RefreshCw } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useGetStoresQuery } from "../../../../services/storeApi";
 import Loader from "../../../../componets/common/Loader";
 import {
   useEditStoreMutation,
   useDeleteStoreMutation,
 } from "../../../../services/storeApi";
+import InventoryPageLayout from "../../../../componets/layout/InventoryPageLayout";
 
 const StorePage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editStoreData, setEditStoreData] = useState(null);
   const { data: stores, error, isLoading, refetch } = useGetStoresQuery();
-  const [editStore, { isLoading: isEditing }] = useEditStoreMutation();
+  const [editStore] = useEditStoreMutation();
   const [deleteStore] = useDeleteStoreMutation();
+  const [selectedStore, setSelectedStore] = useState(null);
+
+  useEffect(() => {
+    if (stores && stores.length > 0) {
+      setSelectedStore((prev) => {
+        if (!prev || !stores.find((s) => s.id === prev.id)) {
+          return stores[0];
+        }
+        return prev;
+      });
+    }
+  }, [stores]);
 
   const columns = [{ key: "storename", title: "Store Name" }];
 
@@ -50,50 +60,56 @@ const StorePage = () => {
     }
   };
 
+  const handleRowSelect = (row) => {
+    setSelectedStore(row);
+  };
+
+  const handleKeyDown = (e) => {
+    if (!stores || stores.length === 0) return;
+    if (!selectedStore) return;
+    const idx = stores.findIndex((s) => s.id === selectedStore.id);
+    if (e.key === "ArrowDown") {
+      const nextIdx = idx < stores.length - 1 ? idx + 1 : 0;
+      setSelectedStore(stores[nextIdx]);
+      e.preventDefault();
+    } else if (e.key === "ArrowUp") {
+      const prevIdx = idx > 0 ? idx - 1 : stores.length - 1;
+      setSelectedStore(stores[prevIdx]);
+      e.preventDefault();
+    }
+  };
+
   return (
-    <div className="space-y-6">
-      <PageHeader
+    <>
+      <InventoryPageLayout
         title="Store Management"
         subtitle="Manage your Store"
         actions={[
           <Button key="add" onClick={handleAddItem}>
-            <Plus className="w-4 h-4" />
-            Add Store
+            <Plus className="w-4 h-4" /> Add Store
           </Button>,
         ]}
+        tableData={stores || []}
+        columns={columns}
+        isLoading={isLoading}
+        selectedRow={selectedStore}
+        onRowSelect={handleRowSelect}
+        onAdd={handleAddItem}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        onArrowNavigation={handleKeyDown}
+        rowInfoPanel={
+          <>
+            <b>Address</b>
+            <div className="mt-1 text-gray-700 text-sm">
+              {selectedStore?.address1 || (
+                <span className="text-gray-400">No address available</span>
+              )}
+            </div>
+          </>
+        }
       />
-      {/* Error Message */}
-      {/* {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <div className="flex items-center justify-between">
-            <div className="text-red-600 text-sm">{error?.data?.message || 'Failed to load Stores'}</div>
-            <Button
-              onClick={() => {}}
-              className="text-red-400 hover:text-red-600 text-lg font-bold"
-            >
-              ×
-            </Button>
-          </div>
-        </div>
-      )} */}
-      <div className="p-6">
-        {isLoading ? (
-          <Loader />
-        ) : (
-          <DataTable
-            title={"Store"}
-            columns={columns}
-            data={stores}
-            handleAddItem={handleAddItem}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
-        )}
-      </div>
-      {/* Modal */}
       <AddStore isOpen={isModalOpen} onClose={handleCloseModal} />
-      
-      {/* Edit Modal */}
       <AddStore
         initialData={editStoreData}
         onSave={handleEditSave}
@@ -103,7 +119,7 @@ const StorePage = () => {
           setEditStoreData(null);
         }}
       />
-    </div>
+    </>
   );
 };
 

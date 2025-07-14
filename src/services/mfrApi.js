@@ -1,47 +1,59 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 const baseQueryWithAuth = fetchBaseQuery({
   baseUrl: import.meta.env.VITE_BACKEND_BASE_URL
     ? `${import.meta.env.VITE_BACKEND_BASE_URL}/admin/master/inventory`
-    : '/api/inventory',
+    : "/api/inventory",
   prepareHeaders: (headers, { getState }) => {
-    const token = getState()?.user?.token || localStorage.getItem('token');
+    const token = getState()?.user?.token || localStorage.getItem("token");
     if (token) {
-      headers.set('Authorization', `Bearer ${token}`);
+      headers.set("Authorization", `Bearer ${token}`);
     }
     return headers;
   },
 });
 
 export const mfrApi = createApi({
-  reducerPath: 'mfrApi',
+  reducerPath: "mfrApi",
   baseQuery: baseQueryWithAuth,
   endpoints: (builder) => ({
     getManufacturers: builder.query({
       query: () => ({
-        url: '/manu/v1/get-manufacturer',
-        method: 'GET',
+        url: "/manu/v1/get-manufacturer",
+        method: "GET",
       }),
-      providesTags: ['Manufacturer'],
+      providesTags: ["Manufacturer"],
     }),
     addManufacturer: builder.mutation({
       query: (mfrData) => ({
-        url: '/manu/v1/add-manufacturer',
-        method: 'POST',
+        url: "/manu/v1/add-manufacturer",
+        method: "POST",
         body: mfrData,
       }),
-      invalidatesTags: ['Manufacturer'],
+      invalidatesTags: ["Manufacturer"],
     }),
     editManufacturer: builder.mutation({
       query: ({ id, ...mfrData }) => ({
         url: `/manu/v1/update-manufacturer/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: mfrData,
       }),
-      invalidatesTags: ['Manufacturer'],
+      invalidatesTags: ["Manufacturer"],
+    }),
+    deleteManufacturer: builder.mutation({
+      query: (id) => ({
+        url: `/manu/v1/delete-manufacturer/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Manufacturer"],
     }),
   }),
   overrideExisting: false,
 });
 
-export const { useGetManufacturersQuery, useAddManufacturerMutation, useEditManufacturerMutation } = mfrApi; 
+export const {
+  useGetManufacturersQuery,
+  useAddManufacturerMutation,
+  useEditManufacturerMutation,
+  useDeleteManufacturerMutation,
+} = mfrApi;

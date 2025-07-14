@@ -21,6 +21,7 @@ import CreateSaltPage from "../pages/masters/inventory/salt/AddSalt";
 import CompanyForm from "../pages/masters/inventory/company/CreateCompanyPage";
 import ItemForm from "../pages/masters/inventory/Item/CreateItemPage";
 import SaltForm from "../pages/masters/inventory/salt/AddSalt";
+import CreateManufacturerPage from '../pages/masters/inventory/menufcurer/AddMFR';
 
 const AppRoutes = () => (
   <Routes>
@@ -183,6 +184,10 @@ const AppRoutes = () => (
           <MFRPage />
         </ProtectedRoute>
       }
+    />
+    <Route
+      path="/master/inventory/manufacturers/create"
+      element={<ProtectedRoute module="inventory" action="C"><CreateManufacturerPage /></ProtectedRoute>}
     />
     <Route
       path="/master/inventory/:type"

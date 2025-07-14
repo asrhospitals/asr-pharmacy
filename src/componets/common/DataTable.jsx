@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { Edit, Trash2, Eye, Plus } from "lucide-react";
 import Button from "./Button";
 import Loader from "./Loader";
@@ -13,6 +14,18 @@ const DataTable = ({
   selectedRow,
   onRowSelect,
 }) => {
+  const rowRefs = useRef([]);
+  const tableContainerRef = useRef(null);
+
+  useEffect(() => {
+    if (selectedRow && rowRefs.current) {
+      const idx = data.findIndex((row) => row.id === selectedRow.id);
+      if (idx !== -1 && rowRefs.current[idx]) {
+        rowRefs.current[idx].scrollIntoView({ block: "nearest", behavior: "smooth" });
+      }
+    }
+  }, [selectedRow, data]);
+
   if (!Array.isArray(data) || data.length === 0) {
     return (
       <div className="text-center py-12 bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col items-center">
@@ -28,21 +41,24 @@ const DataTable = ({
     );
   }
   return (
-    <div className="bg-white shadow-sm rounded-lg overflow-hidden">
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200 text-xs sm:text-sm">
-          <thead className="bg-gray-50">
+    <div className="bg-white border border-gray-200 shadow-sm rounded-lg overflow-hidden">
+      <div
+        ref={tableContainerRef}
+        style={{ maxHeight: 400, overflowY: 'auto' }}
+      >
+        <table className="min-w-full divide-y divide-gray-200 text-xs sm:text-sm" style={{ tableLayout: 'fixed', width: '100%' }}>
+          <thead className="bg-gray-50 sticky top-0 z-10">
             <tr>
               {columns.map((column, idx) => (
                 <th
                   key={idx}
-                  className="px-2 sm:px-4 md:px-6 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  className="px-2 sm:px-4 md:px-6 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50 sticky top-0 z-10"
                 >
                   {column.title}
                 </th>
               ))}
               {(onView || onEdit || onDelete) && (
-                <th className="px-2 sm:px-4 md:px-6 py-2 sm:py-3 text-right text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-2 sm:px-4 md:px-6 py-2 sm:py-3 text-right text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50 sticky top-0 z-10">
                   Actions
                 </th>
               )}
@@ -53,7 +69,12 @@ const DataTable = ({
               data.map((row, index) => (
                 <tr
                   key={row.id || index}
-                  className={`hover:bg-gray-50 cursor-pointer ${selectedRow && (selectedRow.id === row.id) ? 'bg-yellow-100' : ''}`}
+                  ref={el => rowRefs.current[index] = el}
+                  className={`hover:bg-gray-50 cursor-pointer ${
+                    selectedRow && selectedRow.id === row.id
+                      ? "bg-blue-100"
+                      : ""
+                  }`}
                   onClick={() => onRowSelect && onRowSelect(row)}
                 >
                   {columns.map((column, idx) => (
@@ -81,7 +102,7 @@ const DataTable = ({
                         {onEdit && (
                           <Button
                             onClick={() => onEdit(row)}
-                            className="text-indigo-600 hover:text-indigo-900 p-1 rounded transition-colors min-w-0"
+                            className="text-indigo-600 hover:text-indigo-900 hover:bg-gray-100 p-1 rounded transition-colors min-w-0"
                             title="Edit"
                           >
                             <Edit className="w-4 h-4" />
@@ -90,7 +111,7 @@ const DataTable = ({
                         {onDelete && (
                           <Button
                             onClick={() => onDelete(row)}
-                            className="text-red-600 hover:text-red-900 p-1 rounded transition-colors min-w-0"
+                            className="text-red-600 hover:text-red-900 hover:bg-gray-100 p-1 rounded transition-colors min-w-0"
                             title="Delete"
                           >
                             <Trash2 className="w-4 h-4" />

@@ -1,22 +1,34 @@
-import React, { useState } from "react";
-import DataTable from "../../../../componets/common/DataTable";
-import PageHeader from "../../../../componets/common/PageHeader";
+import React, { useState, useEffect } from "react";
 import AddRack from "./AddRack";
 import Button from '../../../../componets/common/Button';
-import Modal from '../../../../componets/common/Modal';
-import { Plus,RefreshCw  } from "lucide-react";
-import { useEditRackMutation, useGetRacksQuery } from '../../../../services/rackApi';
-import Loader from '../../../../componets/common/Loader';
+import { Plus } from "lucide-react";
+import { useDeleteRackMutation, useEditRackMutation, useGetRacksQuery } from '../../../../services/rackApi';
+import InventoryPageLayout from "../../../../componets/layout/InventoryPageLayout";
 
 const RackPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editRackData, setEditRackData] = useState(null);
-  const { data: racks, error, isLoading, refetch } = useGetRacksQuery();
-  const [editRack, { isLoading: isEditing }] = useEditRackMutation();
+  const { data: racksData, error, isLoading, refetch } = useGetRacksQuery();
+  const [editRack] = useEditRackMutation();
+  const [deleteRack] = useDeleteRackMutation();
+  const [selectedRow, setSelectedRow] = useState(null);
+
+  const racks = racksData?.data || [];
+
+  useEffect(() => {
+    if (racks && racks.length > 0) {
+      setSelectedRow((prev) => {
+        if (!prev || !racks.find((r) => r.id === prev.id)) {
+          return racks[0];
+        }
+        return prev;
+      });
+    }
+  }, [racks]);
 
   const columns = [
-    {key: "rackname", title: "Rack Name" },
+    { key: "rackname", title: "Rack Name" },
     { key: "storename", title: "Store Name" },
   ];
 
@@ -29,6 +41,9 @@ const RackPage = () => {
     refetch();
   };
 
+  const handleDelete = async (id) => {
+    await deleteRack(id);
+  };
   const handleEdit = (row) => {
     setEditRackData(row);
     setEditModalOpen(true);
@@ -41,51 +56,54 @@ const RackPage = () => {
     refetch();
   };
 
+  const handleRowSelect = (row) => {
+    setSelectedRow(row);
+  };
+
+  const handleKeyDown = (e) => {
+    if (!racks || racks.length === 0) return;
+    if (!selectedRow) return;
+    const idx = racks.findIndex((r) => r.id === selectedRow.id);
+    if (e.key === "ArrowDown") {
+      const nextIdx = idx < racks.length - 1 ? idx + 1 : 0;
+      setSelectedRow(racks[nextIdx]);
+      e.preventDefault();
+    } else if (e.key === "ArrowUp") {
+      const prevIdx = idx > 0 ? idx - 1 : racks.length - 1;
+      setSelectedRow(racks[prevIdx]);
+      e.preventDefault();
+    }
+  };
+
   return (
-    <div className="space-y-6">
-      <PageHeader
+    <>
+      <InventoryPageLayout
         title="Rack Management"
         subtitle="Manage your Rack"
         actions={[
-          <Button
-            key="add"
-            onClick={handleAddItem}
-          >
-            <Plus className="w-4 h-4" />Add Rack
+          <Button key="add" onClick={handleAddItem}>
+            <Plus className="w-4 h-4" /> Add Rack
           </Button>,
         ]}
+        tableData={racks}
+        columns={columns}
+        isLoading={isLoading}
+        selectedRow={selectedRow}
+        onRowSelect={handleRowSelect}
+        onAdd={handleAddItem}
+        onEdit={handleEdit}
+        onDelete={(row) => handleDelete(row.id)}
+        onArrowNavigation={handleKeyDown}
+        rowInfoPanel={
+          selectedRow && (
+            <div className="flex flex-col gap-1 text-sm">
+              <div><b>Rack Name:</b> {selectedRow.rackname}</div>
+              <div><b>Store Name:</b> {selectedRow.storename}</div>
+            </div>
+          )
+        }
       />
-      {/* Error Message */}
-      {/* {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <div className="flex items-center justify-between">
-            <div className="text-red-600 text-sm">{error?.data?.message || 'Failed to load racks'}</div>
-            <Button
-              onClick={() => {}}
-              className="text-red-400 hover:text-red-600 text-lg font-bold"
-            >
-              ×
-            </Button>
-          </div>
-        </div>
-      )} */}
-      <div className="p-6">
-        {isLoading ? (
-          <Loader />
-        ) : (
-          <DataTable
-            title={"Rack"}
-            columns={columns}
-            data={racks?.data}
-            handleAddItem={handleAddItem}
-            onEdit={handleEdit}
-            onDelete={(row) => console.log("Delete:", row)}
-          />
-        )}
-      </div>
-      {/* Modal */}
       <AddRack isOpen={isModalOpen} onClose={handleCloseModal} />
-      {/* Edit Modal */}
       <AddRack
         initialData={editRackData}
         onSave={handleEditSave}
@@ -95,8 +113,8 @@ const RackPage = () => {
           setEditRackData(null);
         }}
       />
-    </div>
+    </>
   );
-}
+};
 
 export default RackPage;

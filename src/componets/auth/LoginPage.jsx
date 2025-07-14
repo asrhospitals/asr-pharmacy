@@ -35,6 +35,8 @@ const LoginPage = () => {
         username: response.username,
       };
       dispatch(setUser({ user, token: response.token }));
+      localStorage.setItem('token', response.token);
+      localStorage.setItem('user', JSON.stringify(user));
       navigate("/dashboard", { replace: true });
     } catch (err) {
       setError(err?.data?.message || "Login failed");

@@ -1,19 +1,29 @@
-import React, { useState } from "react";
-import DataTable from "../../../../componets/common/DataTable";
-import PageHeader from "../../../../componets/common/PageHeader";
-import { Plus, RefreshCw } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Plus } from "lucide-react";
 import AddUnit from "../unit/AddUnit";
-import { useEditUnitMutation, useGetUnitsQuery } from "../../../../services/unitApi";
+import { useDeleteUnitMutation, useEditUnitMutation, useGetUnitsQuery } from "../../../../services/unitApi";
 import Button from "../../../../componets/common/Button";
-import Modal from "../../../../componets/common/Modal";
-import Loader from "../../../../componets/common/Loader";
+import InventoryPageLayout from "../../../../componets/layout/InventoryPageLayout";
 
 const UnitPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editUnitData, setEditUnitData] = useState(null);
-  const { data: unit, error, isLoading, refetch } = useGetUnitsQuery();
-  const [editUnit, { isLoading: isEditing }] = useEditUnitMutation();
+  const { data: units = [], error, isLoading, refetch } = useGetUnitsQuery();
+  const [editUnit] = useEditUnitMutation();
+  const [deleteUnit] = useDeleteUnitMutation();
+  const [selectedRow, setSelectedRow] = useState(null);
+
+  useEffect(() => {
+    if (units && units.length > 0) {
+      setSelectedRow((prev) => {
+        if (!prev || !units.find((u) => u.id === prev.id)) {
+          return units[0];
+        }
+        return prev;
+      });
+    }
+  }, [units]);
 
   const columns = [
     { key: "unitName", title: "Unit Name" },
@@ -29,6 +39,9 @@ const UnitPage = () => {
     refetch();
   };
 
+  const handleDelete = async (row) => {
+    await deleteUnit(row.id);
+  };
   const handleEdit = (row) => {
     setEditUnitData(row);
     setEditModalOpen(true);
@@ -41,47 +54,53 @@ const UnitPage = () => {
     refetch();
   };
 
+  const handleRowSelect = (row) => {
+    setSelectedRow(row);
+  };
+
+  const handleKeyDown = (e) => {
+    if (!units || units.length === 0) return;
+    if (!selectedRow) return;
+    const idx = units.findIndex((u) => u.id === selectedRow.id);
+    if (e.key === "ArrowDown") {
+      const nextIdx = idx < units.length - 1 ? idx + 1 : 0;
+      setSelectedRow(units[nextIdx]);
+      e.preventDefault();
+    } else if (e.key === "ArrowUp") {
+      const prevIdx = idx > 0 ? idx - 1 : units.length - 1;
+      setSelectedRow(units[prevIdx]);
+      e.preventDefault();
+    }
+  };
+
   return (
-    <div className="space-y-6">
-      <PageHeader
+    <>
+      <InventoryPageLayout
         title="Unit Management"
         subtitle="Manage your Unit"
         actions={[
           <Button key="add" onClick={handleAddItem}>
-            <Plus className="w-4 h-4" />
-            Create Unit
+            <Plus className="w-4 h-4" /> Create Unit
           </Button>,
         ]}
-      />
-      {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 max-w-md mx-auto">
-          <div className="flex items-center justify-between">
-            <div className="text-red-600 text-sm">
-              {error?.data?.message || "Failed to load Unit"}
+        tableData={units}
+        columns={columns}
+        isLoading={isLoading}
+        selectedRow={selectedRow}
+        onRowSelect={handleRowSelect}
+        onAdd={handleAddItem}
+        onEdit={handleEdit}
+        onDelete={(row) => handleDelete(row.id)}
+        onArrowNavigation={handleKeyDown}
+        rowInfoPanel={
+          selectedRow && (
+            <div className="flex flex-col gap-1 text-sm">
+              <div><b>Unit Name:</b> {selectedRow.unitName}</div>
+              <div><b>UQC:</b> {selectedRow.uqc}</div>
             </div>
-            <Button
-              onClick={() => {}}
-              className="text-red-400 hover:text-red-600 text-lg font-bold ml-4"
-            >
-              ×
-            </Button>
-          </div>
-        </div>
-      )}
-      <div className="p-6">
-        {isLoading ? (
-          <Loader />
-        ) : (
-          <DataTable
-            title={"Unit"}
-            columns={columns}
-            data={unit}
-            onEdit={handleEdit}
-            onDelete={(row) => console.log("Delete:", row)}
-            handleAddItem={handleAddItem}
-          />
-        )}
-      </div>
+          )
+        }
+      />
       <AddUnit isOpen={isModalOpen} onClose={handleCloseModal} />
       <AddUnit
         initialData={editUnitData}
@@ -92,7 +111,7 @@ const UnitPage = () => {
           setEditUnitData(null);
         }}
       />
-    </div>
+    </>
   );
 };
 

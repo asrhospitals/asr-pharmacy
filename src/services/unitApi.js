@@ -40,8 +40,15 @@ export const unitApi = createApi({
       }),
       invalidatesTags: ['Unit'],
     }),
+    deleteUnit: builder.mutation({
+      query: (id) => ({
+        url: `/unit/v1/delete-unit/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Unit'],
+    }),
   }),
   overrideExisting: false,
 });
 
-export const { useGetUnitsQuery, useAddUnitMutation, useEditUnitMutation } = unitApi; 
+export const { useGetUnitsQuery, useAddUnitMutation, useEditUnitMutation, useDeleteUnitMutation } = unitApi; 

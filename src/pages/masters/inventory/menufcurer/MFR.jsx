@@ -1,98 +1,102 @@
-import React, { useState } from "react";
-import DataTable from "../../../../componets/common/DataTable";
-import PageHeader from "../../../../componets/common/PageHeader";
-import { Plus, RefreshCw } from "lucide-react";
+import React, { useState, useEffect } from "react";
 import AddMFR from "./AddMFR";
-import { useEditManufacturerMutation, useGetManufacturersQuery } from "../../../../services/mfrApi";
 import Button from "../../../../componets/common/Button";
-import Modal from "../../../../componets/common/Modal";
-import Loader from "../../../../componets/common/Loader";
+import { Plus } from "lucide-react";
+import { useDeleteManufacturerMutation, useEditManufacturerMutation, useGetManufacturersQuery } from "../../../../services/mfrApi";
+import InventoryPageLayout from "../../../../componets/layout/InventoryPageLayout";
+import { useNavigate } from "react-router-dom";
 
 const MFRPage = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editModalOpen, setEditModalOpen] = useState(false);
   const [editMFRData, setEditMFRData] = useState(null);
-  const { data: mfr, error, isLoading, refetch } = useGetManufacturersQuery();
-  const [editManufacturer, { isLoading: isEditing }] = useEditManufacturerMutation();
+  const { data: mfr = [], error, isLoading, refetch } = useGetManufacturersQuery();
+  const [editManufacturer] = useEditManufacturerMutation();
+  const [deleteManufacturer] = useDeleteManufacturerMutation(); 
+  const [selectedRow, setSelectedRow] = useState(null);
+  const navigate = useNavigate();
 
-  const columns = [{ key: "mfrname", title: "Company Name" }];
+  useEffect(() => {
+    if (mfr && mfr.length > 0) {
+      setSelectedRow((prev) => {
+        if (!prev || !mfr.find((r) => r.id === prev.id)) {
+          return mfr[0];
+        }
+        return prev;
+      });
+    }
+  }, [mfr]);
+
+  const columns = [
+    { key: "name", title: "Name" },
+    { key: "mobile", title: "Mobile No." },
+  ];
 
   const handleAddItem = () => {
-    setIsModalOpen(true);
+    navigate("/master/inventory/manufacturers/create");
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    refetch();
+  const handleDelete = async (id) => {
+    await deleteManufacturer(id);
   };
 
   const handleEdit = (row) => {
     setEditMFRData(row);
-    setEditModalOpen(true);
   };
 
   const handleEditSave = async (formData) => {
     await editManufacturer({ id: editMFRData.id, ...formData });
-    setEditModalOpen(false);
     setEditMFRData(null);
     refetch();
   };
 
+  const handleRowSelect = (row) => {
+    setSelectedRow(row);
+  };
+
+  const handleKeyDown = (e) => {
+    if (!mfr || mfr.length === 0) return;
+    if (!selectedRow) return;
+    const idx = mfr.findIndex((r) => r.id === selectedRow.id);
+    if (e.key === "ArrowDown") {
+      const nextIdx = idx < mfr.length - 1 ? idx + 1 : 0;
+      setSelectedRow(mfr[nextIdx]);
+      e.preventDefault();
+    } else if (e.key === "ArrowUp") {
+      const prevIdx = idx > 0 ? idx - 1 : mfr.length - 1;
+      setSelectedRow(mfr[prevIdx]);
+      e.preventDefault();
+    }
+  };
+
   return (
-    <div className="space-y-6">
-      <PageHeader
+    <>
+      <InventoryPageLayout
         title="Manufacturer Management"
         subtitle="Manage your Manufacturer"
         actions={[
           <Button key="add" onClick={handleAddItem}>
-            <Plus className="w-4 h-4" />
-            Add Manufacturer
+            <Plus className="w-4 h-4" /> Add Manufacturer
           </Button>,
         ]}
-      />
-      {/* Error Message */}
-      {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 max-w-md mx-auto">
-          <div className="flex items-center justify-between">
-            <div className="text-red-600 text-sm">
-              {error?.data?.message || "Failed to load manufacturers"}
+        tableData={mfr}
+        columns={columns}
+        isLoading={isLoading}
+        selectedRow={selectedRow}
+        onRowSelect={handleRowSelect}
+        onAdd={handleAddItem}
+        onEdit={handleEdit}
+        onDelete={(row) => handleDelete(row.id)}
+        // onEditSave={handleEditSave}
+        onArrowNavigation={handleKeyDown}
+        rowInfoPanel={
+          selectedRow && (
+            <div className="flex flex-col gap-1 text-xs">
+              <div><b>Name:</b> {selectedRow.name}</div>
+              <div><b>Mobile No.:</b> {selectedRow.mobile}</div>
             </div>
-            <Button
-              onClick={() => {}}
-              className="text-red-400 hover:text-red-600 text-lg font-bold ml-4"
-            >
-              ×
-            </Button>
-          </div>
-        </div>
-      )}
-      <div className="p-6">
-        {isLoading ? (
-          <Loader />
-        ) : (
-          <DataTable
-            title={"Manufacturer"}
-            columns={columns}
-            data={mfr}
-            onEdit={handleEdit}
-            onDelete={(row) => console.log("Delete:", row)}
-            handleAddItem={handleAddItem}
-          />
-        )}
-      </div>
-      {/* Modal */}
-      <AddMFR isOpen={isModalOpen} onClose={handleCloseModal} />
-      {/* Edit Modal */}
-      <AddMFR
-        initialData={editMFRData}
-        onSave={handleEditSave}
-        isOpen={editModalOpen}
-        onClose={() => {
-          setEditModalOpen(false);
-          setEditMFRData(null);
-        }}
+          )
+        }
       />
-    </div>
+    </>
   );
 };
 

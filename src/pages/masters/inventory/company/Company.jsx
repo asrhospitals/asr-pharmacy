@@ -1,19 +1,30 @@
-import React, { useState } from "react";
-import DataTable from "../../../../componets/common/DataTable";
-import PageHeader from "../../../../componets/common/PageHeader";
+import React, { useState, useEffect } from "react";
 import Button from "../../../../componets/common/Button";
-import { Plus, RefreshCw } from "lucide-react";
+import { Plus } from "lucide-react";
 import {
   useDeleteCompanyMutation,
   useGetCompaniesQuery,
 } from "../../../../services/companyApi";
-import Loader from "../../../../componets/common/Loader";
 import { useNavigate } from "react-router-dom";
+import InventoryPageLayout from "../../../../componets/layout/InventoryPageLayout";
 
 const CompanyPage = () => {
-  const { data: company, error, isLoading, refetch } = useGetCompaniesQuery();
+  const { data: companies = [], error, isLoading, refetch } = useGetCompaniesQuery();
   const [deleteCompany] = useDeleteCompanyMutation();
   const navigate = useNavigate();
+  const [selectedRow, setSelectedRow] = useState(null);
+
+  useEffect(() => {
+    if (companies && companies.length > 0) {
+      setSelectedRow((prev) => {
+        if (!prev || !companies.find((c) => c.id === prev.id)) {
+          return companies[0];
+        }
+        return prev;
+      });
+    }
+  }, [companies]);
+
   const columns = [{ key: "companyname", title: "Company Name" }];
 
   const handleAddItem = () => {
@@ -29,37 +40,56 @@ const CompanyPage = () => {
     refetch();
   };
 
+  const handleRowSelect = (row) => {
+    setSelectedRow(row);
+  };
+
+  const handleKeyDown = (e) => {
+    if (!companies || companies.length === 0) return;
+    if (!selectedRow) return;
+    const idx = companies.findIndex((c) => c.id === selectedRow.id);
+    if (e.key === "ArrowDown") {
+      const nextIdx = idx < companies.length - 1 ? idx + 1 : 0;
+      setSelectedRow(companies[nextIdx]);
+      e.preventDefault();
+    } else if (e.key === "ArrowUp") {
+      const prevIdx = idx > 0 ? idx - 1 : companies.length - 1;
+      setSelectedRow(companies[prevIdx]);
+      e.preventDefault();
+    }
+  };
+
   return (
-    <div className="space-y-4 sm:space-y-6 max-w-full">
-      <PageHeader
-        title="Company Management"
-        subtitle="Manage your Comapany"
-        actions={[
-          <Button
-            key="add"
-            onClick={handleAddItem}
-            startIcon={<Plus className="w-4 h-4" />}
-            className="w-full sm:w-auto"
-          >
-            Add Company
-          </Button>,
-        ]}
-      />
-      <div className="p-2 sm:p-4 md:p-6">
-        {isLoading ? (
-          <Loader />
-        ) : (
-          <DataTable
-            title="Company"
-            columns={columns}
-            handleAddItem={handleAddItem}
-            data={company}
-            onEdit={handleEdit}
-            onDelete={(row) => handleDelete(row.id)}
-          />
-        )}
-      </div>
-    </div>
+    <InventoryPageLayout
+      title="Company Management"
+      subtitle="Manage your Company"
+      actions={[
+        <Button
+          key="add"
+          onClick={handleAddItem}
+          startIcon={<Plus className="w-4 h-4" />}
+          className="w-full sm:w-auto"
+        >
+          Add Company
+        </Button>,
+      ]}
+      tableData={companies}
+      columns={columns}
+      isLoading={isLoading}
+      selectedRow={selectedRow}
+      onRowSelect={handleRowSelect}
+      onAdd={handleAddItem}
+      onEdit={handleEdit}
+      onDelete={(row) => handleDelete(row.id)}
+      onArrowNavigation={handleKeyDown}
+      rowInfoPanel={
+        selectedRow && (
+          <div className="flex flex-col gap-1 text-sm">
+            <div><b>Company Name:</b> {selectedRow.companyname}</div>
+          </div>
+        )
+      }
+    />
   );
 };
 
