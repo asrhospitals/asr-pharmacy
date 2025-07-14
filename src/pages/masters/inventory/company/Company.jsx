@@ -20,13 +20,17 @@ const CompanyPage = () => {
     navigate("/master/inventory/company/create");
   };
 
+  const handleEdit = (row) => {
+    navigate(`/master/inventory/companys/edit/${row.id}`);
+  };
+
   const handleDelete = async (id) => {
     await deleteCompany(id);
     refetch();
   };
 
   return (
-    <div className="space-y-4 sm:space-y-6 px-2 sm:px-4 md:px-8 max-w-full">
+    <div className="space-y-4 sm:space-y-6 max-w-full">
       <PageHeader
         title="Company Management"
         subtitle="Manage your Comapany"
@@ -66,7 +70,7 @@ const CompanyPage = () => {
             columns={columns}
             handleAddItem={handleAddItem}
             data={company}
-            onEdit={(row) => console.log("Edit:", row)}
+            onEdit={handleEdit}
             onDelete={(row) => handleDelete(row.id)}
           />
         )}

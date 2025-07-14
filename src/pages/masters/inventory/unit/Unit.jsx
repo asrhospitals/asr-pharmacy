@@ -10,7 +10,10 @@ import Loader from "../../../../componets/common/Loader";
 
 const UnitPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editUnitData, setEditUnitData] = useState(null);
   const { data: unit, error, isLoading, refetch } = useGetUnitsQuery();
+  const [editUnit, { isLoading: isEditing }] = require('../../../../services/unitApi').useEditUnitMutation();
 
   const columns = [
     { key: "unitName", title: "Unit Name" },
@@ -24,6 +27,18 @@ const UnitPage = () => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     refetch(); // Refetch units after closing modal (in case a new unit was added)
+  };
+
+  const handleEdit = (row) => {
+    setEditUnitData(row);
+    setEditModalOpen(true);
+  };
+
+  const handleEditSave = async (formData) => {
+    await editUnit({ id: editUnitData.id, ...formData });
+    setEditModalOpen(false);
+    setEditUnitData(null);
+    refetch();
   };
 
   return (
@@ -62,7 +77,7 @@ const UnitPage = () => {
             title={"Unit"}
             columns={columns}
             data={unit}
-            onEdit={(row) => console.log("Edit:", row)}
+            onEdit={handleEdit}
             onDelete={(row) => console.log("Delete:", row)}
             handleAddItem={handleAddItem}
           />
@@ -70,6 +85,16 @@ const UnitPage = () => {
       </div>
       {/* Modal */}
       <AddUnit isOpen={isModalOpen} onClose={handleCloseModal} />
+      {/* Edit Modal */}
+      <AddUnit
+        initialData={editUnitData}
+        onSave={handleEditSave}
+        isOpen={editModalOpen}
+        onClose={() => {
+          setEditModalOpen(false);
+          setEditUnitData(null);
+        }}
+      />
     </div>
   );
 };

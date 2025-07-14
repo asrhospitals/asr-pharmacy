@@ -5,12 +5,15 @@ import AddRack from "./AddRack";
 import Button from '../../../../componets/common/Button';
 import Modal from '../../../../componets/common/Modal';
 import { Plus,RefreshCw  } from "lucide-react";
-import { useGetRacksQuery } from '../../../../services/rackApi';
+import { useEditRackMutation, useGetRacksQuery } from '../../../../services/rackApi';
 import Loader from '../../../../componets/common/Loader';
 
 const RackPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editRackData, setEditRackData] = useState(null);
   const { data: racks, error, isLoading, refetch } = useGetRacksQuery();
+  const [editRack, { isLoading: isEditing }] = useEditRackMutation();
 
   const columns = [
     {key: "rackname", title: "Rack Name" },
@@ -23,6 +26,18 @@ const RackPage = () => {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
+    refetch();
+  };
+
+  const handleEdit = (row) => {
+    setEditRackData(row);
+    setEditModalOpen(true);
+  };
+
+  const handleEditSave = async (formData) => {
+    await editRack({ id: editRackData.id, ...formData });
+    setEditModalOpen(false);
+    setEditRackData(null);
     refetch();
   };
 
@@ -63,13 +78,23 @@ const RackPage = () => {
             columns={columns}
             data={racks?.data}
             handleAddItem={handleAddItem}
-            onEdit={(row) => console.log("Edit:", row)}
+            onEdit={handleEdit}
             onDelete={(row) => console.log("Delete:", row)}
           />
         )}
       </div>
       {/* Modal */}
-        <AddRack isOpen={isModalOpen} onClose={handleCloseModal} />
+      <AddRack isOpen={isModalOpen} onClose={handleCloseModal} />
+      {/* Edit Modal */}
+      <AddRack
+        initialData={editRackData}
+        onSave={handleEditSave}
+        isOpen={editModalOpen}
+        onClose={() => {
+          setEditModalOpen(false);
+          setEditRackData(null);
+        }}
+      />
     </div>
   );
 }

@@ -78,7 +78,6 @@ const pathToPermission = {
   "/crm/prescriptionreminder": "inventory",
 };
 
-// Recursively filter menu items based on RBAC
 function filterMenuByPermission(items, role) {
   return items
     .map((item) => {
@@ -121,7 +120,9 @@ const Sidebar = ({
   const [isHovered, setIsHovered] = useState(false);
   const isLargeScreen = useIsLargeScreen();
   // Sidebar is expanded if: (mobile and drawer open) OR (large screen and expanded or hovered)
-  const isSidebarExpanded = (!isLargeScreen && mobileOpen) || (isLargeScreen && (!isCollapsed || isHovered));
+  const isSidebarExpanded =
+    (!isLargeScreen && mobileOpen) ||
+    (isLargeScreen && (!isCollapsed || isHovered));
   const user = useSelector((state) => state.user.user);
   console.log(user);
 
@@ -178,7 +179,7 @@ const Sidebar = ({
               : "text-gray-700 hover:bg-gray-50 hover:text-gray-900"
           }`}
           onClick={() => {
-            if (hasChildren && !isCollapsed) {
+            if (hasChildren && isSidebarExpanded) {
               toggleExpanded(item.title);
             } else if (item.path) {
               handleItemClick(item.title, item.path);
@@ -232,11 +233,19 @@ const Sidebar = ({
           )}
         </div>
 
-        {isSidebarExpanded && hasChildren && isExpanded && (
-          <div className="mt-1 space-y-1">
-            {item.children.map((child) => renderMenuItem(child, level + 1))}
-          </div>
-        )}
+        <div
+          className={`transition-all duration-300 ease-in-out overflow-hidden ${
+            isSidebarExpanded && isExpanded
+              ? "h-auto opacity-100 mt-1"
+              : "h-0 opacity-0"
+          }`}
+        >
+          {isSidebarExpanded && isExpanded && (
+            <div className="space-y-1 pl-2">
+              {item?.children?.map((child) => renderMenuItem(child, level + 1))}
+            </div>
+          )}
+        </div>
       </div>
     );
   };
@@ -258,7 +267,9 @@ const Sidebar = ({
       <div
         className={`fixed top-0 left-0 h-full z-60 bg-white shadow-lg border-r border-gray-200 transition-all duration-300 lg:static lg:z-0 lg:translate-x-0 ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
-        } ${isLargeScreen ? (isCollapsed ? "w-16 hover:w-64" : "w-64") : "w-64"} overflow-x-hidden`}
+        } ${
+          isLargeScreen ? (isCollapsed ? "w-16 hover:w-64" : "w-64") : "w-64"
+        } overflow-x-hidden`}
         style={{ maxWidth: "100vw" }}
         onMouseEnter={() => isLargeScreen && isCollapsed && setIsHovered(true)}
         onMouseLeave={() => isLargeScreen && isCollapsed && setIsHovered(false)}

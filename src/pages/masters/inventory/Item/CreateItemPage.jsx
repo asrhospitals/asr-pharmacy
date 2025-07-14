@@ -1,10 +1,14 @@
 import { useForm } from "react-hook-form";
-import { useAddItemMutation } from "../../../../services/itemApi";
+import {
+  useAddItemMutation,
+  useEditItemMutation,
+  useGetItemsQuery,
+} from "../../../../services/itemApi";
 import Input from "../../../../componets/common/Input";
 import Select from "../../../../componets/common/Select";
 import Button from "../../../../componets/common/Button";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { SelectField, TextField } from "../../../../componets/common/Fields";
 import LeftColumn from "./components/LeftColumn";
@@ -12,9 +16,12 @@ import RightColumn from "./components/RightColumn";
 
 const ADVANCE_TABS = ["Discount", "Quantity", "Other Info"];
 
-export default function CreateItemPage() {
+export default function ItemForm({ isEditMode = false, initialData = null }) {
   const navigate = useNavigate();
+  const { id } = useParams();
   const [addItem, { isLoading }] = useAddItemMutation();
+  const [editItem, { isLoading: isEditing }] = useEditItemMutation();
+  const { data: items } = useGetItemsQuery();
   const [showAdvance, setShowAdvance] = useState(false);
   const [activeTab, setActiveTab] = useState("Discount");
 
@@ -57,13 +64,30 @@ export default function CreateItemPage() {
     },
   });
 
+  useEffect(() => {
+    if (isEditMode && id && items) {
+      const item = items.find((c) => parseInt(c.id) === parseInt(id));
+      if (item) reset(item);
+    } else if (initialData) {
+      reset(initialData);
+    }
+  }, [isEditMode, id, items, initialData, reset]);
+
   const handleSave = async (data) => {
     try {
-      await addItem(data).unwrap();
-      toast.success("Data saved successfully");
+      if (isEditMode) {
+        await editItem({ id, ...data }).unwrap();
+        toast.success("Item updated successfully");
+      } else {
+        await addItem(data).unwrap();
+        toast.success("Data saved successfully");
+      }
       reset();
     } catch (error) {
-      toast.error(error?.data?.message || "Failed to save item");
+      toast.error(
+        error?.data?.message ||
+          (isEditMode ? "Failed to update item" : "Failed to save item")
+      );
     }
   };
 

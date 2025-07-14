@@ -32,8 +32,16 @@ export const itemApi = createApi({
       }),
       invalidatesTags: ['Item'],
     }),
+    editItem: builder.mutation({
+      query: ({ id, ...itemData }) => ({
+        url: `/item/v1/update-item/${id}`,
+        method: 'PUT',
+        body: itemData,
+      }),
+      invalidatesTags: ['Item'],
+    }),
   }),
   overrideExisting: false,
 });
 
-export const { useGetItemsQuery, useAddItemMutation } = itemApi; 
+export const { useGetItemsQuery, useAddItemMutation, useEditItemMutation } = itemApi; 

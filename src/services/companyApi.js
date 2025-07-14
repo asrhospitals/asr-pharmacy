@@ -39,6 +39,14 @@ export const companyApi = createApi({
       }),
       invalidatesTags: ["Company"],
     }),
+    editCompany: builder.mutation({
+      query: ({ id, ...companyData }) => ({
+        url: `/company/v1/update-company/${id}`,
+        method: "PUT",
+        body: companyData,
+      }),
+      invalidatesTags: ["Company"],
+    }),
   }),
   overrideExisting: false,
 });
@@ -47,4 +55,5 @@ export const {
   useGetCompaniesQuery,
   useAddCompanyMutation,
   useDeleteCompanyMutation,
+  useEditCompanyMutation,
 } = companyApi;

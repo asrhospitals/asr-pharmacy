@@ -42,7 +42,7 @@ export default function DefaultHeader({ title, onMenuClick }) {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-white px-2 py-2 md:px-4 border-b border-l border-gray-200 flex items-center justify-between w-full min-h-[56px]">
+    <header className="sticky top-0 z-50 bg-white p-4 border-b border-l border-gray-200 flex items-center justify-between w-full min-h-[56px]">
       {/* Left: Logo, Hamburger, Company Name */}
       <div className="flex items-center gap-2 md:gap-3 min-w-0">
         <button

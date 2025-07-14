@@ -10,7 +10,10 @@ import Loader from "../../../../componets/common/Loader";
 
 const HSNPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editHSNData, setEditHSNData] = useState(null);
   const { data: hsn, error, isLoading, refetch } = useGetHSNsQuery();
+  const [editHSN, { isLoading: isEditing }] = require('../../../../services/hsnApi').useEditHSNMutation();
 
   const columns = [
     { key: "hsnsacname", title: "Name" },
@@ -26,8 +29,20 @@ const HSNPage = () => {
     refetch(); // Refetch HSNs after closing modal (in case a new HSN was added)
   };
 
+  const handleEdit = (row) => {
+    setEditHSNData(row);
+    setEditModalOpen(true);
+  };
+
+  const handleEditSave = async (formData) => {
+    await editHSN({ id: editHSNData.id, ...formData });
+    setEditModalOpen(false);
+    setEditHSNData(null);
+    refetch();
+  };
+
   return (
-    <div className="space-y-4 sm:space-y-6 px-2 sm:px-4 md:px-8 max-w-full">
+    <div className="space-y-4 sm:space-y-6 max-w-full">
       <PageHeader
         title="HSN Management"
         subtitle="Manage your HSN/SAC"
@@ -62,7 +77,7 @@ const HSNPage = () => {
             title={"HSN"}
             columns={columns}
             data={hsn}
-            onEdit={(row) => console.log("Edit:", row)}
+            onEdit={handleEdit}
             onDelete={(row) => console.log("Delete:", row)}
             handleAddItem={handleAddItem}
           />
@@ -70,6 +85,16 @@ const HSNPage = () => {
       </div>
       {/* Modal */}
       <AddHSN isOpen={isModalOpen} onClose={handleCloseModal} />
+      {/* Edit Modal */}
+      <AddHSN
+        initialData={editHSNData}
+        onSave={handleEditSave}
+        isOpen={editModalOpen}
+        onClose={() => {
+          setEditModalOpen(false);
+          setEditHSNData(null);
+        }}
+      />
     </div>
   );
 };

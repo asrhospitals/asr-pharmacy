@@ -23,6 +23,9 @@ const SaltPage = () => {
     
   };
 
+  const handleEdit = (row) => {
+    navigate(`/master/inventory/salt/edit/${row.id}`);
+  };
 
 
   return (
@@ -56,7 +59,7 @@ const SaltPage = () => {
             title={"Salt"}
             columns={columns}
             data={salt}
-            onEdit={(row) => console.log("Edit:", row)}
+            onEdit={handleEdit}
             onDelete={(row) => console.log("Delete:", row)}
             handleAddItem={handleAddItem}
           />

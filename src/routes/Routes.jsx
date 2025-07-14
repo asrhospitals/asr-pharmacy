@@ -18,6 +18,9 @@ import Unauthorized from "../pages/Unauthorized";
 import CreateCompanyPage from "../pages/masters/inventory/company/CreateCompanyPage";
 import CreateItemPage from "../pages/masters/inventory/Item/CreateItemPage";
 import CreateSaltPage from "../pages/masters/inventory/salt/AddSalt";
+import CompanyForm from "../pages/masters/inventory/company/CreateCompanyPage";
+import ItemForm from "../pages/masters/inventory/Item/CreateItemPage";
+import SaltForm from "../pages/masters/inventory/salt/AddSalt";
 
 const AppRoutes = () => (
   <Routes>
@@ -86,6 +89,14 @@ const AppRoutes = () => (
       }
     />
     <Route
+      path="/master/inventory/items/edit/:id"
+      element={
+        <ProtectedRoute module="inventory" action="E">
+          <ItemForm isEditMode={true} />
+        </ProtectedRoute>
+      }
+    />
+    <Route
       path="/master/inventory/stores"
       element={
         <ProtectedRoute module="inventory" action="V">
@@ -126,6 +137,14 @@ const AppRoutes = () => (
       }
     />
     <Route
+      path="/master/inventory/companys/edit/:id"
+      element={
+        <ProtectedRoute module="inventory" action="E">
+          <CompanyForm isEditMode={true} />
+        </ProtectedRoute>
+      }
+    />
+    <Route
       path="/master/inventory/salts"
       element={
         <ProtectedRoute module="inventory" action="V">
@@ -138,6 +157,14 @@ const AppRoutes = () => (
       element={
         <ProtectedRoute module="inventory" action="C">
           <CreateSaltPage />
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/master/inventory/salt/edit/:id"
+      element={
+        <ProtectedRoute module="inventory" action="E">
+          <SaltForm isEditMode={true} />
         </ProtectedRoute>
       }
     />

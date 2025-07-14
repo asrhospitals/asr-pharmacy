@@ -1,15 +1,16 @@
 import { useState, useEffect } from "react";
-import { useAddSaltMutation } from "../../../../services/saltApi";
-import { useNavigate } from "react-router-dom";
+import { useAddSaltMutation, useEditSaltMutation, useGetSaltsQuery } from "../../../../services/saltApi";
+import { useNavigate, useParams } from "react-router-dom";
 import Input from "../../../../componets/common/Input";
 import Select from "../../../../componets/common/Select";
 import Button from "../../../../componets/common/Button";
 import InputFields from "./components/InputFields";
 import SaltVariTable from "./components/SaltVariTable";
-import { Eraser, SaveIcon, X } from "lucide-react";
+import { Eraser, Loader, SaveIcon, X } from "lucide-react";
 import { useForm, Controller } from "react-hook-form";
 
-export default function CreateSaltPage({ initialData = null, onSave }) {
+export default function SaltForm({ isEditMode = false, initialData = null, onSave }) {
+  const { id } = useParams();
   const navigate = useNavigate();
   const [showMoreOptions, setShowMoreOptions] = useState(false);
   const [error, setError] = useState("");
@@ -26,6 +27,8 @@ export default function CreateSaltPage({ initialData = null, onSave }) {
     },
   ]);
   const [addSalt, { isLoading }] = useAddSaltMutation();
+  const [editSalt, { isLoading: isEditing }] = useEditSaltMutation();
+  const { data: salts } = useGetSaltsQuery();
 
   const {
     register,
@@ -52,51 +55,44 @@ export default function CreateSaltPage({ initialData = null, onSave }) {
   });
 
   useEffect(() => {
-    if (initialData) {
+    if (isEditMode && id && salts) {
+      const salt = salts.find((c) => parseInt(c.id) === parseInt(id));
+      if (salt) reset(salt);
+    } else if (initialData) {
       reset(initialData);
     }
-  }, [initialData, reset]);
+  }, [isEditMode, id, salts, initialData, reset]);
 
   const handleSave = async (data) => {
     setError("");
     setSuccess("");
     try {
       const payload = { ...data, variants };
-      if (onSave) {
+      if (isEditMode) {
+        await editSalt({ id, ...payload }).unwrap();
+        setSuccess("Salt updated successfully!");
+      } else if (onSave) {
         await onSave(payload);
         setSuccess("Salt saved successfully!");
-        reset();
-        setVariants([
-          {
-            strength: "",
-            dosageForm: "",
-            brandName: "",
-            packSize: "",
-            mrp: "",
-            dpco_applicable: false,
-            dpco_mrp: "",
-          },
-        ]);
-        navigate("/master/inventory/salt");
       } else {
         await addSalt(payload).unwrap();
         setSuccess("Salt created successfully!");
-        reset();
-        setVariants([
-          {
-            strength: "",
-            dosageForm: "",
-            brandName: "",
-            packSize: "",
-            mrp: "",
-            dpco_applicable: false,
-            dpco_mrp: "",
-          },
-        ]);
-        navigate("/master/inventory/salt");
       }
+      reset();
+      setVariants([
+        {
+          strength: "",
+          dosageForm: "",
+          brandName: "",
+          packSize: "",
+          mrp: "",
+          dpco_applicable: false,
+          dpco_mrp: "",
+        },
+      ]);
+      navigate("/master/inventory/salts");
     } catch (err) {
-      setError(err?.data?.message || "Failed to save salt");
+      setError(err?.data?.message || (isEditMode ? "Failed to update salt" : "Failed to save salt"));
     }
   };
 
@@ -115,8 +111,8 @@ export default function CreateSaltPage({ initialData = null, onSave }) {
     ]);
   };
 
-  const handleBack = () => navigate("/master/inventory/salt");
-  const handleClose = () => navigate("/master/inventory/salt");
+  const handleBack = () => navigate("/master/inventory/salts");
+  const handleClose = () => navigate("/master/inventory/salts");
 
   const addVariant = () =>
     setVariants([
@@ -147,7 +143,7 @@ export default function CreateSaltPage({ initialData = null, onSave }) {
       >
         <div className="bg-white rounded shadow p-4 transition-all duration-500">
           <div className="flex items-center justify-between sticky top-0 z-10">
-            <h1 className="text-xl font-bold">Create Salt</h1>
+            <h1 className="text-xl font-bold">{isEditMode ? "Edit Salt" : "Add Salt"}</h1>
             <Button type="button" variant="secondary" onClick={handleBack}>
               &#8592; Back
             </Button>
@@ -196,10 +192,10 @@ export default function CreateSaltPage({ initialData = null, onSave }) {
             <Button
               type="submit"
               variant="primary"
-              disabled={isLoading}
+              disabled={isLoading || isEditing}
               startIcon={
-                isLoading ? (
-                  <Spinner className="w-4" />
+                isLoading || isEditing ? (
+                  <Loader className="w-4" />
                 ) : (
                   <SaveIcon className="w-4" />
                 )

@@ -10,7 +10,10 @@ import Loader from "../../../../componets/common/Loader";
 
 const MFRPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editMFRData, setEditMFRData] = useState(null);
   const { data: mfr, error, isLoading, refetch } = useGetManufacturersQuery();
+  const [editManufacturer, { isLoading: isEditing }] = require('../../../../services/mfrApi').useEditManufacturerMutation();
 
   const columns = [{ key: "mfrname", title: "Company Name" }];
 
@@ -21,6 +24,18 @@ const MFRPage = () => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     refetch(); // Refetch manufacturers after closing modal (in case a new manufacturer was added)
+  };
+
+  const handleEdit = (row) => {
+    setEditMFRData(row);
+    setEditModalOpen(true);
+  };
+
+  const handleEditSave = async (formData) => {
+    await editManufacturer({ id: editMFRData.id, ...formData });
+    setEditModalOpen(false);
+    setEditMFRData(null);
+    refetch();
   };
 
   return (
@@ -59,7 +74,7 @@ const MFRPage = () => {
             title={"Manufacturer"}
             columns={columns}
             data={mfr}
-            onEdit={(row) => console.log("Edit:", row)}
+            onEdit={handleEdit}
             onDelete={(row) => console.log("Delete:", row)}
             handleAddItem={handleAddItem}
           />
@@ -67,6 +82,16 @@ const MFRPage = () => {
       </div>
       {/* Modal */}
       <AddMFR isOpen={isModalOpen} onClose={handleCloseModal} />
+      {/* Edit Modal */}
+      <AddMFR
+        initialData={editMFRData}
+        onSave={handleEditSave}
+        isOpen={editModalOpen}
+        onClose={() => {
+          setEditModalOpen(false);
+          setEditMFRData(null);
+        }}
+      />
     </div>
   );
 };

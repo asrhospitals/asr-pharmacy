@@ -19,6 +19,7 @@ export const permissions = {
     audit_logs: "VCED",
     backup: "VCED",
     settings: "VCED",
+    reports: "VCED",
   },
   pharmacist: {
     dashboard: "V",

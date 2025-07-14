@@ -16,7 +16,7 @@ const Input = forwardRef(
   ) => (
     <>
       {label && <label className="block font-medium mb-1">{label}</label>}
-      <div className="flex relative w-full align-center justify-center">
+      <div className="flex relative align-center justify-center">
         {startIcon && (
           <div className="absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
             {startIcon}

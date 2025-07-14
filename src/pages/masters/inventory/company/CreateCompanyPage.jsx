@@ -1,13 +1,22 @@
-import { useState } from "react";
-import { useAddCompanyMutation } from "../../../../services/companyApi";
+import { useState, useEffect } from "react";
+import {
+  useAddCompanyMutation,
+  useEditCompanyMutation,
+  useGetCompaniesQuery,
+} from "../../../../services/companyApi";
 import Input from "../../../../componets/common/Input";
 import Select from "../../../../componets/common/Select";
 import Button from "../../../../componets/common/Button";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Save, Eraser, X } from "lucide-react";
 import EmailWebsiteModal from "./EmailWebsiteModal";
 
-export default function CreateCompanyPage() {
+export default function CompanyForm({
+  isEditMode = false,
+  initialData = null,
+}) {
+  const { id } = useParams();
+  console.log("id", id);
   const [showMoreOptions, setShowMoreOptions] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -24,8 +33,12 @@ export default function CreateCompanyPage() {
     minimummargin: 0.0,
     storeroom: 1,
   });
-  const [addCompany, { isLoading }] = useAddCompanyMutation();
+  const [addCompany, { isLoading: isCreating }] = useAddCompanyMutation();
+  const [editCompany, { isLoading: isEditing }] = useEditCompanyMutation();
+  const { data: companies } = useGetCompaniesQuery();
   const navigate = useNavigate();
+
+  console.log("companies", companies);
 
   // Email & Website modal state
   const [detailsModalOpen, setDetailsModalOpen] = useState(false);
@@ -35,6 +48,19 @@ export default function CreateCompanyPage() {
     bcc: "",
     url: "",
   });
+
+  console.log(isEditMode);
+
+  useEffect(() => {
+    if (isEditMode && id && companies) {
+      const company = companies.find(
+        (company) => parseInt(company.id) === parseInt(id)
+      );
+      if (company) setFormData(company);
+    } else if (initialData) {
+      setFormData(initialData);
+    }
+  }, [isEditMode, id, companies, initialData]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -49,8 +75,13 @@ export default function CreateCompanyPage() {
     setError("");
     setSuccess("");
     try {
-      await addCompany({ ...formData, ...emailWebsite }).unwrap();
-      setSuccess("Company created successfully!");
+      if (isEditMode) {
+        await editCompany({ id, ...formData, ...emailWebsite }).unwrap();
+        setSuccess("Company updated successfully!");
+      } else {
+        await addCompany({ ...formData, ...emailWebsite }).unwrap();
+        setSuccess("Company created successfully!");
+      }
       setFormData({
         companyname: "",
         printremark: "Sample remark for printing",
@@ -67,7 +98,10 @@ export default function CreateCompanyPage() {
       setEmailWebsite({ main: "", cc: "", bcc: "", url: "" });
       navigate("/master/inventory/companys");
     } catch (err) {
-      setError(err?.data?.message || "Failed to create company");
+      setError(
+        err?.data?.message ||
+          (isEditMode ? "Failed to update company" : "Failed to create company")
+      );
     }
   };
 
@@ -96,7 +130,9 @@ export default function CreateCompanyPage() {
     <div className="flex justify-center items-start min-h-[calc(100vh-100px)] bg-gray-100 py-2">
       <div className="bg-white rounded-lg shadow-md p-6 max-w-4xl w-full">
         <div className="flex items-center justify-between">
-          <h1 className="text-xl font-bold">Create Company</h1>
+          <h1 className="text-xl font-bold">
+            {isEditMode ? "Edit Company" : "Create Company"}
+          </h1>
           <Button type="button" variant="secondary" onClick={handleBack}>
             &#8592; Back
           </Button>
@@ -125,7 +161,9 @@ export default function CreateCompanyPage() {
                 onChange={(e) => setShowMoreOptions(e.target.checked)}
                 className="h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
               />
-              <span className="font-semibold text-sm min-w-fit">More Option</span>
+              <span className="font-semibold text-sm min-w-fit">
+                More Option
+              </span>
             </label>
           </div>
           <div
@@ -280,7 +318,7 @@ export default function CreateCompanyPage() {
               type="submit"
               variant="primary"
               endIcon={<Save className="w-4" />}
-              disabled={isLoading}
+              disabled={isCreating || isEditing}
             >
               Save
             </Button>

@@ -5,6 +5,8 @@ import Input from "../../../../componets/common/Input";
 import Button from "../../../../componets/common/Button";
 import { useForm } from "react-hook-form";
 import { TextField } from "../../../../componets/common/Fields";
+import { useGetStoresQuery } from "../../../../services/storeApi";
+import SearchableSelect from "../../../../componets/common/SearchableSelect";
 
 export default function AddRack({
   isOpen = true,
@@ -20,19 +22,31 @@ export default function AddRack({
     register,
     handleSubmit,
     reset,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm({
     defaultValues: initialData || {
-      storename: "",
+      storeId: "",
       rackname: "",
     },
   });
 
   useEffect(() => {
+    if (errors && errors.storeId) {
+      console.warn('Validation error:', errors.storeId);
+    }
+  }, [errors]);
+
+  const { data: stores = [] } = useGetStoresQuery();
+  const selectedStoreId = watch("storeId");
+  const selectedStore = stores.find((s) => s.id === selectedStoreId);
+
+  useEffect(() => {
     if (initialData) {
       reset(initialData);
     } else {
-      reset({ storename: "", rackname: "" });
+      reset({ storeId: "", rackname: "" });
     }
   }, [initialData, isOpen, reset]);
 
@@ -59,15 +73,21 @@ export default function AddRack({
   return (
     <Modal open={isOpen} onClose={onClose} title="Create Rack">
       <form onSubmit={handleSubmit(handleSave)} className="space-y-6">
-        <TextField
-          noHeight={true}
-          label="Store Name"
-          name="storename"
-          register={register}
-          errors={errors}
-          required
-          noStyle={true}
-        />
+        <input type="hidden" {...register("storeId", { required: true })} />
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Store Name *</label>
+          <SearchableSelect
+            options={stores.map(s => ({ label: s.storename, value: s.id }))}
+            value={selectedStoreId}
+            onChange={(opt) => setValue("storeId", opt.value, { shouldValidate: true })}
+            placeholder="Select Store"
+          />
+          {errors.storeId && (
+            <div className="text-red-600 font-semibold text-sm mt-1">
+              Please select a store.
+            </div>
+          )}
+        </div>
         <TextField
           noHeight={true}
           label="Rack Name"
