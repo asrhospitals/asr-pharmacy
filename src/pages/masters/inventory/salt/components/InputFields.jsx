@@ -2,7 +2,7 @@ import React from "react";
 import Input from "../../../../../componets/common/Input";
 import Select from "../../../../../componets/common/Select";
 import { SelectField, TextField } from "../../../../../componets/common/Fields";
-import { showToast } from "../../../../../../componets/common/Toast";
+import { showToast } from "../../../../../componets/common/Toast";
 
 const InputFields = ({ register, errors }) => {
   return (

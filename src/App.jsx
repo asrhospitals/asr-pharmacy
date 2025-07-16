@@ -3,7 +3,7 @@ import LoginPage from "./componets/auth/LoginPage";
 import { useSelector, useDispatch } from "react-redux";
 import { setUser } from "./services/userSlice";
 import { useEffect, useState } from "react";
-import Loader from './componets/common/Loader';
+import Loader from "./componets/common/Loader";
 import Toast from "./componets/common/Toast";
 
 function App() {
@@ -26,10 +26,10 @@ function App() {
   }
 
   return (
-    <>
+    <div className="h-screen">
       {!isAuthenticated ? <LoginPage /> : <AppLayout />}
       <Toast />
-    </>
+    </div>
   );
 }
 

@@ -8,6 +8,18 @@ const LeftColumn = ({ errors, register, allData, states, setters, setValue }) =>
       <TextField
         errors={errors}
         register={register}
+        label={"Contraindications"}
+        name="contraindications"
+      />
+      <TextField
+        errors={errors}
+        register={register}
+        label={"Relative Contraindications"}
+        name="relativeContraindications"
+      />
+      <TextField
+        errors={errors}
+        register={register}
         required
         label="Packing"
         name="packing"

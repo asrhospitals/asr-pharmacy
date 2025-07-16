@@ -45,6 +45,7 @@ export default function SaltForm({
     control,
     reset,
     formState: { errors },
+    setValue,
   } = useForm({
     defaultValues: initialData || {
       saltname: "",
@@ -60,13 +61,58 @@ export default function SaltForm({
       narcotic: "No",
       scheduleh: "No",
       scheduleh1: "No",
+      contraindications: "",
+      relativeContraindications: "",
     },
   });
+
+  // Keep form value in sync with showMoreOptions state
+  useEffect(() => {
+    setValue && setValue("showMoreOptions", showMoreOptions);
+  }, [showMoreOptions, setValue]);
 
   useEffect(() => {
     if (isEditMode && id && salts) {
       const salt = salts.find((c) => parseInt(c.id) === parseInt(id));
-      if (salt) reset(salt);
+      if (salt) {
+        reset(salt);
+        if (
+          Array.isArray(salt.saltvariations) &&
+          salt.saltvariations.length > 0
+        ) {
+          setVariants(
+            salt.saltvariations.map((v) => ({
+              strength: v.str || "",
+              dosageForm: v.dosage || "",
+              brandName: v.brandname || "",
+              packSize: v.packsize || "",
+              mrp: v.mrp || "",
+              dpco_applicable: v.dpco === "Yes" || v.dpco === true,
+              dpco_mrp: v.dpcomrp || "",
+            }))
+          );
+        }
+        const moreInfoFields = [
+          "saltcode",
+          "salttype",
+          "saltgroup",
+          "saltsubgroup",
+          "saltsubsubgroup",
+          "tbitem",
+          "narcotic",
+          "scheduleh2",
+          "scheduleh3",
+          "nowstatus",
+          "prohibited",
+        ];
+        if (
+          moreInfoFields.some(
+            (field) => salt[field] && String(salt[field]).trim() !== ""
+          )
+        ) {
+          setShowMoreOptions(true);
+        }
+      }
     } else if (initialData) {
       reset(initialData);
     }
@@ -76,7 +122,7 @@ export default function SaltForm({
     setError("");
     setSuccess("");
     try {
-      const payload = { ...data, saltvariations: variants };
+      const payload = { saltData: { ...data }, saltvariations: variants };
       if (isEditMode) {
         await editSalt({ id, ...payload }).unwrap();
         setSuccess("Salt updated successfully!");
@@ -157,7 +203,7 @@ export default function SaltForm({
   };
 
   return (
-    <div className="flex flex-col overflow-hidden no-scrollbar">
+    <div className="flex flex-col overflow-auto no-scrollbar">
       <form
         onSubmit={handleSubmit(handleSave)}
         className="flex-1 flex flex-col relative"
@@ -185,13 +231,29 @@ export default function SaltForm({
                 {errors.saltname.message}
               </p>
             )}
+            <label className="block text-sm font-medium text-gray-700 mb-2 mt-4">
+              Contraindications
+            </label>
+            <Input
+              type="text"
+              {...register("contraindications")}
+              className="h-8 text-xs w-full"
+            />
+            <label className="block text-sm font-medium text-gray-700 mb-2 mt-4">
+              Relative Contraindications
+            </label>
+            <Input
+              type="text"
+              {...register("relativeContraindications")}
+              className="h-8 text-xs w-full"
+            />
           </div>
           <div className="w-fit">
             <label className="flex items-center justify-center gap-2 text-sm font-medium text-gray-700">
               <Input
                 width="w-4"
                 type="checkbox"
-                {...register("showMoreOptions")}
+                checked={showMoreOptions}
                 onChange={(e) => setShowMoreOptions(e.target.checked)}
                 className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
               />

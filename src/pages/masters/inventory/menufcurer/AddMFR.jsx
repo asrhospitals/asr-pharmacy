@@ -21,7 +21,7 @@ export default function CreateManufacturerPage() {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      name: "",
+      mfrname: "",
       shortname: "",
       country: "India",
       state: "",
@@ -63,7 +63,6 @@ export default function CreateManufacturerPage() {
         className="flex-1 flex flex-col relative"
       >
         <div className="bg-white rounded shadow p-4 transition-all duration-500">
-          {/* Header */}
           <div className="flex items-center justify-between sticky top-0 z-10">
             <h1 className="text-xl font-bold">Create Manufacturer</h1>
             <Button type="button" variant="secondary" onClick={handleClose}>
@@ -71,14 +70,13 @@ export default function CreateManufacturerPage() {
             </Button>
           </div>
 
-          {/* Name Field */}
           <div className="mb-5">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Name <span className="text-red-500">*</span>
             </label>
             <Input
               type="text"
-              {...register("name", { required: "Name is required" })}
+              {...register("mfrname", { required: "Name is required" })}
               className="h-8 text-xs w-full"
             />
             {errors.name && (
@@ -86,7 +84,6 @@ export default function CreateManufacturerPage() {
             )}
           </div>
 
-          {/* Inline checkbox for More Info */}
           <div className="w-fit mb-4">
             <label className="flex items-center gap-2 text-sm font-medium text-gray-700">
               <Input
@@ -100,25 +97,21 @@ export default function CreateManufacturerPage() {
             </label>
           </div>
 
-          {/* Optional Fields */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-            <TextField
-              label="Phone"
-              name="phone"
-              register={register}
-              errors={errors}
-            />
-            <TextField
-              label="Mobile No."
-              name="mobile"
-              register={register}
-              errors={errors}
-            />
-          </div>
-
           {showMore && (
             <div className="space-y-4 border border-gray-300 rounded p-3 bg-gray-50 mb-4 text-xs">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <TextField
+                  label="Phone"
+                  name="phone"
+                  register={register}
+                  errors={errors}
+                />
+                <TextField
+                  label="Mobile No."
+                  name="mobile"
+                  register={register}
+                  errors={errors}
+                />
                 <TextField
                   label="Country"
                   name="country"

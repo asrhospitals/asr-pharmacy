@@ -92,14 +92,6 @@ const UnitPage = () => {
         onEdit={handleEdit}
         onDelete={(row) => handleDelete(row.id)}
         onArrowNavigation={handleKeyDown}
-        rowInfoPanel={
-          selectedRow && (
-            <div className="flex flex-col gap-1 text-sm">
-              <div><b>Unit Name:</b> {selectedRow.unitName}</div>
-              <div><b>UQC:</b> {selectedRow.uqc}</div>
-            </div>
-          )
-        }
       />
       <AddUnit isOpen={isModalOpen} onClose={handleCloseModal} />
       <AddUnit

@@ -2,15 +2,24 @@ import React, { useState, useEffect } from "react";
 import AddMFR from "./AddMFR";
 import Button from "../../../../componets/common/Button";
 import { Plus } from "lucide-react";
-import { useDeleteManufacturerMutation, useEditManufacturerMutation, useGetManufacturersQuery } from "../../../../services/mfrApi";
+import {
+  useDeleteManufacturerMutation,
+  useEditManufacturerMutation,
+  useGetManufacturersQuery,
+} from "../../../../services/mfrApi";
 import InventoryPageLayout from "../../../../componets/layout/InventoryPageLayout";
 import { useNavigate } from "react-router-dom";
 
 const MFRPage = () => {
   const [editMFRData, setEditMFRData] = useState(null);
-  const { data: mfr = [], error, isLoading, refetch } = useGetManufacturersQuery();
+  const {
+    data: mfr = [],
+    error,
+    isLoading,
+    refetch,
+  } = useGetManufacturersQuery();
   const [editManufacturer] = useEditManufacturerMutation();
-  const [deleteManufacturer] = useDeleteManufacturerMutation(); 
+  const [deleteManufacturer] = useDeleteManufacturerMutation();
   const [selectedRow, setSelectedRow] = useState(null);
   const navigate = useNavigate();
 
@@ -26,7 +35,7 @@ const MFRPage = () => {
   }, [mfr]);
 
   const columns = [
-    { key: "name", title: "Name" },
+    { key: "mfrname", title: "Name" },
     { key: "mobile", title: "Mobile No." },
   ];
 
@@ -90,8 +99,12 @@ const MFRPage = () => {
         rowInfoPanel={
           selectedRow && (
             <div className="flex flex-col gap-1 text-xs">
-              <div><b>Name:</b> {selectedRow.name}</div>
-              <div><b>Mobile No.:</b> {selectedRow.mobile}</div>
+              <div>
+                <b>Name:</b> {selectedRow.mfrname}
+              </div>
+              <div>
+                <b>Mobile No.:</b> {selectedRow.mobile}
+              </div>
             </div>
           )
         }

@@ -103,6 +103,8 @@ export default function CreateItemPage() {
       discountType: "Applicable",
       itemDisc1: "",
       maxDisc: "",
+      contraindications: "",
+      relativeContraindications: "",
     },
   });
 
