@@ -4,6 +4,7 @@ import Input from "../../../../componets/common/Input";
 import Button from "../../../../componets/common/Button";
 import Modal from "../../../../componets/common/Modal";
 import { useForm } from "react-hook-form";
+import { showToast } from "../../../../componets/common/Toast";
 
 export default function AddStore({
   isOpen = true,
@@ -44,17 +45,20 @@ export default function AddStore({
     try {
       if (onSave) {
         await onSave(data);
-        setSuccess("Store saved successfully!");
+        showToast("Store saved successfully!", { type: "success" });
         reset();
         onClose();
       } else {
         await addStore(data);
-        setSuccess("Store created successfully!");
+        showToast("Store created successfully!", { type: "success" });
         reset();
         onClose();
       }
     } catch (err) {
       setError(err?.data?.message || "Failed to save store");
+      showToast(err?.data?.message || "Failed to save store", {
+        type: "error",
+      });
     }
   };
 
@@ -66,31 +70,52 @@ export default function AddStore({
           {...register("storecode", { required: "Store Code is required" })}
           required
         />
-        {errors.storecode && <p className="text-red-500 text-xs mt-1">{errors.storecode.message}</p>}
+        {errors.storecode && (
+          <p className="text-red-500 text-xs mt-1">
+            {errors.storecode.message}
+          </p>
+        )}
         <Input
           label="Store Name"
           {...register("storename", { required: "Store Name is required" })}
           required
         />
-        {errors.storename && <p className="text-red-500 text-xs mt-1">{errors.storename.message}</p>}
+        {errors.storename && (
+          <p className="text-red-500 text-xs mt-1">
+            {errors.storename.message}
+          </p>
+        )}
         <Input
           label="Address"
           {...register("address1", { required: "Address is required" })}
           required
         />
-        {errors.address1 && <p className="text-red-500 text-xs mt-1">{errors.address1.message}</p>}
+        {errors.address1 && (
+          <p className="text-red-500 text-xs mt-1">{errors.address1.message}</p>
+        )}
         <div className="flex gap-2 justify-end mt-6">
-          <Button type="submit" variant="primary" disabled={isLoading}>
+          <Button
+            buttonType={"save"}
+            type="submit"
+            variant="primary"
+            disabled={isLoading}
+          >
             Save
           </Button>
           <Button
             type="button"
             variant="secondary"
+            buttonType={"clear"}
             onClick={() => reset()}
           >
             Clear
           </Button>
-          <Button type="button" variant="danger" onClick={onClose}>
+          <Button
+            buttonType={"close"}
+            type="button"
+            variant="danger"
+            onClick={onClose}
+          >
             Close
           </Button>
         </div>

@@ -3,6 +3,7 @@ import Input from "../../../../componets/common/Input";
 import Button from "../../../../componets/common/Button";
 import { Save } from "lucide-react";
 import { useState, useEffect } from "react";
+import { showToast } from "../../../../componets/common/Toast";
 
 export default function EmailWebsiteModal({ open, onClose, onSave, initialData }) {
   const [fields, setFields] = useState({ main: "", cc: "", bcc: "", url: "" });
@@ -62,7 +63,7 @@ export default function EmailWebsiteModal({ open, onClose, onSave, initialData }
           <Button
             type="submit"
             variant="primary"
-            endIcon={<Save className="w-4" />}
+            buttonType={"save"}
           >
             Update
           </Button>

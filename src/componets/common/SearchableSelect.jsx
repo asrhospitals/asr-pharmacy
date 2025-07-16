@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { showToast } from "./Toast";
 
 export default function SearchableSelect({
   options = [],
@@ -83,7 +84,7 @@ export default function SearchableSelect({
       <input
         ref={inputRef}
         type="text"
-        className={`w-full border border-gray-300 rounded-lg ${
+        className={`w-full border border-gray-00 rounded-lg ${
             noPadding ? "p-0" : startIcon ? "pl-10 pr-2 py-2" : "p-2"
           } focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm`}
         placeholder={placeholder}

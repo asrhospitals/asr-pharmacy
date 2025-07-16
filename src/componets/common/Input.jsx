@@ -27,7 +27,7 @@ const Input = forwardRef(
           ref={ref}
           className={`${className} ${width ? width : "w-full"} ${
             noPadding ? "p-0" : startIcon ? "pl-10 pr-2 py-2" : "p-2"
-          } border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`.trim()}
+          } border border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`.trim()}
           {...props}
         />
         {endIcon && (

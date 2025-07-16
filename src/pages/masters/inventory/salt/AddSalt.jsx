@@ -1,5 +1,9 @@
 import { useState, useEffect } from "react";
-import { useAddSaltMutation, useEditSaltMutation, useGetSaltsQuery } from "../../../../services/saltApi";
+import {
+  useAddSaltMutation,
+  useEditSaltMutation,
+  useGetSaltsQuery,
+} from "../../../../services/saltApi";
 import { useNavigate, useParams } from "react-router-dom";
 import Input from "../../../../componets/common/Input";
 import Select from "../../../../componets/common/Select";
@@ -8,8 +12,13 @@ import InputFields from "./components/InputFields";
 import SaltVariTable from "./components/SaltVariTable";
 import { Eraser, Loader, SaveIcon, X } from "lucide-react";
 import { useForm, Controller } from "react-hook-form";
+import { showToast } from "../../../../componets/common/Toast";
 
-export default function SaltForm({ isEditMode = false, initialData = null, onSave }) {
+export default function SaltForm({
+  isEditMode = false,
+  initialData = null,
+  onSave,
+}) {
   const { id } = useParams();
   const navigate = useNavigate();
   const [showMoreOptions, setShowMoreOptions] = useState(false);
@@ -67,16 +76,19 @@ export default function SaltForm({ isEditMode = false, initialData = null, onSav
     setError("");
     setSuccess("");
     try {
-      const payload = { ...data, variants };
+      const payload = { ...data, saltvariations: variants };
       if (isEditMode) {
         await editSalt({ id, ...payload }).unwrap();
         setSuccess("Salt updated successfully!");
+        showToast("Salt updated successfully!", { type: "success" });
       } else if (onSave) {
         await onSave(payload);
         setSuccess("Salt saved successfully!");
+        showToast("Salt saved successfully!", { type: "success" });
       } else {
         await addSalt(payload).unwrap();
         setSuccess("Salt created successfully!");
+        showToast("Salt created successfully!", { type: "success" });
       }
       reset();
       setVariants([
@@ -91,8 +103,17 @@ export default function SaltForm({ isEditMode = false, initialData = null, onSav
         },
       ]);
       navigate("/master/inventory/salts");
+      console.log(payload);
     } catch (err) {
-      setError(err?.data?.message || (isEditMode ? "Failed to update salt" : "Failed to save salt"));
+      setError(
+        err?.data?.message ||
+          (isEditMode ? "Failed to update salt" : "Failed to save salt")
+      );
+      showToast(
+        err?.data?.message ||
+          (isEditMode ? "Failed to update salt" : "Failed to save salt"),
+        { type: "error" }
+      );
     }
   };
 
@@ -143,7 +164,9 @@ export default function SaltForm({ isEditMode = false, initialData = null, onSav
       >
         <div className="bg-white rounded shadow p-4 transition-all duration-500">
           <div className="flex items-center justify-between sticky top-0 z-10">
-            <h1 className="text-xl font-bold">{isEditMode ? "Edit Salt" : "Add Salt"}</h1>
+            <h1 className="text-xl font-bold">
+              {isEditMode ? "Edit Salt" : "Add Salt"}
+            </h1>
             <Button type="button" variant="secondary" onClick={handleBack}>
               &#8592; Back
             </Button>
@@ -193,13 +216,7 @@ export default function SaltForm({ isEditMode = false, initialData = null, onSav
               type="submit"
               variant="primary"
               disabled={isLoading || isEditing}
-              startIcon={
-                isLoading || isEditing ? (
-                  <Loader className="w-4" />
-                ) : (
-                  <SaveIcon className="w-4" />
-                )
-              }
+              buttonType={"save"}
             >
               Save
             </Button>
@@ -207,7 +224,7 @@ export default function SaltForm({ isEditMode = false, initialData = null, onSav
               type="button"
               variant="secondary"
               onClick={handleClear}
-              startIcon={<Eraser className="w-4" />}
+              buttonType={"clear"}
             >
               Clear
             </Button>
@@ -215,7 +232,7 @@ export default function SaltForm({ isEditMode = false, initialData = null, onSav
               type="button"
               variant="danger"
               onClick={handleClose}
-              startIcon={<X className="w-4" />}
+              buttonType={"close"}
             >
               Close
             </Button>

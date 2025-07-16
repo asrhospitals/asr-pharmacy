@@ -183,13 +183,7 @@ export default function CreateManufacturerPage() {
               type="submit"
               variant="primary"
               disabled={isLoading}
-              startIcon={
-                isLoading ? (
-                  <Loader className="w-4" />
-                ) : (
-                  <SaveIcon className="w-4" />
-                )
-              }
+              buttonType={"save"}
             >
               Save
             </Button>
@@ -197,7 +191,7 @@ export default function CreateManufacturerPage() {
               type="button"
               variant="secondary"
               onClick={handleClear}
-              startIcon={<Eraser className="w-4" />}
+              buttonType={"clear"}
             >
               Clear
             </Button>
@@ -205,7 +199,7 @@ export default function CreateManufacturerPage() {
               type="button"
               variant="danger"
               onClick={handleClose}
-              startIcon={<X className="w-4" />}
+              buttonType={"close"}
             >
               Close
             </Button>

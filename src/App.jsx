@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { setUser } from "./services/userSlice";
 import { useEffect, useState } from "react";
 import Loader from './componets/common/Loader';
+import Toast from "./componets/common/Toast";
 
 function App() {
   const dispatch = useDispatch();
@@ -25,9 +26,10 @@ function App() {
   }
 
   return (
-    <div className="h-screen">
+    <>
       {!isAuthenticated ? <LoginPage /> : <AppLayout />}
-    </div>
+      <Toast />
+    </>
   );
 }
 

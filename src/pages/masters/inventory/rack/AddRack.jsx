@@ -27,26 +27,26 @@ export default function AddRack({
     formState: { errors },
   } = useForm({
     defaultValues: initialData || {
-      storeId: "",
+      storeid: "",
       rackname: "",
     },
   });
 
   useEffect(() => {
-    if (errors && errors.storeId) {
-      console.warn('Validation error:', errors.storeId);
+    if (errors && errors.storeid) {
+      console.warn("Validation error:", errors.storeid);
     }
   }, [errors]);
 
   const { data: stores = [] } = useGetStoresQuery();
-  const selectedStoreId = watch("storeId");
+  const selectedStoreId = watch("storeid");
   const selectedStore = stores.find((s) => s.id === selectedStoreId);
 
   useEffect(() => {
     if (initialData) {
       reset(initialData);
     } else {
-      reset({ storeId: "", rackname: "" });
+      reset({ storeid: "", rackname: "" });
     }
   }, [initialData, isOpen, reset]);
 
@@ -59,7 +59,9 @@ export default function AddRack({
         setSuccess("Rack saved successfully!");
         reset();
         onClose();
+        console.log("in on save");
       } else {
+        console.log("in else on save", data);
         await addRack(data).unwrap();
         setSuccess("Rack created successfully!");
         reset();
@@ -73,16 +75,20 @@ export default function AddRack({
   return (
     <Modal open={isOpen} onClose={onClose} title="Create Rack">
       <form onSubmit={handleSubmit(handleSave)} className="space-y-6">
-        <input type="hidden" {...register("storeId", { required: true })} />
+        <input type="hidden" {...register("storeid", { required: true })} />
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Store Name *</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Store Name *
+          </label>
           <SearchableSelect
-            options={stores.map(s => ({ label: s.storename, value: s.id }))}
+            options={stores.map((s) => ({ label: s.storename, value: s.id }))}
             value={selectedStoreId}
-            onChange={(opt) => setValue("storeId", opt.value, { shouldValidate: true })}
+            onChange={(opt) =>
+              setValue("storeid", opt.value, { shouldValidate: true })
+            }
             placeholder="Select Store"
           />
-          {errors.storeId && (
+          {errors.storeid && (
             <div className="text-red-600 font-semibold text-sm mt-1">
               Please select a store.
             </div>
@@ -100,10 +106,20 @@ export default function AddRack({
         {error && <div className="text-red-500 mb-4">{error}</div>}
         {success && <div className="text-green-500 mb-4">{success}</div>}
         <div className="flex gap-2 mt-6">
-          <Button type="submit" variant="primary" disabled={isLoading}>
+          <Button
+            type="submit"
+            buttonType={"save"}
+            variant="primary"
+            disabled={isLoading}
+          >
             Save
           </Button>
-          <Button type="button" variant="danger" onClick={onClose}>
+          <Button
+            type="button"
+            buttonType={"close"}
+            variant="danger"
+            onClick={onClose}
+          >
             Close
           </Button>
         </div>

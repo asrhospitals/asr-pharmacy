@@ -93,14 +93,6 @@ const HSNPage = () => {
         onEdit={handleEdit}
         onDelete={(row) => handleDelete(row.id)}
         onArrowNavigation={handleKeyDown}
-        rowInfoPanel={
-          selectedRow && (
-            <div className="flex flex-col gap-1 text-xs">
-              <div><b>Name:</b> {selectedRow.hsnsacname}</div>
-              <div><b>HSN Code:</b> {selectedRow.hsnSacCode}</div>
-            </div>
-          )
-        }
       />
       <AddHSN isOpen={isModalOpen} onClose={handleCloseModal} />
       <AddHSN

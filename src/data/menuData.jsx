@@ -57,9 +57,7 @@ const adminMenu = [
       {
         title: "Rate Master",
         icon: DollarSign,
-        children: [
-          { title: "Price List", path: "/master/rates/pricelist" },
-        ],
+        children: [{ title: "Price List", path: "/master/rates/pricelist" }],
       },
       {
         title: "Discount Master",

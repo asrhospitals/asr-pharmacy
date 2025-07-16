@@ -39,7 +39,7 @@ const ItemsPage = () => {
         .toString()
         .toLowerCase()
         .includes(search.toLowerCase());
-    const matchesStore = !selectedStore || item.storeId === selectedStore;
+    const matchesStore = !selectedStore || item.storeid === selectedStore;
     return matchesSearch && matchesStore;
   });
 

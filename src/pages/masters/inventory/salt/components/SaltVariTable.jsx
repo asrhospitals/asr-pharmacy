@@ -3,6 +3,7 @@ import Input from "../../../../../componets/common/Input";
 import Select from "../../../../../componets/common/Select";
 import { Plus, X } from "lucide-react";
 import Button from "../../../../../componets/common/Button";
+import { showToast } from "../../../../../componets/common/Toast";
 
 const SaltVariTable = ({
   variants,

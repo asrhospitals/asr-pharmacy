@@ -82,13 +82,6 @@ const CompanyPage = () => {
       onEdit={handleEdit}
       onDelete={(row) => handleDelete(row.id)}
       onArrowNavigation={handleKeyDown}
-      rowInfoPanel={
-        selectedRow && (
-          <div className="flex flex-col gap-1 text-sm">
-            <div><b>Company Name:</b> {selectedRow.companyname}</div>
-          </div>
-        )
-      }
     />
   );
 };

@@ -1,12 +1,74 @@
-# React + Vite
+# ASR Pharmacy Inventory Management
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern inventory and billing management system for pharmacies, built with React, Vite, and Redux Toolkit. This app features robust authentication, role-based access, and persistent login across reloads for a seamless user experience.
 
-Currently, two official plugins are available:
+## Features
+- User authentication with role-based access (Admin, Manager, User)
+- Persistent login (token and user info stored in localStorage)
+- Inventory management: companies, items, HSN, racks, salts, stores, units, manufacturers
+- Purchase and billing modules
+- Responsive dashboard and sidebar navigation
+- Customizable data tables and modals
+- Error boundaries and loading states
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Authentication Persistence
+- On login, the authentication token and user info are saved to `localStorage`.
+- On app load, the app restores authentication state from `localStorage` before rendering protected content.
+- On logout, all authentication data is cleared from both Redux and `localStorage`.
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Prerequisites
+- Node.js (v16 or higher recommended)
+- npm or yarn
+
+### Installation
+```bash
+npm install
+# or
+yarn install
+```
+
+### Running the App
+```bash
+npm run dev
+# or
+yarn dev
+```
+The app will be available at `http://localhost:5173` by default.
+
+### Building for Production
+```bash
+npm run build
+# or
+yarn build
+```
+
+### Environment Variables
+Create a `.env` file in the root with the following (example):
+```
+VITE_BACKEND_BASE_URL=http://localhost:5000
+```
+
+## Project Structure
+```
+asr-pharmacy/
+├── public/                # Static assets
+├── src/
+│   ├── componets/         # UI components (auth, common, dashboard, layout)
+│   ├── pages/             # Page components (dashboard, masters, purchase, etc.)
+│   ├── services/          # API logic and Redux slices
+│   ├── data/              # Static/mock data and permissions
+│   ├── routes/            # App routes and protected route logic
+│   ├── store.js           # Redux store setup
+│   └── main.jsx           # App entry point
+├── package.json
+├── vite.config.js
+└── README.md
+```
+
+## License
+This project is for demonstration and educational purposes.
+
+---
+For questions or support, contact: support@asrpharmacy.com

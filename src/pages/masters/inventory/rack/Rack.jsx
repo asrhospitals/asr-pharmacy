@@ -1,8 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import AddRack from "./AddRack";
-import Button from '../../../../componets/common/Button';
+import Button from "../../../../componets/common/Button";
 import { Plus } from "lucide-react";
-import { useDeleteRackMutation, useEditRackMutation, useGetRacksQuery } from '../../../../services/rackApi';
+import {
+  useDeleteRackMutation,
+  useEditRackMutation,
+  useGetRacksQuery,
+} from "../../../../services/rackApi";
 import InventoryPageLayout from "../../../../componets/layout/InventoryPageLayout";
 
 const RackPage = () => {
@@ -14,18 +18,28 @@ const RackPage = () => {
   const [deleteRack] = useDeleteRackMutation();
   const [selectedRow, setSelectedRow] = useState(null);
 
-  const racks = racksData?.data || [];
+  const racks = racksData || [];
+
+  const tableData = useMemo(
+    () =>
+      racks.map((rack) => ({
+        ...rack,
+        storename: rack.stores?.storename || "",
+      })),
+    [racks]
+  );
 
   useEffect(() => {
-    if (racks && racks.length > 0) {
+    if (tableData && tableData.length > 0) {
       setSelectedRow((prev) => {
-        if (!prev || !racks.find((r) => r.id === prev.id)) {
-          return racks[0];
+        if (!prev || !tableData.find((r) => r.id === prev.id)) {
+          return tableData[0];
         }
-        return prev;
+        // If prev exists, update it with the latest data (including storename)
+        return tableData.find((r) => r.id === prev.id) || tableData[0];
       });
     }
-  }, [racks]);
+  }, [tableData]);
 
   const columns = [
     { key: "rackname", title: "Rack Name" },
@@ -57,7 +71,9 @@ const RackPage = () => {
   };
 
   const handleRowSelect = (row) => {
-    setSelectedRow(row);
+    // Always select from tableData to ensure storename is present
+    const found = tableData.find((r) => r.id === row.id);
+    setSelectedRow(found || row);
   };
 
   const handleKeyDown = (e) => {
@@ -85,7 +101,7 @@ const RackPage = () => {
             <Plus className="w-4 h-4" /> Add Rack
           </Button>,
         ]}
-        tableData={racks}
+        tableData={tableData}
         columns={columns}
         isLoading={isLoading}
         selectedRow={selectedRow}
@@ -94,14 +110,6 @@ const RackPage = () => {
         onEdit={handleEdit}
         onDelete={(row) => handleDelete(row.id)}
         onArrowNavigation={handleKeyDown}
-        rowInfoPanel={
-          selectedRow && (
-            <div className="flex flex-col gap-1 text-sm">
-              <div><b>Rack Name:</b> {selectedRow.rackname}</div>
-              <div><b>Store Name:</b> {selectedRow.storename}</div>
-            </div>
-          )
-        }
       />
       <AddRack isOpen={isModalOpen} onClose={handleCloseModal} />
       <AddRack

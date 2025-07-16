@@ -5,10 +5,15 @@ import Select from "../../../../componets/common/Select";
 import Button from "../../../../componets/common/Button";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { toast } from "react-toastify";
+import { showToast } from "../../../../componets/common/Toast";
 import { SelectField, TextField } from "../../../../componets/common/Fields";
 import LeftColumn from "./components/LeftColumn";
 import RightColumn from "./components/RightColumn";
+import { useGetRacksQuery } from "../../../../services/rackApi";
+import { useGetCompaniesQuery } from "../../../../services/companyApi";
+import { useGetSaltsQuery } from "../../../../services/saltApi";
+import { useGetUnitsQuery } from "../../../../services/unitApi";
+import { useGetHSNsQuery } from "../../../../services/hsnApi";
 
 const ADVANCE_TABS = ["Discount", "Quantity", "Other Info"];
 
@@ -17,12 +22,57 @@ export default function CreateItemPage() {
   const [addItem, { isLoading }] = useAddItemMutation();
   const [showAdvance, setShowAdvance] = useState(false);
   const [activeTab, setActiveTab] = useState("Discount");
+  const [selectedRack, setSelectedRack] = useState(null);
+  const [selectedCompany, setSelectedCompany] = useState(null);
+  const [selectedSalt, setSelectedSalt] = useState(null);
+  const [selectedUnit, setSelectedUnit] = useState(null);
+  const [selectedHSN, setSelectedHSN] = useState(null);
+
+  const { data: rackData } = useGetRacksQuery();
+  const { data: companyData } = useGetCompaniesQuery();
+  const { data: saltData } = useGetSaltsQuery();
+  const { data: unitData } = useGetUnitsQuery();
+  const { data: hsnData } = useGetHSNsQuery();
+
+  console.log(
+    "rackData, companyData, saltData, unitData, hsnData",
+    rackData,
+    companyData,
+    saltData,
+    unitData,
+    hsnData
+  );
+
+  const allData = {
+    rackData,
+    companyData,
+    saltData,
+    unitData,
+    hsnData,
+  };
+
+  const allSetters = {
+    setSelectedRack,
+    setSelectedCompany,
+    setSelectedSalt,
+    setSelectedUnit,
+    setSelectedHSN,
+  };
+
+  const allStates = {
+    selectedRack,
+    selectedCompany,
+    selectedSalt,
+    selectedUnit,
+    selectedHSN,
+  };
 
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
+    setValue,
   } = useForm({
     defaultValues: {
       productname: "",
@@ -59,15 +109,15 @@ export default function CreateItemPage() {
   const handleSave = async (data) => {
     try {
       await addItem(data).unwrap();
-      toast.success("Data saved successfully");
+      showToast("Data saved successfully", { type: "success" });
       reset();
     } catch (error) {
-      toast.error(error?.data?.message || "Failed to save item");
+      showToast(error?.data?.message || "Failed to save item", { type: "error" });
     }
   };
 
   const handleClear = () => {
-    toast.success("All Fields Cleared");
+    showToast("All Fields Cleared", { type: "success" });
     reset();
   };
 
@@ -85,7 +135,7 @@ export default function CreateItemPage() {
           <div
             className={`
           bg-white rounded shadow p-4 transition-all duration-500
-          ${showAdvance ? "lg:w-3/4" : "lg:w-full"} w-full
+          ${showAdvance ? "lg:w-3/5" : "lg:w-full"} w-full
         `}
           >
             {/* Header */}
@@ -117,19 +167,19 @@ export default function CreateItemPage() {
             </div>
 
             {/* Main Grid */}
-            <div className="space-y-4 text-xs">
+            <div className="space-y-4 text-m">
               {/* Product and Goods */}
               <div className="flex flex-col sm:flex-row gap-4">
                 <div className="flex-1">
                   <label className="block font-medium mb-1">Product *</label>
                   <Input
-                    className="h-8 w-full text-xs"
+                    className="h-8 w-full text-m"
                     {...register("productname", {
                       required: "Product Name is required",
                     })}
                   />
                   {errors.productname && (
-                    <span className="text-xs text-red-500">
+                    <span className="text-m text-red-500">
                       {errors.productname.message}
                     </span>
                   )}
@@ -138,7 +188,7 @@ export default function CreateItemPage() {
                   <label className="block font-medium mb-1">Goods</label>
                   <Select
                     noPadding
-                    className="h-8 w-full text-xs"
+                    className="h-8 w-full text-m"
                     {...register("goods")}
                   >
                     <option value="Goods">Goods</option>
@@ -149,24 +199,46 @@ export default function CreateItemPage() {
 
               {/* Columns */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <LeftColumn register={register} errors={errors} />
+                <LeftColumn
+                  allData={allData}
+                  setters={allSetters}
+                  states={allStates}
+                  register={register}
+                  errors={errors}
+                  setValue={setValue}
+                />
                 <RightColumn register={register} errors={errors} />
               </div>
             </div>
 
             {/* Bottom Sticky Buttons */}
-            <div className="bg-white h-10 py-2 flex items-center gap-2 justify-end z-10 sticky bottom-0 text-xs">
+            <div className="bg-white h-10 py-2 flex items-center gap-2 justify-end z-10 sticky bottom-0 text-m">
               <Button type="button" variant="secondary" onClick={handleBack}>
                 F4 Switch Tab
               </Button>
-              <Button type="submit" variant="primary" disabled={isLoading}>
-                F10 Save
+              <Button
+                type="submit"
+                buttonType={"save"}
+                variant="primary"
+                disabled={isLoading}
+              >
+                Save
               </Button>
-              <Button type="button" variant="secondary" onClick={handleClear}>
-                F9 Clear
+              <Button
+                type="button"
+                buttonType={"clear"}
+                variant="secondary"
+                onClick={handleClear}
+              >
+                Clear
               </Button>
-              <Button type="button" variant="danger" onClick={handleClose}>
-                Esc Close
+              <Button
+                type="button"
+                buttonType={"close"}
+                variant="danger"
+                onClick={handleClose}
+              >
+                Close
               </Button>
             </div>
           </div>
@@ -175,7 +247,7 @@ export default function CreateItemPage() {
           <div
             className={`
           transition-all duration-500
-          ${showAdvance ? "lg:w-1/4 w-full" : "lg:w-0 w-0"}
+          ${showAdvance ? "lg:w-2/5 w-full" : "lg:w-0 w-0"}
           overflow-hidden
         `}
           >
@@ -186,7 +258,7 @@ export default function CreateItemPage() {
                     <button
                       key={tab}
                       type="button"
-                      className={`px-3 py-1 text-xs font-medium border-b-2 ${
+                      className={`px-3 py-1 text-m font-medium border-b-2 ${
                         activeTab === tab
                           ? "border-blue-600 text-blue-700"
                           : "border-transparent text-gray-500"
@@ -200,12 +272,12 @@ export default function CreateItemPage() {
 
                 {/* Tab Content */}
                 {activeTab === "Discount" && (
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-m">
                     <div>
                       <label className="block font-medium mb-1">Discount</label>
                       <Select
                         noPadding
-                        className="h-8 text-xs"
+                        className="h-8 text-m"
                         {...register("discountType")}
                       >
                         <option value="Applicable">Applicable</option>
@@ -217,7 +289,7 @@ export default function CreateItemPage() {
                         Item Disc 1 %
                       </label>
                       <Input
-                        className="h-8 text-xs"
+                        className="h-8 text-m"
                         type="number"
                         {...register("itemDisc1")}
                       />
@@ -227,7 +299,7 @@ export default function CreateItemPage() {
                         Max Disc%
                       </label>
                       <Input
-                        className="h-8 text-xs"
+                        className="h-8 text-m"
                         type="number"
                         {...register("maxDisc")}
                       />
@@ -235,10 +307,10 @@ export default function CreateItemPage() {
                   </div>
                 )}
                 {activeTab === "Quantity" && (
-                  <div className="text-xs">Quantity (Coming soon)</div>
+                  <div className="text-m">Quantity (Coming soon)</div>
                 )}
                 {activeTab === "Other Info" && (
-                  <div className="text-xs">Other Info (Coming soon)</div>
+                  <div className="text-m">Other Info (Coming soon)</div>
                 )}
               </div>
             )}

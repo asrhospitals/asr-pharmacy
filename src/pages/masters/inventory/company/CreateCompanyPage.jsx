@@ -316,7 +316,7 @@ export default function CompanyForm({
             <Button
               type="submit"
               variant="primary"
-              endIcon={<Save className="w-4" />}
+              buttonType={"save"}
               disabled={isCreating || isEditing}
             >
               Save
@@ -324,7 +324,8 @@ export default function CompanyForm({
             <Button
               type="button"
               variant="secondary"
-              endIcon={<Eraser className="w-4" />}
+              buttonType={"clear"}
+              disabled={isCreating || isEditing}
               onClick={handleClear}
             >
               Clear
@@ -332,7 +333,8 @@ export default function CompanyForm({
             <Button
               type="button"
               variant="danger"
-              endIcon={<X className="w-4" />}
+              buttonType={"close"}
+              disabled={isCreating || isEditing}
               onClick={handleBack}
             >
               Close

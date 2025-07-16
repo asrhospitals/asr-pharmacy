@@ -86,13 +86,28 @@ export default function CreateUnitForm({
         {error && <div className="text-red-500 mb-4">{error}</div>}
         {success && <div className="text-green-500 mb-4">{success}</div>}
         <div className="flex gap-2 mt-6">
-          <Button type="submit" variant="primary" disabled={isLoading}>
+          <Button
+            buttonType={"save"}
+            type="submit"
+            variant="primary"
+            disabled={isLoading}
+          >
             Save
           </Button>
-          <Button type="button" variant="secondary" onClick={handleClear}>
+          <Button
+            buttonType={"clear"}
+            type="button"
+            variant="secondary"
+            onClick={handleClear}
+          >
             Clear
           </Button>
-          <Button type="button" variant="danger" onClick={onClose}>
+          <Button
+            buttonType={"close"}
+            type="button"
+            variant="danger"
+            onClick={onClose}
+          >
             Close
           </Button>
         </div>
