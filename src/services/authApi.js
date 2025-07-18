@@ -4,6 +4,8 @@ const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL
   ? `${import.meta.env.VITE_BACKEND_BASE_URL}/auth`
   : '/auth';
 
+  console.log("baseUrl", baseUrl);
+  
 export const authApi = createApi({
   reducerPath: 'authApi',
   baseQuery: fetchBaseQuery({ baseUrl }),
