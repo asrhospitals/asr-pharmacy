@@ -16,6 +16,7 @@ export const permissions = {
     backup: "VCED",
     settings: "VCED",
     reports: "VCED",
+    rate_master: "VCED",
   },
   pharmacist: {
     dashboard: "V",

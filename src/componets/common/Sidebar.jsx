@@ -99,6 +99,7 @@ const Sidebar = ({
     (!isLargeScreen && mobileOpen) ||
     (isLargeScreen && (!isCollapsed || isHovered));
   const user = useSelector((state) => state.user.user);
+  console.log('Current user role:', user?.role); // Debug log for user role
   const dispatch = useDispatch();
   const logout = () => dispatch(logoutAction());
   const location = useLocation();
@@ -235,7 +236,6 @@ const Sidebar = ({
         onClick={() => setMobileOpen(false)}
         aria-hidden="true"
       />
-      {/* Sidebar Drawer / Static Sidebar */}
       <div
         className={`fixed top-0 left-0 h-full z-60 bg-white shadow-lg border-r border-gray-200 transition-all duration-300 lg:static lg:z-0 lg:translate-x-0 ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
@@ -247,7 +247,6 @@ const Sidebar = ({
         onMouseLeave={() => isLargeScreen && isCollapsed && setIsHovered(false)}
       >
         <div className="flex flex-col h-full">
-          {/* Header */}
           <div className="flex items-center gap-2 p-4 border-b border-gray-200">
             <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">ASR</span>
@@ -257,7 +256,6 @@ const Sidebar = ({
                 ASR Pharmacy
               </span>
             )}
-            {/* Mobile close button */}
             <button
               className="lg:hidden ml-auto p-2 rounded hover:bg-gray-100 focus:outline-none"
               onClick={() => setMobileOpen(false)}
@@ -266,7 +264,6 @@ const Sidebar = ({
               <X className="w-6 h-6 text-gray-700" />
             </button>
           </div>
-          {/* User Role Badge */}
           {isSidebarExpanded && (
             <div className="px-4 py-2">
               <div className="bg-gradient-to-r from-blue-50 to-purple-50 px-3 py-2 rounded-lg">
@@ -276,7 +273,6 @@ const Sidebar = ({
               </div>
             </div>
           )}
-          {/* Search */}
           {isSidebarExpanded && (
             <div className="p-4">
               <div className="relative">
@@ -289,7 +285,6 @@ const Sidebar = ({
               </div>
             </div>
           )}
-          {/* Navigation Menu */}
           <nav className="flex-1 px-2 pt-2 pb-10 overflow-y-auto">
             <div className="space-y-1">
               {menuItems.map((item) => renderMenuItem(item))}
