@@ -122,7 +122,21 @@ export default function SaltForm({
     setError("");
     setSuccess("");
     try {
-      const payload = { saltData: { ...data }, saltvariations: variants };
+      // Check if all variants are empty
+      const allEmpty = variants.every(
+        v =>
+          !v.strength &&
+          !v.dosageForm &&
+          !v.brandName &&
+          !v.packSize &&
+          !v.mrp &&
+          !v.dpco_applicable &&
+          !v.dpco_mrp
+      );
+      const payload = {
+        saltData: { ...data },
+        variationData: allEmpty ? [] : variants,
+      };
       if (isEditMode) {
         await editSalt({ id, ...payload }).unwrap();
         setSuccess("Salt updated successfully!");
@@ -137,17 +151,7 @@ export default function SaltForm({
         showToast("Salt created successfully!", { type: "success" });
       }
       reset();
-      setVariants([
-        {
-          strength: "",
-          dosageForm: "",
-          brandName: "",
-          packSize: "",
-          mrp: "",
-          dpco_applicable: false,
-          dpco_mrp: "",
-        },
-      ]);
+      setVariants([]); // Set to empty array after save
       navigate("/master/inventory/salts");
       console.log(payload);
     } catch (err) {
@@ -165,17 +169,7 @@ export default function SaltForm({
 
   const handleClear = () => {
     reset();
-    setVariants([
-      {
-        strength: "",
-        dosageForm: "",
-        brandName: "",
-        packSize: "",
-        mrp: "",
-        dpco_applicable: false,
-        dpco_mrp: "",
-      },
-    ]);
+    setVariants([]); // Set to empty array after clear
   };
 
   const handleBack = () => navigate("/master/inventory/salts");
@@ -194,8 +188,11 @@ export default function SaltForm({
         dpco_mrp: "",
       },
     ]);
-  const removeVariant = (idx) =>
-    setVariants(variants.filter((_, i) => i !== idx));
+  const removeVariant = (idx) => {
+    if (variants.length > 1) {
+      setVariants(variants.filter((_, i) => i !== idx));
+    }
+  };
   const handleVariantChange = (idx, field, value) => {
     const updated = [...variants];
     updated[idx][field] = value;

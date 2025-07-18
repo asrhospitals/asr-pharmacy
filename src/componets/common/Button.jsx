@@ -36,7 +36,7 @@ const Button = ({
       if (
         (keyMap[buttonType].key === "Escape" && e.key === "Escape") ||
         (keyMap[buttonType].key !== "Escape" &&
-          e.key.toUpperCase() === keyMap[buttonType].key)
+          e?.key?.toUpperCase() === keyMap[buttonType]?.key)
       ) {
         e.preventDefault();
         if (onKeyShortcut) onKeyShortcut(e);

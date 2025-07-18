@@ -8,7 +8,7 @@ import { store } from "./store.js";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename="/asr-pharmacy">
       <Provider store={store}>
         <App />
       </Provider>
