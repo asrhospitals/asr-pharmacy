@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { buildQueryParams } from '../utils/queryParams';
 
 const baseQueryWithAuth = fetchBaseQuery({
   baseUrl: import.meta.env.VITE_BACKEND_BASE_URL
@@ -18,11 +19,11 @@ export const saltApi = createApi({
   baseQuery: baseQueryWithAuth,
   endpoints: (builder) => ({
     getSalts: builder.query({
-      query: () => ({
-        url: "/salt/v1/get-salt",
-        method: "GET",
+      query: ({ page = 1, limit = 10, search = '', filters = {} } = {}) => ({
+        url: `/salt/v1/get-salt?${buildQueryParams({ page, limit, search, filters })}`,
+        method: 'GET',
       }),
-      providesTags: ["Salt"],
+      providesTags: ['Salt'],
     }),
     addSalt: builder.mutation({
       query: (saltData) => ({

@@ -4,26 +4,32 @@ import Button from "../../../../componets/common/Button";
 import { Plus } from "lucide-react";
 import { useDeleteHSNMutation, useEditHSNMutation, useGetHSNsQuery } from "../../../../services/hsnApi";
 import InventoryPageLayout from "../../../../componets/layout/InventoryPageLayout";
+import Pagination from '../../../../componets/common/Pagination';
+import { useDebounce } from '../../../../utils/useDebounce';
 
 const HSNPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editHSNData, setEditHSNData] = useState(null);
-  const { data: hsn = [], error, isLoading, refetch } = useGetHSNsQuery();
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 300);
+  const { data, error, isLoading, refetch } = useGetHSNsQuery({ page, limit, search: debouncedSearch });
   const [editHSN] = useEditHSNMutation();
   const [deleteHSN] = useDeleteHSNMutation();
   const [selectedRow, setSelectedRow] = useState(null);
 
   useEffect(() => {
-    if (hsn && hsn.length > 0) {
+    if (data?.data && data.data.length > 0) {
       setSelectedRow((prev) => {
-        if (!prev || !hsn.find((h) => h.id === prev.id)) {
-          return hsn[0];
+        if (!prev || !data.data.find((h) => h.id === prev.id)) {
+          return data.data[0];
         }
         return prev;
       });
     }
-  }, [hsn]);
+  }, [data]);
 
   const columns = [
     { key: "hsnsacname", title: "Name" },
@@ -60,16 +66,16 @@ const HSNPage = () => {
   };
 
   const handleKeyDown = (e) => {
-    if (!hsn || hsn.length === 0) return;
+    if (!data?.data || data.data.length === 0) return;
     if (!selectedRow) return;
-    const idx = hsn.findIndex((h) => h.id === selectedRow.id);
+    const idx = data.data.findIndex((h) => h.id === selectedRow.id);
     if (e.key === "ArrowDown") {
-      const nextIdx = idx < hsn.length - 1 ? idx + 1 : 0;
-      setSelectedRow(hsn[nextIdx]);
+      const nextIdx = idx < data.data.length - 1 ? idx + 1 : 0;
+      setSelectedRow(data.data[nextIdx]);
       e.preventDefault();
     } else if (e.key === "ArrowUp") {
-      const prevIdx = idx > 0 ? idx - 1 : hsn.length - 1;
-      setSelectedRow(hsn[prevIdx]);
+      const prevIdx = idx > 0 ? idx - 1 : data.data.length - 1;
+      setSelectedRow(data.data[prevIdx]);
       e.preventDefault();
     }
   };
@@ -84,7 +90,9 @@ const HSNPage = () => {
             <Plus className="w-4 h-4" /> Create HSN/SAC
           </Button>,
         ]}
-        tableData={hsn}
+        search={search}
+        onSearchChange={e => { setSearch(e.target.value); setPage(1); }}
+        tableData={data?.data || []}
         columns={columns}
         isLoading={isLoading}
         selectedRow={selectedRow}
@@ -93,7 +101,13 @@ const HSNPage = () => {
         onEdit={handleEdit}
         onDelete={(row) => handleDelete(row.id)}
         onArrowNavigation={handleKeyDown}
-      />
+      >
+        <Pagination
+          page={page}
+          totalPages={data?.totalPages || 1}
+          onPageChange={setPage}
+        />
+      </InventoryPageLayout>
       <AddHSN isOpen={isModalOpen} onClose={handleCloseModal} />
       <AddHSN
         initialData={editHSNData}

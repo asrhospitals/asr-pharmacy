@@ -4,23 +4,29 @@ import { Plus } from "lucide-react";
 import { useDeleteSaltMutation, useGetSaltsQuery } from "../../../../services/saltApi";
 import { useNavigate } from "react-router-dom";
 import InventoryPageLayout from "../../../../componets/layout/InventoryPageLayout";
+import Pagination from '../../../../componets/common/Pagination';
+import { useDebounce } from '../../../../utils/useDebounce';
 
 const SaltPage = () => {
-  const { data: salts = [], error, isLoading, refetch } = useGetSaltsQuery();
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 300);
+  const { data, error, isLoading, refetch } = useGetSaltsQuery({ page, limit, search: debouncedSearch });
   const [deleteSalt] = useDeleteSaltMutation();
   const navigate = useNavigate();
   const [selectedRow, setSelectedRow] = useState(null);
 
   useEffect(() => {
-    if (salts && salts.length > 0) {
+    if (data?.data && data.data.length > 0) {
       setSelectedRow((prev) => {
-        if (!prev || !salts.find((s) => s.id === prev.id)) {
-          return salts[0];
+        if (!prev || !data.data.find((s) => s.id === prev.id)) {
+          return data.data[0];
         }
         return prev;
       });
     }
-  }, [salts]);
+  }, [data]);
 
   const columns = [
     { key: "saltname", title: "Header" },
@@ -44,16 +50,16 @@ const SaltPage = () => {
   };
 
   const handleKeyDown = (e) => {
-    if (!salts || salts.length === 0) return;
+    if (!data?.data || data.data.length === 0) return;
     if (!selectedRow) return;
-    const idx = salts.findIndex((s) => s.id === selectedRow.id);
+    const idx = data.data.findIndex((s) => s.id === selectedRow.id);
     if (e.key === "ArrowDown") {
-      const nextIdx = idx < salts.length - 1 ? idx + 1 : 0;
-      setSelectedRow(salts[nextIdx]);
+      const nextIdx = idx < data.data.length - 1 ? idx + 1 : 0;
+      setSelectedRow(data.data[nextIdx]);
       e.preventDefault();
     } else if (e.key === "ArrowUp") {
-      const prevIdx = idx > 0 ? idx - 1 : salts.length - 1;
-      setSelectedRow(salts[prevIdx]);
+      const prevIdx = idx > 0 ? idx - 1 : data.data.length - 1;
+      setSelectedRow(data.data[prevIdx]);
       e.preventDefault();
     }
   };
@@ -67,7 +73,9 @@ const SaltPage = () => {
           <Plus className="w-4 h-4 mr-2" /> Create Salt
         </Button>,
       ]}
-      tableData={salts}
+      search={search}
+      onSearchChange={e => { setSearch(e.target.value); setPage(1); }}
+      tableData={data?.data || []}
       columns={columns}
       isLoading={isLoading}
       selectedRow={selectedRow}
@@ -106,7 +114,13 @@ const SaltPage = () => {
           </div>
         )
       }
-    />
+    >
+      <Pagination
+        page={page}
+        totalPages={data?.totalPages || 1}
+        onPageChange={setPage}
+      />
+    </InventoryPageLayout>
   );
 };
 

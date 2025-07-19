@@ -95,7 +95,7 @@ export default function CompanyForm({
         storeroom: 1,
       });
       setEmailWebsite({ main: "", cc: "", bcc: "", url: "" });
-      navigate("/master/inventory/companys");
+      navigate("/master/inventory/companies");
     } catch (err) {
       setError(
         err?.data?.message ||
@@ -122,7 +122,7 @@ export default function CompanyForm({
   };
 
   const handleBack = () => {
-    navigate("/master/inventory/companys");
+    navigate("/master/inventory/companies");
   };
 
   return (

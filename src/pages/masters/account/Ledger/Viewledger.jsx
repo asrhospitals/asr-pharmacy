@@ -26,7 +26,7 @@ const Viewledger = () => {
 
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_BASE_URL}/inventory/company/v1/get-companies`
+        `${import.meta.env.VITE_BACKEND_BASE_URL}/account/get-ledger`
       );
       if (response.status === 200) {
         const ledgerData = response.data || [];

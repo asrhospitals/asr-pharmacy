@@ -7,23 +7,29 @@ import {
 } from "../../../../services/companyApi";
 import { useNavigate } from "react-router-dom";
 import InventoryPageLayout from "../../../../componets/layout/InventoryPageLayout";
+import Pagination from '../../../../componets/common/Pagination';
+import { useDebounce } from '../../../../utils/useDebounce';
 
 const CompanyPage = () => {
-  const { data: companies = [], error, isLoading, refetch } = useGetCompaniesQuery();
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 300);
+  const { data, error, isLoading, refetch } = useGetCompaniesQuery({ page, limit, search: debouncedSearch });
   const [deleteCompany] = useDeleteCompanyMutation();
   const navigate = useNavigate();
   const [selectedRow, setSelectedRow] = useState(null);
 
   useEffect(() => {
-    if (companies && companies.length > 0) {
+    if (data?.data && data.data.length > 0) {
       setSelectedRow((prev) => {
-        if (!prev || !companies.find((c) => c.id === prev.id)) {
-          return companies[0];
+        if (!prev || !data.data.find((c) => c.id === prev.id)) {
+          return data.data[0];
         }
         return prev;
       });
     }
-  }, [companies]);
+  }, [data]);
 
   const columns = [{ key: "companyname", title: "Company Name" }];
 
@@ -32,7 +38,7 @@ const CompanyPage = () => {
   };
 
   const handleEdit = (row) => {
-    navigate(`/master/inventory/companys/edit/${row.id}`);
+    navigate(`/master/inventory/companies/edit/${row.id}`);
   };
 
   const handleDelete = async (id) => {
@@ -45,16 +51,16 @@ const CompanyPage = () => {
   };
 
   const handleKeyDown = (e) => {
-    if (!companies || companies.length === 0) return;
+    if (!data?.data || data.data.length === 0) return;
     if (!selectedRow) return;
-    const idx = companies.findIndex((c) => c.id === selectedRow.id);
+    const idx = data.data.findIndex((c) => c.id === selectedRow.id);
     if (e.key === "ArrowDown") {
-      const nextIdx = idx < companies.length - 1 ? idx + 1 : 0;
-      setSelectedRow(companies[nextIdx]);
+      const nextIdx = idx < data.data.length - 1 ? idx + 1 : 0;
+      setSelectedRow(data.data[nextIdx]);
       e.preventDefault();
     } else if (e.key === "ArrowUp") {
-      const prevIdx = idx > 0 ? idx - 1 : companies.length - 1;
-      setSelectedRow(companies[prevIdx]);
+      const prevIdx = idx > 0 ? idx - 1 : data.data.length - 1;
+      setSelectedRow(data.data[prevIdx]);
       e.preventDefault();
     }
   };
@@ -73,7 +79,9 @@ const CompanyPage = () => {
           Add Company
         </Button>,
       ]}
-      tableData={companies}
+      search={search}
+      onSearchChange={e => { setSearch(e.target.value); setPage(1); }}
+      tableData={data?.data || []}
       columns={columns}
       isLoading={isLoading}
       selectedRow={selectedRow}
@@ -82,7 +90,13 @@ const CompanyPage = () => {
       onEdit={handleEdit}
       onDelete={(row) => handleDelete(row.id)}
       onArrowNavigation={handleKeyDown}
-    />
+    >
+      <Pagination
+        page={page}
+        totalPages={data?.totalPages || 1}
+        onPageChange={setPage}
+      />
+    </InventoryPageLayout>
   );
 };
 

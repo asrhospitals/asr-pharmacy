@@ -8,21 +8,27 @@ import {
   useGetRacksQuery,
 } from "../../../../services/rackApi";
 import InventoryPageLayout from "../../../../componets/layout/InventoryPageLayout";
+import Pagination from '../../../../componets/common/Pagination';
+import { useDebounce } from '../../../../utils/useDebounce';
 
 const RackPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editRackData, setEditRackData] = useState(null);
-  const { data: racksData, error, isLoading, refetch } = useGetRacksQuery();
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 300);
+  const { data, error, isLoading, refetch } = useGetRacksQuery({ page, limit, search: debouncedSearch });
   const [editRack] = useEditRackMutation();
   const [deleteRack] = useDeleteRackMutation();
   const [selectedRow, setSelectedRow] = useState(null);
 
-  const racks = racksData || [];
+  const racks = data || {};
 
   const tableData = useMemo(
     () =>
-      racks.map((rack) => ({
+      (racks.data || []).map((rack) => ({
         ...rack,
         storename: rack.stores?.storename || "",
       })),
@@ -101,6 +107,8 @@ const RackPage = () => {
             <Plus className="w-4 h-4" /> Add Rack
           </Button>,
         ]}
+        search={search}
+        onSearchChange={e => { setSearch(e.target.value); setPage(1); }}
         tableData={tableData}
         columns={columns}
         isLoading={isLoading}
@@ -110,7 +118,13 @@ const RackPage = () => {
         onEdit={handleEdit}
         onDelete={(row) => handleDelete(row.id)}
         onArrowNavigation={handleKeyDown}
-      />
+      >
+        <Pagination
+          page={page}
+          totalPages={data?.totalPages || 1}
+          onPageChange={setPage}
+        />
+      </InventoryPageLayout>
       <AddRack isOpen={isModalOpen} onClose={handleCloseModal} />
       <AddRack
         initialData={editRackData}

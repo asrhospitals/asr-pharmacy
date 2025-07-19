@@ -35,9 +35,9 @@ const routeConfig = [
   { path: "/master/inventory/stores", module: "inventory", action: "V", element: <StorePage /> },
   { path: "/master/inventory/units", module: "inventory", action: "V", element: <UnitPage /> },
   { path: "/master/inventory/racks", module: "inventory", action: "V", element: <RackPage /> },
-  { path: "/master/inventory/companys", module: "inventory", action: "V", element: <Company /> },
+  { path: "/master/inventory/companies", module: "inventory", action: "V", element: <Company /> },
   { path: "/master/inventory/company/create", module: "inventory", action: "C", element: <CreateCompanyPage /> },
-  { path: "/master/inventory/companys/edit/:id", module: "inventory", action: "E", element: <CompanyForm isEditMode={true} /> },
+  { path: "/master/inventory/companies/edit/:id", module: "inventory", action: "E", element: <CompanyForm isEditMode={true} /> },
 
   { path: "/master/inventory/salts", module: "inventory", action: "V", element: <SaltPage /> },
   { path: "/master/inventory/salt/create", module: "inventory", action: "C", element: <CreateSaltPage /> },

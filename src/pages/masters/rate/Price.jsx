@@ -31,7 +31,8 @@ const enrichItems = (items) =>
 export default function PriceListPage() {
   const [search, setSearch] = useState('');
   const [selectedRow, setSelectedRow] = useState(null);
-  const { data: items = [], isLoading } = useGetItemsQuery();
+  const { data: itemsData = {}, isLoading } = useGetItemsQuery();
+  const items = itemsData?.data || [];
 
   // Transform API data to match columns (fallback to 0 if price missing)
   const enrichItems = (items) =>

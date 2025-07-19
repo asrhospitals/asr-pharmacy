@@ -47,7 +47,7 @@ const adminMenu = [
           { title: "Item", path: "/master/inventory/items" },
           { title: "Store", path: "/master/inventory/stores" },
           { title: "Rack", path: "/master/inventory/racks" },
-          { title: "Company", path: "/master/inventory/companys" },
+          { title: "Company", path: "/master/inventory/companies" },
           { title: "Salt", path: "/master/inventory/salts" },
           { title: "HSN/SAC", path: "/master/inventory/sacs" },
           { title: "Unit", path: "/master/inventory/units" },

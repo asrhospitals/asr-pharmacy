@@ -126,8 +126,7 @@ export default function SearchableSelect({
             </li>
           ))}
           {allowCreate &&
-            inputValue &&
-            !filteredOptions.some((opt) => opt.label === inputValue) && (
+            !normalizedOptions.some((opt) => opt.label === inputValue) && (
               <li
                 className="px-3 py-2 cursor-pointer text-blue-600 hover:bg-blue-50"
                 onMouseDown={(e) => {

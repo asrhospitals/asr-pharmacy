@@ -9,26 +9,32 @@ import {
   useDeleteStoreMutation,
 } from "../../../../services/storeApi";
 import InventoryPageLayout from "../../../../componets/layout/InventoryPageLayout";
+import Pagination from '../../../../componets/common/Pagination';
+import { useDebounce } from '../../../../utils/useDebounce';
 
 const StorePage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [editStoreData, setEditStoreData] = useState(null);
-  const { data: stores, error, isLoading, refetch } = useGetStoresQuery();
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 300);
+  const { data, error, isLoading, refetch } = useGetStoresQuery({ page, limit, search: debouncedSearch });
   const [editStore] = useEditStoreMutation();
   const [deleteStore] = useDeleteStoreMutation();
   const [selectedStore, setSelectedStore] = useState(null);
 
   useEffect(() => {
-    if (stores && stores.length > 0) {
+    if (data?.data && data.data.length > 0) {
       setSelectedStore((prev) => {
-        if (!prev || !stores.find((s) => s.id === prev.id)) {
-          return stores[0];
+        if (!prev || !data.data.find((s) => s.id === prev.id)) {
+          return data.data[0];
         }
         return prev;
       });
     }
-  }, [stores]);
+  }, [data]);
 
   const columns = [{ key: "storename", title: "Store Name" }];
 
@@ -65,16 +71,16 @@ const StorePage = () => {
   };
 
   const handleKeyDown = (e) => {
-    if (!stores || stores.length === 0) return;
+    if (!data?.data || data.data.length === 0) return;
     if (!selectedStore) return;
-    const idx = stores.findIndex((s) => s.id === selectedStore.id);
+    const idx = data.data.findIndex((s) => s.id === selectedStore.id);
     if (e.key === "ArrowDown") {
-      const nextIdx = idx < stores.length - 1 ? idx + 1 : 0;
-      setSelectedStore(stores[nextIdx]);
+      const nextIdx = idx < data.data.length - 1 ? idx + 1 : 0;
+      setSelectedStore(data.data[nextIdx]);
       e.preventDefault();
     } else if (e.key === "ArrowUp") {
-      const prevIdx = idx > 0 ? idx - 1 : stores.length - 1;
-      setSelectedStore(stores[prevIdx]);
+      const prevIdx = idx > 0 ? idx - 1 : data.data.length - 1;
+      setSelectedStore(data.data[prevIdx]);
       e.preventDefault();
     }
   };
@@ -89,7 +95,9 @@ const StorePage = () => {
             <Plus className="w-4 h-4" /> Add Store
           </Button>,
         ]}
-        tableData={stores || []}
+        search={search}
+        onSearchChange={e => { setSearch(e.target.value); setPage(1); }}
+        tableData={data?.data || []}
         columns={columns}
         isLoading={isLoading}
         selectedRow={selectedStore}
@@ -108,7 +116,13 @@ const StorePage = () => {
             </div>
           </>
         }
-      />
+      >
+        <Pagination
+          page={page}
+          totalPages={data?.totalPages || 1}
+          onPageChange={setPage}
+        />
+      </InventoryPageLayout>
       <AddStore isOpen={isModalOpen} onClose={handleCloseModal} />
       <AddStore
         initialData={editStoreData}

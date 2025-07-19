@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { buildQueryParams } from '../utils/queryParams';
 
 const baseQueryWithAuth = fetchBaseQuery({
   baseUrl: import.meta.env.VITE_BACKEND_BASE_URL
@@ -18,11 +19,11 @@ export const hsnApi = createApi({
   baseQuery: baseQueryWithAuth,
   endpoints: (builder) => ({
     getHSNs: builder.query({
-      query: () => ({
-        url: "/hsn/v1/get-hsn",
-        method: "GET",
+      query: ({ page = 1, limit = 10, search = '', filters = {} } = {}) => ({
+        url: `/hsn/v1/get-hsn?${buildQueryParams({ page, limit, search, filters })}`,
+        method: 'GET',
       }),
-      providesTags: ["HSN"],
+      providesTags: ['HSN'],
     }),
     addHSN: builder.mutation({
       query: (hsnData) => ({

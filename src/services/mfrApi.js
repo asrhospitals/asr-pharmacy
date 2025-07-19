@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { buildQueryParams } from '../utils/queryParams';
 
 const baseQueryWithAuth = fetchBaseQuery({
   baseUrl: import.meta.env.VITE_BACKEND_BASE_URL
@@ -18,11 +19,11 @@ export const mfrApi = createApi({
   baseQuery: baseQueryWithAuth,
   endpoints: (builder) => ({
     getManufacturers: builder.query({
-      query: () => ({
-        url: "/manu/v1/get-manufacturer",
-        method: "GET",
+      query: ({ page = 1, limit = 10, search = '', filters = {} } = {}) => ({
+        url: `/manu/v1/get-manufacturer?${buildQueryParams({ page, limit, search, filters })}`,
+        method: 'GET',
       }),
-      providesTags: ["Manufacturer"],
+      providesTags: ['Manufacturer'],
     }),
     addManufacturer: builder.mutation({
       query: (mfrData) => ({

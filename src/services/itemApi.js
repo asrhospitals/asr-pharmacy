@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { buildQueryParams } from '../utils/queryParams';
 
 const baseQueryWithAuth = fetchBaseQuery({
   baseUrl: import.meta.env.VITE_BACKEND_BASE_URL
@@ -18,8 +19,8 @@ export const itemApi = createApi({
   baseQuery: baseQueryWithAuth,
   endpoints: (builder) => ({
     getItems: builder.query({
-      query: () => ({
-        url: '/item/v1/get-item',
+      query: ({ page = 1, limit = 10, search = '', filters = {} } = {}) => ({
+        url: `/item/v1/get-item?${buildQueryParams({ page, limit, search, filters })}`,
         method: 'GET',
       }),
       providesTags: ['Item'],

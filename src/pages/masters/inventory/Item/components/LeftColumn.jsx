@@ -2,7 +2,7 @@ import React from "react";
 import { SelectField, TextField } from "../../../../../componets/common/Fields";
 import SearchableSelect from "../../../../../componets/common/SearchableSelect";
 
-const LeftColumn = ({ errors, register, allData, states, setters, setValue }) => {
+const LeftColumn = ({ errors, register, allData, states, setters, setValue, onCreateRack, onCreateUnit, onCreateHSN, onCreateCompany, onCreateSalt }) => {
   return (
     <div className="space-y-3">
       <TextField
@@ -30,9 +30,14 @@ const LeftColumn = ({ errors, register, allData, states, setters, setValue }) =>
           Rack *
         </label>
         <SearchableSelect
-          options={allData?.rackData?.map((s) => ({ label: s.rackname, value: s.id }))}
+          options={allData?.rackData?.data?.map((s) => ({ label: s.rackname, value: s.id }))}
           value={states?.selectedRack}
+          allowCreate={true}
           onChange={(opt) => {
+            if (opt.isNew) {
+              onCreateRack && onCreateRack();
+              return;
+            }
             setters.setSelectedRack(opt.value);
             setValue("rack", opt.value, { shouldValidate: true });
           }}
@@ -50,9 +55,14 @@ const LeftColumn = ({ errors, register, allData, states, setters, setValue }) =>
           Company *
         </label>
         <SearchableSelect
-          options={allData?.companyData?.map((s) => ({ label: s.companyname, value: s.id }))}
+          options={allData?.companyData?.data?.map((s) => ({ label: s.companyname, value: s.id }))}
           value={states?.selectedCompany}
+          allowCreate={true}
           onChange={(opt) => {
+            if (opt.isNew) {
+              onCreateCompany && onCreateCompany();
+              return;
+            }
             setters.setSelectedCompany(opt.value);
             setValue("company", opt.value, { shouldValidate: true });
           }}
@@ -70,9 +80,14 @@ const LeftColumn = ({ errors, register, allData, states, setters, setValue }) =>
           Salt
         </label>
         <SearchableSelect
-          options={allData?.saltData?.map((s) => ({ label: s.saltname, value: s.id }))}
+          options={allData?.saltData?.data?.map((s) => ({ label: s.saltname, value: s.id }))}
           value={states?.selectedSalt}
+          allowCreate={true}
           onChange={(opt) => {
+            if (opt.isNew) {
+              onCreateSalt && onCreateSalt();
+              return;
+            }
             setters.setSelectedSalt(opt.value);
             setValue("salt", opt.value, { shouldValidate: true });
           }}
@@ -90,9 +105,14 @@ const LeftColumn = ({ errors, register, allData, states, setters, setValue }) =>
           Unit *
         </label>
         <SearchableSelect
-          options={allData?.unitData?.map((s) => ({ label: s.unitName, value: s.id }))}
+          options={allData?.unitData?.data?.map((s) => ({ label: s.unitName, value: s.id }))}
           value={states?.selectedUnit}
+          allowCreate={true}
           onChange={(opt) => {
+            if (opt.isNew) {
+              onCreateUnit && onCreateUnit();
+              return;
+            }
             setters.setSelectedUnit(opt.value);
             setValue("unit1", opt.value, { shouldValidate: true });
           }}
@@ -110,9 +130,14 @@ const LeftColumn = ({ errors, register, allData, states, setters, setValue }) =>
           HSN/SAC *
         </label>
         <SearchableSelect
-          options={allData?.hsnData?.map((s) => ({ label: s.hsnsacname, value: s.id }))}
+          options={allData?.hsnData?.data?.map((s) => ({ label: s.hsnsacname, value: s.id }))}
           value={states?.selectedHSN}
+          allowCreate={true}
           onChange={(opt) => {
+            if (opt.isNew) {
+              onCreateHSN && onCreateHSN();
+              return;
+            }
             setters.setSelectedHSN(opt.value);
             setValue("hsnsac", opt.value, { shouldValidate: true });
           }}

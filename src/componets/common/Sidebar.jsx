@@ -27,7 +27,7 @@ const pathToPermission = {
   "/master/inventory/stores": "inventory",
   "/master/inventory/units": "inventory",
   "/master/inventory/racks": "inventory",
-  "/master/inventory/companys": "inventory",
+  "/master/inventory/companies": "inventory",
   "/master/inventory/salts": "inventory",
   "/master/inventory/sacs": "inventory",
   "/master/inventory/manufacturers": "inventory",

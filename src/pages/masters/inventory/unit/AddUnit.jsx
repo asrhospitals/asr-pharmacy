@@ -83,8 +83,7 @@ export default function CreateUnitForm({
           noHeight={true}
           noStyle={true}
         />
-        {error && <div className="text-red-500 mb-4">{error}</div>}
-        {success && <div className="text-green-500 mb-4">{success}</div>}
+        {/* Removed in-UI error and success messages, use toasts only */}
         <div className="flex gap-2 mt-6">
           <Button
             buttonType={"save"}

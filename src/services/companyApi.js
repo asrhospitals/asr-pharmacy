@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { buildQueryParams } from '../utils/queryParams';
 
 const baseQueryWithAuth = fetchBaseQuery({
   baseUrl: import.meta.env.VITE_BACKEND_BASE_URL
@@ -18,11 +19,11 @@ export const companyApi = createApi({
   baseQuery: baseQueryWithAuth,
   endpoints: (builder) => ({
     getCompanies: builder.query({
-      query: () => ({
-        url: "/company/v1/get-companies",
-        method: "GET",
+      query: ({ page = 1, limit = 10, search = '', filters = {} } = {}) => ({
+        url: `/company/v1/get-companies?${buildQueryParams({ page, limit, search, filters })}`,
+        method: 'GET',
       }),
-      providesTags: ["Company"],
+      providesTags: ['Company'],
     }),
     addCompany: builder.mutation({
       query: (companyData) => ({

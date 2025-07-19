@@ -14,6 +14,9 @@ import { useGetCompaniesQuery } from "../../../../services/companyApi";
 import { useGetSaltsQuery } from "../../../../services/saltApi";
 import { useGetUnitsQuery } from "../../../../services/unitApi";
 import { useGetHSNsQuery } from "../../../../services/hsnApi";
+import CreateUnitForm from "../unit/AddUnit";
+import CreateHsnSacForm from "../hsn/AddHSN";
+import AddRack from "../rack/AddRack";
 
 const ADVANCE_TABS = ["Discount", "Quantity", "Other Info"];
 
@@ -27,6 +30,9 @@ export default function CreateItemPage() {
   const [selectedSalt, setSelectedSalt] = useState(null);
   const [selectedUnit, setSelectedUnit] = useState(null);
   const [selectedHSN, setSelectedHSN] = useState(null);
+  const [isUnitModalOpen, setIsUnitModalOpen] = useState(false);
+  const [isHSNModalOpen, setIsHSNModalOpen] = useState(false);
+  const [isRackModalOpen, setIsRackModalOpen] = useState(false);
 
   const { data: rackData } = useGetRacksQuery();
   const { data: companyData } = useGetCompaniesQuery();
@@ -128,6 +134,10 @@ export default function CreateItemPage() {
 
   return (
     <div className="flex flex-col overflow-hidden no-scrollbar">
+      {/* Modals for creation */}
+      <AddRack isOpen={isRackModalOpen} onClose={() => setIsRackModalOpen(false)} />
+      <CreateUnitForm isOpen={isUnitModalOpen} onClose={() => setIsUnitModalOpen(false)} />
+      <CreateHsnSacForm isOpen={isHSNModalOpen} onClose={() => setIsHSNModalOpen(false)} />
       <form
         onSubmit={handleSubmit(handleSave)}
         className="flex-1 flex flex-col relative"
@@ -208,6 +218,11 @@ export default function CreateItemPage() {
                   register={register}
                   errors={errors}
                   setValue={setValue}
+                  onCreateRack={() => setIsRackModalOpen(true)}
+                  onCreateUnit={() => setIsUnitModalOpen(true)}
+                  onCreateHSN={() => setIsHSNModalOpen(true)}
+                  onCreateCompany={() => navigate("/master/inventory/company/create")}
+                  onCreateSalt={() => navigate("/master/inventory/salt/create")}
                 />
                 <RightColumn register={register} errors={errors} />
               </div>

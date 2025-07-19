@@ -8,17 +8,22 @@ import Input from "../../../../componets/common/Input";
 import Select from "../../../../componets/common/Select";
 import Loader from "../../../../componets/common/Loader";
 import InventoryPageLayout from "../../../../componets/layout/InventoryPageLayout";
+import Pagination from '../../../../componets/common/Pagination';
+import { useDebounce } from '../../../../utils/useDebounce';
 
 const ItemsPage = () => {
   const [selectedRow, setSelectedRow] = useState(null);
   const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 300);
   const [searchField, setSearchField] = useState("Description");
   const [selectedStore, setSelectedStore] = useState("");
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
 
   const navigate = useNavigate();
 
-  const { data: items, isLoading } = useGetItemsQuery();
-  const { data: stores = [] } = useGetStoresQuery();
+  const { data, isLoading } = useGetItemsQuery({ page, limit, search: debouncedSearch, filters: selectedStore ? { storeid: selectedStore } : {} });
+  const { data: stores = [] } = useGetStoresQuery();  
   // const [deleteItem] = useDeleteItemMutation();
 
   const handleAddItem = () => navigate("/master/inventory/items/create");
@@ -32,17 +37,6 @@ const ItemsPage = () => {
     { key: "price", title: "M.R.P" },
   ];
 
-  const filteredItems = (items || []).filter((item) => {
-    const matchesSearch =
-      !search ||
-      (item[searchField.toLowerCase()] || "")
-        .toString()
-        .toLowerCase()
-        .includes(search.toLowerCase());
-    const matchesStore = !selectedStore || item.storeid === selectedStore;
-    return matchesSearch && matchesStore;
-  });
-
   return (
     <InventoryPageLayout
       title="Items Management"
@@ -52,7 +46,7 @@ const ItemsPage = () => {
         </Button>,
       ]}
       search={search}
-      onSearchChange={(e) => setSearch(e.target.value)}
+      onSearchChange={(e) => { setSearch(e.target.value); setPage(1); }}
       searchOptions={[{ value: "description", label: "Description" }]}
       selectedSearchField={searchField}
       onSearchFieldChange={(e) => setSearchField(e.target.value)}
@@ -60,17 +54,17 @@ const ItemsPage = () => {
         <Select
           className="w-full sm:w-40"
           value={selectedStore}
-          onChange={(e) => setSelectedStore(e.target.value)}
+          onChange={(e) => { setSelectedStore(e.target.value); setPage(1); }}
         >
           <option value="">All Stores</option>
-          {stores.map((store) => (
+          {stores?.data?.map((store) => (
             <option key={store.id} value={store.id}>
               {store.storename}
             </option>
           ))}
         </Select>
       }
-      tableData={filteredItems}
+      tableData={data?.data || []}
       columns={columns}
       isLoading={isLoading}
       selectedRow={selectedRow}
@@ -114,7 +108,13 @@ const ItemsPage = () => {
           </div>
         )
       }
-    />
+    >
+      <Pagination
+        page={page}
+        totalPages={data?.totalPages || 1}
+        onPageChange={setPage}
+      />
+    </InventoryPageLayout>
   );
 };
 

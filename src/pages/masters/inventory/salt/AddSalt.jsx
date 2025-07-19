@@ -269,7 +269,6 @@ export default function SaltForm({
           />
 
           {error && <div className="text-red-500 mb-4">{error}</div>}
-          {success && <div className="text-green-500 mb-4">{success}</div>}
           <div className="flex gap-2 mt-6 justify-end">
             <Button
               type="submit"
