@@ -1,24 +1,25 @@
-import Dashboard from "../pages/Dashboard";
-import GenericPage from "../pages/GenericPage";
-import ItemsPage from "../pages/masters/inventory/Item/Item";
-import ItemDetails from "../pages/masters/inventory/Item/ItemDetails";
-import StorePage from "../pages/masters/inventory/store/Store";
-import RackPage from "../pages/masters/inventory/rack/Rack";
-import Company from "../pages/masters/inventory/company/Company";
-import SaltPage from "../pages/masters/inventory/salt/Salt";
-import UnitPage from "../pages/masters/inventory/unit/Unit";
-import HSNPage from "../pages/masters/inventory/hsn/HSN";
-import MFRPage from "../pages/masters/inventory/menufcurer/MFR";
-import Price from "../pages/masters/rate/Price";
-// import BillPage from "../pages/purchase/Bill";
-import Viewledger from "../pages/masters/account/Ledger/Viewledger";
-import CreateCompanyPage from "../pages/masters/inventory/company/CreateCompanyPage";
-import CreateItemPage from "../pages/masters/inventory/Item/CreateItemPage";
-import CreateSaltPage from "../pages/masters/inventory/salt/AddSalt";
-import CompanyForm from "../pages/masters/inventory/company/CreateCompanyPage";
-import ItemForm from "../pages/masters/inventory/Item/CreateItemPage";
-import SaltForm from "../pages/masters/inventory/salt/AddSalt";
-import CreateManufacturerPage from "../pages/masters/inventory/menufcurer/AddMFR";
+import React from "react";
+
+const Dashboard = React.lazy(() => import("../pages/Dashboard"));
+const GenericPage = React.lazy(() => import("../pages/GenericPage"));
+const ItemsPage = React.lazy(() => import("../pages/masters/inventory/Item/Item"));
+const ItemDetails = React.lazy(() => import("../pages/masters/inventory/Item/ItemDetails"));
+const StorePage = React.lazy(() => import("../pages/masters/inventory/store/Store"));
+const RackPage = React.lazy(() => import("../pages/masters/inventory/rack/Rack"));
+const Company = React.lazy(() => import("../pages/masters/inventory/company/Company"));
+const SaltPage = React.lazy(() => import("../pages/masters/inventory/salt/Salt"));
+const UnitPage = React.lazy(() => import("../pages/masters/inventory/unit/Unit"));
+const HSNPage = React.lazy(() => import("../pages/masters/inventory/hsn/HSN"));
+const MFRPage = React.lazy(() => import("../pages/masters/inventory/menufcurer/MFR"));
+const Price = React.lazy(() => import("../pages/masters/rate/Price"));
+const Viewledger = React.lazy(() => import("../pages/masters/account/Ledger/Viewledger"));
+const CreateCompanyPage = React.lazy(() => import("../pages/masters/inventory/company/CreateCompanyPage"));
+const CreateItemPage = React.lazy(() => import("../pages/masters/inventory/Item/CreateItemPage"));
+const CreateSaltPage = React.lazy(() => import("../pages/masters/inventory/salt/AddSalt"));
+const CompanyForm = React.lazy(() => import("../pages/masters/inventory/company/CreateCompanyPage"));
+const ItemForm = React.lazy(() => import("../pages/masters/inventory/Item/CreateItemPage"));
+const SaltForm = React.lazy(() => import("../pages/masters/inventory/salt/AddSalt"));
+const CreateManufacturerPage = React.lazy(() => import("../pages/masters/inventory/menufcurer/AddMFR"));
 
 const routeConfig = [
   { path: "/dashboard", module: "dashboard", action: "V", element: <Dashboard /> },

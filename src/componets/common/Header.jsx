@@ -45,7 +45,7 @@ export default function DefaultHeader({ title, onMenuClick }) {
       {/* Left: Logo, Hamburger, Company Name */}
       <div className="flex items-center gap-2 md:gap-3 min-w-0">
         <button
-          className="rounded-md hover:bg-gray-100 flex-shrink-0"
+          className="rounded-md hover:bg-gray-100 flex-shrink-0 cursor-pointer"
           onClick={onMenuClick}
           aria-label="Toggle sidebar"
         >
