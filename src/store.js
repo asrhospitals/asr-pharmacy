@@ -10,6 +10,7 @@ import { rackApi } from './services/rackApi';
 import { saltApi } from './services/saltApi';
 import { unitApi } from './services/unitApi';
 import { mfrApi } from './services/mfrApi';
+import { patientApi } from './services/patientApi';
 import userReducer from './services/userSlice';
 
 export const store = configureStore({
@@ -25,6 +26,7 @@ export const store = configureStore({
     [saltApi.reducerPath]: saltApi.reducer,
     [unitApi.reducerPath]: unitApi.reducer,
     [mfrApi.reducerPath]: mfrApi.reducer,
+    [patientApi.reducerPath]: patientApi.reducer,
     user: userReducer,
   },
   middleware: (getDefaultMiddleware) =>
@@ -39,6 +41,7 @@ export const store = configureStore({
       rackApi.middleware,
       saltApi.middleware,
       unitApi.middleware,
-      mfrApi.middleware
+      mfrApi.middleware,
+      patientApi.middleware
     ),
 }); 
