@@ -55,6 +55,8 @@ const CreateManufacturerPage = React.lazy(() =>
 const Patient = React.lazy(() =>
   import("../pages/masters/other/patient/Patient")
 );
+const AddPatient = React.lazy(() => import("../pages/masters/other/patient/AddPatient"));
+const PatientForm = React.lazy(() => import("../pages/masters/other/patient/AddPatient"));
 
 const routeConfig = [
   {
@@ -213,10 +215,22 @@ const routeConfig = [
     element: <GenericPage />,
   },
   {
-    path: "/other/patient",
+    path: "/master/other/patient",
     module: "other",
     action: "V",
     element: <Patient />,
+  },
+  {
+    path: "/master/other/patient/create",
+    module: "other",
+    action: "C",
+    element: <AddPatient />,
+  },
+  {
+    path: "/master/other/patient/edit/:id",
+    module: "other",
+    action: "E",
+    element: <PatientForm isEditMode={true} />,
   },
   {
     path: "/opening/:type",
