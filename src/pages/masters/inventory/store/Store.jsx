@@ -21,6 +21,9 @@ const StorePage = () => {
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 300);
   const { data, error, isLoading, refetch } = useGetStoresQuery({ page, limit, search: debouncedSearch });
+
+  console.log(data);
+  
   const [editStore] = useEditStoreMutation();
   const [deleteStore] = useDeleteStoreMutation();
   const [selectedStore, setSelectedStore] = useState(null);

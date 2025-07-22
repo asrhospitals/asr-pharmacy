@@ -1,4 +1,5 @@
 import React from "react";
+import PrescriptionList from "../pages/masters/other/prescription/Prescription";
 
 const Dashboard = React.lazy(() => import("../pages/Dashboard"));
 const GenericPage = React.lazy(() => import("../pages/GenericPage"));
@@ -232,6 +233,24 @@ const routeConfig = [
     action: "E",
     element: <PatientForm isEditMode={true} />,
   },
+  {
+    path: "/master/other/prescription",
+    module: "other",
+    action: "V",
+    element: <PrescriptionList />,
+  },
+  // {
+  //   path: "/master/other/prescription/create",
+  //   module: "other",
+  //   action: "C",
+  //   element: <AddPatient />,
+  // },
+  // {
+  //   path: "/master/other/prescription/edit/:id",
+  //   module: "other",
+  //   action: "E",
+  //   element: <PatientForm isEditMode={true} />,
+  // },
   {
     path: "/opening/:type",
     module: "inventory",
