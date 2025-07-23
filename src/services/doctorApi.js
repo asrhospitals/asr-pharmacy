@@ -14,14 +14,14 @@ const baseQueryWithAuth = fetchBaseQuery({
   },
 });
 
-export const prescriptionApi = createApi({
-  reducerPath: "prescriptionApi",
+export const doctorApi = createApi({
+  reducerPath: "doctorApi",
   baseQuery: baseQueryWithAuth,
-  tagTypes: ["Prescription"],
+  tagTypes: ["Doctor"],
   endpoints: (builder) => ({
-    getPrescriptions: builder.query({
+    getDoctors: builder.query({
       query: ({ page = 1, limit = 10, search = "", filters = {} } = {}) => ({
-        url: `/prescription/v1/get-prescription?${buildQueryParams({
+        url: `/doctor/v1/get-doctor?${buildQueryParams({
           page,
           limit,
           search,
@@ -29,45 +29,45 @@ export const prescriptionApi = createApi({
         })}`,
         method: "GET",
       }),
-      providesTags: ["Prescription"],
+      providesTags: ["Doctor"],
     }),
-    getPrescriptionById: builder.query({
+    getDoctorById: builder.query({
       query: (id) => ({
-        url: `/prescription/v1/get-prescriptions/${id}`,
+        url: `/doctor/v1/get-doctor/${id}`,
         method: "GET",
       }),
-      providesTags: (_result, _error, id) => [{ type: "Prescription", id }],
+      providesTags: (_result, _error, id) => [{ type: "Doctor", id }],
     }),
-    createPrescription: builder.mutation({
+    createDoctor: builder.mutation({
       query: (data) => ({
-        url: "/prescription/v1/add-prescription",
+        url: "/doctor/v1/add-doctor",
         method: "POST",
         body: data,
       }),
-      invalidatesTags: ["Prescription"],
+      invalidatesTags: ["Doctor"],
     }),
-    updatePrescription: builder.mutation({
+    updateDoctor: builder.mutation({
       query: ({ id, ...data }) => ({
-        url: `/prescription/v1/update-prescription/${id}`,
+        url: `/doctor/v1/update-doctor/${id}`,
         method: "PUT",
         body: data,
       }),
-      invalidatesTags: ["Prescription"],
+      invalidatesTags: ["Doctor"],
     }),
-    deletePrescription: builder.mutation({
+    deleteDoctor: builder.mutation({
       query: (id) => ({
-        url: `/prescription/v1/delete-prescription/${id}`,
+        url: `/doctor/v1/delete-doctor/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["Prescription"],
+      invalidatesTags: ["Doctor"],
     }),
   }),
 });
 
 export const {
-  useGetPrescriptionsQuery,
-  useGetPrescriptionByIdQuery,
-  useCreatePrescriptionMutation,
-  useUpdatePrescriptionMutation,
-  useDeletePrescriptionMutation,
-} = prescriptionApi;
+  useGetDoctorsQuery,
+  useGetDoctorByIdQuery,
+  useCreateDoctorMutation,
+  useUpdateDoctorMutation,
+  useDeleteDoctorMutation,
+} = doctorApi;

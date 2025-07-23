@@ -1,5 +1,6 @@
 import React from "react";
 import PrescriptionList from "../pages/masters/other/prescription/Prescription";
+import CreatePrescriptionPage from "../pages/masters/other/prescription/CreatePrescriptionPage";
 
 const Dashboard = React.lazy(() => import("../pages/Dashboard"));
 const GenericPage = React.lazy(() => import("../pages/GenericPage"));
@@ -239,12 +240,12 @@ const routeConfig = [
     action: "V",
     element: <PrescriptionList />,
   },
-  // {
-  //   path: "/master/other/prescription/create",
-  //   module: "other",
-  //   action: "C",
-  //   element: <AddPatient />,
-  // },
+  {
+    path: "/masters/other/prescription/create",
+    module: "other",
+    action: "C",
+    element: <CreatePrescriptionPage />,
+  },
   // {
   //   path: "/master/other/prescription/edit/:id",
   //   module: "other",

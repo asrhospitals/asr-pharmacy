@@ -6,6 +6,7 @@ const Input = forwardRef(
       type,
       className = "",
       width,
+      fullWidth,
       label,
       noPadding,
       startIcon,
@@ -16,7 +17,7 @@ const Input = forwardRef(
   ) => (
     <>
       {label && <label className="block font-medium mb-1">{label}</label>}
-      <div className="flex relative align-center justify-center">
+      <div className={`flex ${fullWidth ? "w-full" : ""} relative align-center justify-center`}>
         {startIcon && (
           <div className="absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
             {startIcon}
@@ -27,7 +28,7 @@ const Input = forwardRef(
           ref={ref}
           className={`${className} ${width ? width : "w-full"} ${
             noPadding ? "p-0" : startIcon ? "pl-10 pr-2 py-2" : "p-2"
-          } border border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`.trim()}
+          } border border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-xs`.trim()}
           {...props}
         />
         {endIcon && (

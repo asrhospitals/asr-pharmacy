@@ -11,6 +11,8 @@ import { saltApi } from './services/saltApi';
 import { unitApi } from './services/unitApi';
 import { mfrApi } from './services/mfrApi';
 import { patientApi } from './services/patientApi';
+import { prescriptionApi } from './services/prescriptionApi';
+import { doctorApi } from './services/doctorApi';
 import userReducer from './services/userSlice';
 
 export const store = configureStore({
@@ -27,6 +29,8 @@ export const store = configureStore({
     [unitApi.reducerPath]: unitApi.reducer,
     [mfrApi.reducerPath]: mfrApi.reducer,
     [patientApi.reducerPath]: patientApi.reducer,
+    [prescriptionApi.reducerPath] : prescriptionApi.reducer,
+    [doctorApi.reducerPath] : doctorApi.reducer,
     user: userReducer,
   },
   middleware: (getDefaultMiddleware) =>
@@ -42,6 +46,8 @@ export const store = configureStore({
       saltApi.middleware,
       unitApi.middleware,
       mfrApi.middleware,
-      patientApi.middleware
+      patientApi.middleware,
+      prescriptionApi.middleware,
+      doctorApi.middleware,
     ),
 }); 

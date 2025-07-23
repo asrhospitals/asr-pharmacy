@@ -30,7 +30,7 @@ const TextField = ({
 
 const SelectField = ({ label, name, options, register, noHeight }) => (
   <div>
-    <label className="block font-medium mb-1">{label}</label>
+    {label && <label className="block font-medium mb-1">{label}</label>}
     <Select
       noPadding
       className={`${noHeight ? "" : "h-8"} w-full text-xs`}

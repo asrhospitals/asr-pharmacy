@@ -11,7 +11,7 @@ const Select = forwardRef(
       ref={ref}
       className={`${className} w-full ${
         noPadding ? "" : "p-2"
-      } border border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`.trim()}
+      } border border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-xs`.trim()}
       {...props}
     >
       {options
