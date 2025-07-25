@@ -1,100 +1,148 @@
-import React from 'react';
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import IconButton from '@mui/material/IconButton';
-import AddIcon from '@mui/icons-material/Add';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { X } from "lucide-react";
+import React from "react";
+import Button from "./Button";
 
-export default function GlobalEditableTable({ columns, rows, setRows, minRows = 1 }) {
+const GlobalEditableTable = ({
+  columns = [],
+  rows = [],
+  setRows = () => {},
+  minRows = 1,
+  showAddRow = false,
+}) => {
   const handleCellChange = (rowIdx, key, value) => {
-    const updated = [...rows];
-    updated[rowIdx][key] = value;
-    setRows(updated);
+    const updatedRows = rows.map((row, idx) =>
+      idx === rowIdx ? { ...row, [key]: value } : row
+    );
+    setRows(updatedRows);
   };
 
-  const addRow = () => {
-    const emptyRow = {};
-    columns.forEach(col => {
-      emptyRow[col.key] = col.type === 'select' ? (col.options?.[0]?.value ?? '') : '';
-    });
+  const handleAddRow = () => {
+    const emptyRow = columns.reduce((acc, col) => {
+      acc[col.key] = "";
+      return acc;
+    }, {});
     setRows([...rows, emptyRow]);
   };
 
-  const removeRow = (idx) => {
+  const handleRemoveRow = (rowIdx) => {
     if (rows.length > minRows) {
-      setRows(rows.filter((_, i) => i !== idx));
+      setRows(rows.filter((_, idx) => idx !== rowIdx));
     }
   };
 
-  return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full border rounded-lg text-xs mb-2 bg-white shadow-sm">
-        <thead>
-          <tr className="bg-gray-100">
-            {columns.map(col => (
-              <th key={col.key} className="border px-3 py-2">{col.label}</th>
+  const renderInput = (col, value, rowIdx) => {
+    switch (col.type) {
+      case "number":
+        return (
+          <input
+            type="number"
+            className="w-full h-full px-1 py-0.5 text-xs border border-gray-300 focus:outline-none focus:ring-0"
+            value={value}
+            onChange={(e) => handleCellChange(rowIdx, col.key, e.target.value)}
+          />
+        );
+      case "date":
+        return (
+          <input
+            type="date"
+            className="w-full h-full px-1 py-0.5 text-xs border border-gray-300 focus:outline-none focus:ring-0"
+            value={value}
+            onChange={(e) => handleCellChange(rowIdx, col.key, e.target.value)}
+          />
+        );
+      case "select":
+        return (
+          <select
+            className="w-full h-full px-1 py-0.5 text-xs border border-gray-300 focus:outline-none focus:ring-0"
+            value={value}
+            onChange={(e) => handleCellChange(rowIdx, col.key, e.target.value)}
+          >
+            {(col.options || []).map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
             ))}
-            <th className="border px-3 py-2"></th>
+          </select>
+        );
+      default:
+        return (
+          <input
+            type="text"
+            className="w-full h-full px-1 py-0.5 text-xs border border-gray-300 focus:outline-none focus:ring-0"
+            value={value}
+            onChange={(e) => handleCellChange(rowIdx, col.key, e.target.value)}
+          />
+        );
+    }
+  };
+
+  const displayRows =
+    rows.length >= minRows
+      ? rows
+      : [
+          ...rows,
+          ...Array(minRows - rows.length)
+            .fill(0)
+            .map(() =>
+              columns.reduce((acc, col) => ({ ...acc, [col.key]: "" }), {})
+            ),
+        ];
+
+  return (
+    <div className="border border-gray-300 overflow-auto rounded-sm">
+      <table className="w-full text-sm table-fixed">
+        <thead className="bg-blue-500 text-white">
+          <tr>
+            {columns.map((col, i) => (
+              <th
+                key={col.key || i}
+                className="border border-gray-300 px-1 py-1 font-semibold text-center"
+              >
+                {col.label}
+              </th>
+            ))}
+            <th className="border border-gray-300 px-1 py-1 font-semibold text-center w-8">
+              {" "}
+            </th>
           </tr>
         </thead>
         <tbody>
-          {rows.map((row, idx) => (
-            <tr key={idx} className="hover:bg-blue-50 transition">
-              {columns.map(col => (
-                <td key={col.key} className="border px-3 py-2">
-                  {col.type === 'autocomplete' ? (
-                    <Autocomplete
-                      options={col.options || []}
-                      value={row[col.key] || ''}
-                      onChange={(_, value) => handleCellChange(idx, col.key, value)}
-                      freeSolo
-                      size="small"
-                      renderInput={params => <TextField {...params} label={col.label} variant="outlined" size="small" />}
-                    />
-                  ) : col.type === 'select' ? (
-                    <Select
-                      value={row[col.key] ?? ''}
-                      onChange={e => handleCellChange(idx, col.key, e.target.value)}
-                      size="small"
-                      fullWidth
-                    >
-                      {(col.options || []).map(opt => (
-                        <MenuItem key={opt.value} value={opt.value}>{opt.label}</MenuItem>
-                      ))}
-                    </Select>
-                  ) : (
-                    <TextField
-                      value={row[col.key] ?? ''}
-                      onChange={e => handleCellChange(idx, col.key, e.target.value)}
-                      label={col.label}
-                      type={col.type === 'number' ? 'number' : 'text'}
-                      size="small"
-                      variant="outlined"
-                      fullWidth
-                    />
-                  )}
+          {displayRows.map((row, rowIdx) => (
+            <tr key={rowIdx} className="hover:bg-gray-100">
+              {columns.map((col, colIdx) => (
+                <td
+                  key={col.key || colIdx}
+                  className="border border-gray-200 p-0"
+                >
+                  {renderInput(col, row[col.key], rowIdx)}
                 </td>
               ))}
-              <td className="border px-3 py-2 text-center">
-                <IconButton
-                  aria-label="remove"
-                  color="error"
-                  size="small"
-                  onClick={() => removeRow(idx)}
-                  disabled={rows.length <= minRows}
-                >
-                  <DeleteIcon fontSize="small" />
-                </IconButton>
+              <td className="border border-gray-200 p-0 text-center align-middle">
+                {rows.length > minRows && rowIdx < rows.length ? (
+                  <Button
+                    isIcon={true}
+                    variant="danger"
+                    onClick={() => handleRemoveRow(rowIdx)}
+                  >
+                    <X className="w-3 h-3" />
+                  </Button>
+                ) : null}
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-      <IconButton aria-label="add" color="primary" onClick={addRow}>
-        <AddIcon />
-      </IconButton>
+      {showAddRow && (
+        <button
+          type="button"
+          className="mt-2 px-2 py-1 bg-teal-600 text-white rounded text-xs"
+          onClick={handleAddRow}
+        >
+          + Add Row
+        </button>
+      )}
     </div>
   );
-}
+};
+
+export default GlobalEditableTable;

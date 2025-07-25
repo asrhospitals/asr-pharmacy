@@ -14,6 +14,7 @@ import { patientApi } from './services/patientApi';
 import { prescriptionApi } from './services/prescriptionApi';
 import { doctorApi } from './services/doctorApi';
 import userReducer from './services/userSlice';
+import { salesBillApi } from './services/salesBillApi';
 
 export const store = configureStore({
   reducer: {
@@ -31,7 +32,8 @@ export const store = configureStore({
     [patientApi.reducerPath]: patientApi.reducer,
     [prescriptionApi.reducerPath] : prescriptionApi.reducer,
     [doctorApi.reducerPath] : doctorApi.reducer,
-    user: userReducer,
+    [salesBillApi.reducerPath] : salesBillApi.reducer,
+     user: userReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -49,5 +51,6 @@ export const store = configureStore({
       patientApi.middleware,
       prescriptionApi.middleware,
       doctorApi.middleware,
+      salesBillApi.middleware,
     ),
 }); 

@@ -1,6 +1,4 @@
 import React from "react";
-import PrescriptionList from "../pages/masters/other/prescription/Prescription";
-import CreatePrescriptionPage from "../pages/masters/other/prescription/CreatePrescriptionPage";
 
 const Dashboard = React.lazy(() => import("../pages/Dashboard"));
 const GenericPage = React.lazy(() => import("../pages/GenericPage"));
@@ -59,6 +57,10 @@ const Patient = React.lazy(() =>
 );
 const AddPatient = React.lazy(() => import("../pages/masters/other/patient/AddPatient"));
 const PatientForm = React.lazy(() => import("../pages/masters/other/patient/AddPatient"));
+const PrescriptionList = React.lazy(() => import("../pages/masters/other/prescription/Prescription"));
+const CreatePrescriptionPage = React.lazy(() => import("../pages/masters/other/prescription/CreatePrescriptionPage"));
+const BillList = React.lazy(() => import("../pages/sales/Bill/BillList"));
+const BillForm = React.lazy(() => import("../pages/sales/Bill/BillForm"));
 
 const routeConfig = [
   {
@@ -205,10 +207,16 @@ const routeConfig = [
     element: <GenericPage />,
   },
   {
-    path: "/sales/:type",
+    path: "/sales/bill",
     module: "gst_billing",
     action: "V",
-    element: <GenericPage />,
+    element: <BillList />,
+  },
+  {
+    path: "/sales/bill/create",
+    module: "gst_billing",
+    action: "C",
+    element: <BillForm />,
   },
   {
     path: "/purchase/:type",

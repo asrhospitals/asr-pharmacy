@@ -21,7 +21,10 @@ const DataTable = ({
     if (selectedRow && rowRefs.current) {
       const idx = data.findIndex((row) => row.id === selectedRow.id);
       if (idx !== -1 && rowRefs.current[idx]) {
-        rowRefs.current[idx].scrollIntoView({ block: "nearest", behavior: "smooth" });
+        rowRefs.current[idx].scrollIntoView({
+          block: "nearest",
+          behavior: "smooth",
+        });
       }
     }
   }, [selectedRow, data]);
@@ -44,33 +47,38 @@ const DataTable = ({
     <div className="bg-white border border-gray-200 shadow-sm rounded-lg overflow-hidden">
       <div
         ref={tableContainerRef}
-        style={{ maxHeight: 400, overflowY: 'auto' }}
+        style={{ maxHeight: 400, overflowY: "auto" }}
       >
-        <table className="min-w-full divide-y divide-gray-200 text-xs sm:text-sm" style={{ tableLayout: 'fixed', width: '100%' }}>
-          <thead className="bg-gray-50 sticky top-0 z-10">
+        <table
+          className="min-w-full divide-y divide-gray-200 text-xs sm:text-sm"
+          style={{ tableLayout: "fixed", width: "100%" }}
+        >
+          <thead className="bg-blue-400 sticky top-0 z-10">
             <tr>
               {columns.map((column, idx) => (
                 <th
                   key={idx}
-                  className="px-2 sm:px-4 md:px-6 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50 sticky top-0 z-10"
+                  className={`px-2 py-2 text-center text-[10px] sm:text-xs font-medium text-white uppercase tracking-wider bg-blue-400 sticky top-0 z-10 ${
+                    "border-r border-gray-400" 
+                  }`}
                 >
                   {column.title}
                 </th>
               ))}
               {(onView || onEdit || onDelete) && (
-                <th className="px-2 sm:px-4 md:px-6 py-2 sm:py-3 text-right text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50 sticky top-0 z-10">
+                <th className="px-2 py-2 text-center text-[10px] sm:text-xs font-medium text-white uppercase tracking-wider bg-blue-400 sticky top-0 z-10">
                   Actions
                 </th>
               )}
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+          <tbody className="bg-white divide-y divide-gray-400">
             {Array.isArray(data) && data.length > 0 ? (
               data.map((row, index) => (
                 <tr
                   key={row.id || index}
-                  ref={el => rowRefs.current[index] = el}
-                  className={`hover:bg-gray-50 cursor-pointer ${
+                  ref={(el) => (rowRefs.current[index] = el)}
+                  className={`hover:bg-blue-200 cursor-pointer ${
                     selectedRow && selectedRow.id === row.id
                       ? "bg-blue-100"
                       : ""
@@ -80,7 +88,8 @@ const DataTable = ({
                   {columns.map((column, idx) => (
                     <td
                       key={idx}
-                      className="px-2 sm:px-4 md:px-6 py-2 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-900"
+                      className={`px-2 py-2 whitespace-nowrap text-xs sm:text-sm text-gray-900 ${"border-r border-gray-400"
+                      }`}
                     >
                       {column.render
                         ? column.render(row[column.key], row)
@@ -88,8 +97,8 @@ const DataTable = ({
                     </td>
                   ))}
                   {(onView || onEdit || onDelete) && (
-                    <td className="px-2 sm:px-4 md:px-6 py-2 sm:py-4 whitespace-nowrap text-right text-xs sm:text-sm font-medium">
-                      <div className="flex justify-end gap-1 sm:gap-2">
+                    <td className="px-2 py-2 whitespace-nowrap text-center text-xs sm:text-sm font-medium">
+                      <div className="flex justify-center gap-1 sm:gap-2">
                         {onView && (
                           <Button
                             onClick={() => onView(row)}
@@ -128,7 +137,7 @@ const DataTable = ({
                   colSpan={
                     columns.length + (onView || onEdit || onDelete ? 1 : 0)
                   }
-                  className="px-2 sm:px-6 py-6 sm:py-8 text-center text-xs sm:text-sm text-gray-500"
+                  className="px-2 py-6 text-center text-xs sm:text-sm text-gray-500"
                 >
                   No data available
                 </td>

@@ -1,0 +1,1 @@
+// Placeholder for Sales StockReceive page 

@@ -8,7 +8,7 @@ import {
   useUpdatePrescriptionMutation,
 } from "../../../../services/prescriptionApi";
 import PatientListModal from "./PatientListModal";
-import DoctorListModal from "./DoctorListModal";
+import DoctorListModal from "../doctor/DoctorListModal";
 
 const initialForm = {
   presNo: "",
@@ -38,12 +38,12 @@ const patientFields = [
 
 const doctorFields = [
   { label: "Code", name: "doctor.code", readOnly: true },
-  { label: "Reg. No.", name: "doctor.regNo", readOnly: true },
+  { label: "Reg. No.", name: "doctor.registrationNo", readOnly: true },
   { label: "Name", name: "doctor.name", readOnly: true },
   { label: "Address", name: "doctor.address", readOnly: true },
   {
     label: "Contact No.",
-    name: "doctor.contact",
+    name: "doctor.mobileNo",
     readOnly: true,
     prefix: "+91",
   },
@@ -87,7 +87,6 @@ const CreatePrescriptionPage = ({ isEdit = false, initialData = null }) => {
     name: "items",
   });
 
-  // Placeholder handlers for patient/doctor search
   const handlePatientSearch = () => {};
   const handleDoctorSearch = () => {};
 
@@ -101,11 +100,13 @@ const CreatePrescriptionPage = ({ isEdit = false, initialData = null }) => {
   };
 
   const handleDoctorSelect = (doctor) => {
+    console.log(doctor);
+    
     setValue("doctor.code", doctor.id);
     setValue("doctor.name", doctor.name);
-    setValue("doctor.regNo", doctor.regNo);
+    setValue("doctor.registrationNo", doctor.registrationNo);
     setValue("doctor.address", doctor.address);
-    setValue("doctor.contact", doctor.phone);
+    setValue("doctor.mobileNo", doctor.mobileNo);
     setValue("doctor.search", `${doctor.name} (${doctor.id})`);
   };
 
@@ -131,8 +132,8 @@ const CreatePrescriptionPage = ({ isEdit = false, initialData = null }) => {
     reset(initialForm);
   };
 
-  const handleBack = () => navigate("/masters/other/prescription");
-  const handleClose = () => navigate("/masters/other/prescription");
+  const handleBack = () => navigate("/master/other/prescription");
+  const handleClose = () => navigate("/master/other/prescription");
 
   return (
     <>
@@ -366,13 +367,13 @@ const CreatePrescriptionPage = ({ isEdit = false, initialData = null }) => {
             {success && <div className="text-green-600 mb-2">{success}</div>}
             {/* Footer Buttons */}
             <div className="flex flex-col md:flex-row gap-2 mt-4 md:mt-6 justify-end">
-              <Button type="submit" variant="primary" className="w-full md:w-auto">
+              <Button buttonType={isEdit ? "update" : "save"} type="submit" variant="primary" className="w-full md:w-auto">
                 Save
               </Button>
-              <Button type="button" variant="secondary" onClick={handleClear} className="w-full md:w-auto">
+              <Button buttonType="clear" type="button" variant="secondary" onClick={handleClear} className="w-full md:w-auto">
                 Clear
               </Button>
-              <Button type="button" variant="danger" onClick={handleClose} className="w-full md:w-auto">
+              <Button buttonType="close" type="button" variant="danger" onClick={handleClose} className="w-full md:w-auto">
                 Close
               </Button>
             </div>

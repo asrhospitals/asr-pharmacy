@@ -8,8 +8,8 @@ import {
   useGetRacksQuery,
 } from "../../../../services/rackApi";
 import InventoryPageLayout from "../../../../componets/layout/InventoryPageLayout";
-import Pagination from '../../../../componets/common/Pagination';
-import { useDebounce } from '../../../../utils/useDebounce';
+import Pagination from "../../../../componets/common/Pagination";
+import { useDebounce } from "../../../../utils/useDebounce";
 
 const RackPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -19,7 +19,11 @@ const RackPage = () => {
   const [limit, setLimit] = useState(10);
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 300);
-  const { data, error, isLoading, refetch } = useGetRacksQuery({ page, limit, search: debouncedSearch });
+  const { data, error, isLoading, refetch } = useGetRacksQuery({
+    page,
+    limit,
+    search: debouncedSearch,
+  });
   const [editRack] = useEditRackMutation();
   const [deleteRack] = useDeleteRackMutation();
   const [selectedRow, setSelectedRow] = useState(null);
@@ -30,7 +34,7 @@ const RackPage = () => {
     () =>
       (racks.data || []).map((rack) => ({
         ...rack,
-        storename: rack.stores?.storename || "",
+        storename: rack.store?.storename || "",
       })),
     [racks]
   );
@@ -41,7 +45,6 @@ const RackPage = () => {
         if (!prev || !tableData.find((r) => r.id === prev.id)) {
           return tableData[0];
         }
-        // If prev exists, update it with the latest data (including storename)
         return tableData.find((r) => r.id === prev.id) || tableData[0];
       });
     }
@@ -49,7 +52,10 @@ const RackPage = () => {
 
   const columns = [
     { key: "rackname", title: "Rack Name" },
-    { key: "storename", title: "Store Name" },
+    {
+      key: "storename",
+      title: "Store Name",
+    },
   ];
 
   const handleAddItem = () => {
@@ -83,16 +89,16 @@ const RackPage = () => {
   };
 
   const handleKeyDown = (e) => {
-    if (!racks || racks.length === 0) return;
+    if (!tableData || tableData.length === 0) return;
     if (!selectedRow) return;
-    const idx = racks.findIndex((r) => r.id === selectedRow.id);
+    const idx = tableData.findIndex((r) => r.id === selectedRow.id);
     if (e.key === "ArrowDown") {
-      const nextIdx = idx < racks.length - 1 ? idx + 1 : 0;
-      setSelectedRow(racks[nextIdx]);
+      const nextIdx = idx < tableData.length - 1 ? idx + 1 : 0;
+      setSelectedRow(tableData[nextIdx]);
       e.preventDefault();
     } else if (e.key === "ArrowUp") {
-      const prevIdx = idx > 0 ? idx - 1 : racks.length - 1;
-      setSelectedRow(racks[prevIdx]);
+      const prevIdx = idx > 0 ? idx - 1 : tableData.length - 1;
+      setSelectedRow(tableData[prevIdx]);
       e.preventDefault();
     }
   };
@@ -108,7 +114,10 @@ const RackPage = () => {
           </Button>,
         ]}
         search={search}
-        onSearchChange={e => { setSearch(e.target.value); setPage(1); }}
+        onSearchChange={(e) => {
+          setSearch(e.target.value);
+          setPage(1);
+        }}
         tableData={tableData}
         columns={columns}
         isLoading={isLoading}

@@ -110,12 +110,13 @@ const Sidebar = ({
     user?.role
   );
 
-  const toggleExpanded = (title) => {
-    setExpandedItems((prev) =>
-      prev.includes(title)
-        ? prev.filter((item) => item !== title)
-        : [...prev, title]
-    );
+  const toggleExpanded = (title, level = 0, parentTitles = []) => {
+    setExpandedItems((prev) => {
+      if (prev.includes(title)) {
+        return prev.filter((item) => item !== title);
+      }
+      return [...parentTitles, title];
+    });
   };
 
   const handleItemClick = (title, path) => {
@@ -132,7 +133,7 @@ const Sidebar = ({
     return false;
   };
 
-  const renderMenuItem = (item, level = 0) => {
+  const renderMenuItem = (item, level = 0, parentTitles = []) => {
     const Icon = item.icon;
     const hasChildren = item.children && item.children.length > 0;
     const isExpanded = expandedItems.includes(item.title);
@@ -154,7 +155,7 @@ const Sidebar = ({
           }`}
           onClick={() => {
             if (hasChildren && isSidebarExpanded) {
-              toggleExpanded(item.title);
+              toggleExpanded(item.title, level, parentTitles);
             } else if (item.path) {
               handleItemClick(item.title, item.path);
             }
@@ -216,7 +217,9 @@ const Sidebar = ({
         >
           {isSidebarExpanded && isExpanded && (
             <div className="space-y-1 pl-2">
-              {item?.children?.map((child) => renderMenuItem(child, level + 1))}
+              {item?.children?.map((child) =>
+                renderMenuItem(child, level + 1, [...parentTitles, item.title])
+              )}
             </div>
           )}
         </div>
