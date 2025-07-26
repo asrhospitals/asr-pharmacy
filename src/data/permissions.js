@@ -18,6 +18,11 @@ export const permissions = {
     reports: "VCED",
     rate_master: "VCED",
     other: "VCED",
+    accounting_groups: "VCED",
+    accounting_ledgers: "VCED",
+    accounting_transactions: "VCED",
+    accounting_reports: "VCED",
+    opening_balance: "VCED",
   },
   pharmacist: {
     dashboard: "V",
@@ -27,11 +32,17 @@ export const permissions = {
     inventory: "V",
     gst_billing: "V",
     scheme_billing: "V",
+    accounting_groups: "V",
+    accounting_ledgers: "V",
+    accounting_transactions: "V",
+    accounting_reports: "V",
   },
   assistant: {
     view_prescription: "V",
     dispensing: "VC",
     gst_billing: "VC",
+    accounting_groups: "V",
+    accounting_ledgers: "V",
   },
   store_manager: {
     dashboard: "V",
@@ -41,6 +52,10 @@ export const permissions = {
     return_expiry: "VCED",
     scheme_billing: "V",
     financial_reports: "V",
+    accounting_groups: "V",
+    accounting_ledgers: "V",
+    accounting_transactions: "V",
+    accounting_reports: "V",
   },
   accounts_officer: {
     dashboard: "V",
@@ -48,6 +63,22 @@ export const permissions = {
     scheme_billing: "VCED",
     financial_reports: "VCED",
     audit_logs: "V",
+    accounting_groups: "VCED",
+    accounting_ledgers: "VCED",
+    accounting_transactions: "VCED",
+    accounting_reports: "VCED",
+    opening_balance: "VCED",
+  },
+  accountant: {
+    dashboard: "V",
+    gst_billing: "VCED",
+    scheme_billing: "VCED",
+    financial_reports: "VCED",
+    accounting_groups: "VCED",
+    accounting_ledgers: "VCED",
+    accounting_transactions: "VCED",
+    accounting_reports: "VCED",
+    opening_balance: "VCED",
   },
   doctor: {
     prescription_entry: "C",
@@ -63,6 +94,10 @@ export const permissions = {
     scheme_billing: "V",
     financial_reports: "V",
     audit_logs: "V",
+    accounting_groups: "V",
+    accounting_ledgers: "V",
+    accounting_transactions: "V",
+    accounting_reports: "V",
   },
   scheme_desk: {
     dashboard: "V",
@@ -71,7 +106,313 @@ export const permissions = {
     inventory: "V",
     scheme_billing: "VCED",
     financial_reports: "V",
+    accounting_groups: "V",
+    accounting_ledgers: "V",
+    accounting_transactions: "V",
   },
+  viewer: {
+    dashboard: "V",
+    accounting_groups: "V",
+    accounting_ledgers: "V",
+    accounting_transactions: "V",
+    accounting_reports: "V",
+  },
+};
+
+export const groupPermissions = {
+  defaultGroupPermissions: {
+    Asset: {
+      canCreateLedger: true,
+      canEditLedger: true,
+      canDeleteLedger: false,
+      canViewLedger: true,
+      canCreateTransaction: true,
+      canEditTransaction: true,
+      canDeleteTransaction: false,
+      canViewTransaction: true,
+      canViewReport: true,
+      canExportReport: true,
+      canViewBalance: true,
+      canModifyBalance: false,
+      canSetOpeningBalance: true,
+      canCreateSubGroup: true,
+      canEditGroup: true,
+      canDeleteGroup: false
+    },
+    Liability: {
+      canCreateLedger: true,
+      canEditLedger: true,
+      canDeleteLedger: false,
+      canViewLedger: true,
+      canCreateTransaction: true,
+      canEditTransaction: true,
+      canDeleteTransaction: false,
+      canViewTransaction: true,
+      canViewReport: true,
+      canExportReport: true,
+      canViewBalance: true,
+      canModifyBalance: false,
+      canSetOpeningBalance: true,
+      canCreateSubGroup: true,
+      canEditGroup: true,
+      canDeleteGroup: false
+    },
+    Income: {
+      canCreateLedger: true,
+      canEditLedger: true,
+      canDeleteLedger: true,
+      canViewLedger: true,
+      canCreateTransaction: true,
+      canEditTransaction: true,
+      canDeleteTransaction: true,
+      canViewTransaction: true,
+      canViewReport: true,
+      canExportReport: true,
+      canViewBalance: true,
+      canModifyBalance: true,
+      canSetOpeningBalance: true,
+      canCreateSubGroup: true,
+      canEditGroup: true,
+      canDeleteGroup: true
+    },
+    Expense: {
+      canCreateLedger: true,
+      canEditLedger: true,
+      canDeleteLedger: true,
+      canViewLedger: true,
+      canCreateTransaction: true,
+      canEditTransaction: true,
+      canDeleteTransaction: true,
+      canViewTransaction: true,
+      canViewReport: true,
+      canExportReport: true,
+      canViewBalance: true,
+      canModifyBalance: true,
+      canSetOpeningBalance: true,
+      canCreateSubGroup: true,
+      canEditGroup: true,
+      canDeleteGroup: true
+    },
+    Capital: {
+      canCreateLedger: false,
+      canEditLedger: false,
+      canDeleteLedger: false,
+      canViewLedger: true,
+      canCreateTransaction: false,
+      canEditTransaction: false,
+      canDeleteTransaction: false,
+      canViewTransaction: true,
+      canViewReport: true,
+      canExportReport: true,
+      canViewBalance: true,
+      canModifyBalance: false,
+      canSetOpeningBalance: false,
+      canCreateSubGroup: false,
+      canEditGroup: false,
+      canDeleteGroup: false
+    }
+  },
+
+  defaultGroups: {
+    'Branch / Divisions': {
+      canCreateLedger: true,
+      canEditLedger: true,
+      canDeleteLedger: false,
+      canViewLedger: true,
+      canCreateTransaction: true,
+      canEditTransaction: true,
+      canDeleteTransaction: false,
+      canViewTransaction: true,
+      canViewReport: true,
+      canExportReport: true,
+      canViewBalance: true,
+      canModifyBalance: false,
+      canSetOpeningBalance: true,
+      canCreateSubGroup: true,
+      canEditGroup: false,
+      canDeleteGroup: false
+    },
+    'Capital Account': {
+      canCreateLedger: false,
+      canEditLedger: false,
+      canDeleteLedger: false,
+      canViewLedger: true,
+      canCreateTransaction: false,
+      canEditTransaction: false,
+      canDeleteTransaction: false,
+      canViewTransaction: true,
+      canViewReport: true,
+      canExportReport: true,
+      canViewBalance: true,
+      canModifyBalance: false,
+      canSetOpeningBalance: false,
+      canCreateSubGroup: true,
+      canEditGroup: false,
+      canDeleteGroup: false
+    },
+    'Current Assets': {
+      canCreateLedger: true,
+      canEditLedger: true,
+      canDeleteLedger: false,
+      canViewLedger: true,
+      canCreateTransaction: true,
+      canEditTransaction: true,
+      canDeleteTransaction: false,
+      canViewTransaction: true,
+      canViewReport: true,
+      canExportReport: true,
+      canViewBalance: true,
+      canModifyBalance: false,
+      canSetOpeningBalance: true,
+      canCreateSubGroup: true,
+      canEditGroup: false,
+      canDeleteGroup: false
+    },
+    'Current Liabilities': {
+      canCreateLedger: true,
+      canEditLedger: true,
+      canDeleteLedger: false,
+      canViewLedger: true,
+      canCreateTransaction: true,
+      canEditTransaction: true,
+      canDeleteTransaction: false,
+      canViewTransaction: true,
+      canViewReport: true,
+      canExportReport: true,
+      canViewBalance: true,
+      canModifyBalance: false,
+      canSetOpeningBalance: true,
+      canCreateSubGroup: true,
+      canEditGroup: false,
+      canDeleteGroup: false
+    },
+    'Fixed Assets': {
+      canCreateLedger: true,
+      canEditLedger: true,
+      canDeleteLedger: false,
+      canViewLedger: true,
+      canCreateTransaction: true,
+      canEditTransaction: true,
+      canDeleteTransaction: false,
+      canViewTransaction: true,
+      canViewReport: true,
+      canExportReport: true,
+      canViewBalance: true,
+      canModifyBalance: false,
+      canSetOpeningBalance: true,
+      canCreateSubGroup: true,
+      canEditGroup: false,
+      canDeleteGroup: false
+    },
+    'Investments': {
+      canCreateLedger: true,
+      canEditLedger: true,
+      canDeleteLedger: false,
+      canViewLedger: true,
+      canCreateTransaction: true,
+      canEditTransaction: true,
+      canDeleteTransaction: false,
+      canViewTransaction: true,
+      canViewReport: true,
+      canExportReport: true,
+      canViewBalance: true,
+      canModifyBalance: false,
+      canSetOpeningBalance: true,
+      canCreateSubGroup: true,
+      canEditGroup: false,
+      canDeleteGroup: false
+    },
+    'Loans (Liability)': {
+      canCreateLedger: true,
+      canEditLedger: true,
+      canDeleteLedger: false,
+      canViewLedger: true,
+      canCreateTransaction: true,
+      canEditTransaction: true,
+      canDeleteTransaction: false,
+      canViewTransaction: true,
+      canViewReport: true,
+      canExportReport: true,
+      canViewBalance: true,
+      canModifyBalance: false,
+      canSetOpeningBalance: true,
+      canCreateSubGroup: true,
+      canEditGroup: false,
+      canDeleteGroup: false
+    },
+    'Misc.Expenses(ASSET)': {
+      canCreateLedger: true,
+      canEditLedger: true,
+      canDeleteLedger: true,
+      canViewLedger: true,
+      canCreateTransaction: true,
+      canEditTransaction: true,
+      canDeleteTransaction: true,
+      canViewTransaction: true,
+      canViewReport: true,
+      canExportReport: true,
+      canViewBalance: true,
+      canModifyBalance: true,
+      canSetOpeningBalance: true,
+      canCreateSubGroup: true,
+      canEditGroup: false,
+      canDeleteGroup: false
+    },
+    'Profit & Loss': {
+      canCreateLedger: true,
+      canEditLedger: true,
+      canDeleteLedger: true,
+      canViewLedger: true,
+      canCreateTransaction: true,
+      canEditTransaction: true,
+      canDeleteTransaction: true,
+      canViewTransaction: true,
+      canViewReport: true,
+      canExportReport: true,
+      canViewBalance: true,
+      canModifyBalance: true,
+      canSetOpeningBalance: true,
+      canCreateSubGroup: true,
+      canEditGroup: false,
+      canDeleteGroup: false
+    },
+    'Revenue Account': {
+      canCreateLedger: true,
+      canEditLedger: true,
+      canDeleteLedger: true,
+      canViewLedger: true,
+      canCreateTransaction: true,
+      canEditTransaction: true,
+      canDeleteTransaction: true,
+      canViewTransaction: true,
+      canViewReport: true,
+      canExportReport: true,
+      canViewBalance: true,
+      canModifyBalance: true,
+      canSetOpeningBalance: true,
+      canCreateSubGroup: true,
+      canEditGroup: false,
+      canDeleteGroup: false
+    },
+    'Suspense Accounts': {
+      canCreateLedger: true,
+      canEditLedger: true,
+      canDeleteLedger: false,
+      canViewLedger: true,
+      canCreateTransaction: true,
+      canEditTransaction: true,
+      canDeleteTransaction: false,
+      canViewTransaction: true,
+      canViewReport: true,
+      canExportReport: true,
+      canViewBalance: true,
+      canModifyBalance: false,
+      canSetOpeningBalance: true,
+      canCreateSubGroup: true,
+      canEditGroup: false,
+      canDeleteGroup: false
+    }
+  }
 };
 
 export function hasPermission(role, module, action) {
@@ -79,4 +420,28 @@ export function hasPermission(role, module, action) {
   const allowed = permissions[role][module];
   if (!allowed) return false;
   return allowed.includes(action);
+}
+
+export function hasGroupPermission(groupName, groupType, action) {
+  if (groupPermissions.defaultGroups[groupName]) {
+    return groupPermissions.defaultGroups[groupName][action] || false;
+  }
+  
+  if (groupPermissions.defaultGroupPermissions[groupType]) {
+    return groupPermissions.defaultGroupPermissions[groupType][action] || false;
+  }
+  
+  return false;
+}
+
+export function getGroupPermissions(groupName, groupType) {
+  if (groupPermissions.defaultGroups[groupName]) {
+    return groupPermissions.defaultGroups[groupName];
+  }
+  
+  if (groupPermissions.defaultGroupPermissions[groupType]) {
+    return groupPermissions.defaultGroupPermissions[groupType];
+  }
+  
+  return {};
 } 

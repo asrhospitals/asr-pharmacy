@@ -1,4 +1,6 @@
 import React from "react";
+import HierarchicalGroupManager from "../pages/masters/account/group/HierarchicalGroupManager";
+import Group from "../pages/masters/account/group/Group";
 
 const Dashboard = React.lazy(() => import("../pages/Dashboard"));
 const GenericPage = React.lazy(() => import("../pages/GenericPage"));
@@ -77,9 +79,15 @@ const routeConfig = [
   },
   {
     path: "/master/accounts/group",
-    module: "audit_logs",
+    module: "accounting_groups",
     action: "V",
-    element: <GenericPage title="Group" />,
+    element: <Group />,
+  },
+  {
+    path: "/master/accounts/group/hierarchical",
+    module: "accounting_groups",
+    action: "V",
+    element: <HierarchicalGroupManager />,
   },
   {
     path: "/master/accounts/sale",

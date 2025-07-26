@@ -13,6 +13,7 @@ import { mfrApi } from './services/mfrApi';
 import { patientApi } from './services/patientApi';
 import { prescriptionApi } from './services/prescriptionApi';
 import { doctorApi } from './services/doctorApi';
+import { groupApi } from './services/groupApi';
 import userReducer from './services/userSlice';
 import { salesBillApi } from './services/salesBillApi';
 
@@ -32,6 +33,7 @@ export const store = configureStore({
     [patientApi.reducerPath]: patientApi.reducer,
     [prescriptionApi.reducerPath] : prescriptionApi.reducer,
     [doctorApi.reducerPath] : doctorApi.reducer,
+    [groupApi.reducerPath]: groupApi.reducer,
     [salesBillApi.reducerPath] : salesBillApi.reducer,
      user: userReducer,
   },
@@ -51,6 +53,7 @@ export const store = configureStore({
       patientApi.middleware,
       prescriptionApi.middleware,
       doctorApi.middleware,
+      groupApi.middleware,
       salesBillApi.middleware,
     ),
 }); 

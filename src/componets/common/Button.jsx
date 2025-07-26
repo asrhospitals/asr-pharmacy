@@ -27,6 +27,8 @@ const Button = ({
   buttonType,
   onKeyShortcut,
   onClick,
+  loading,
+  disabled,
   ...props
 }) => {
   const isIcon = type === "icon";
@@ -50,6 +52,10 @@ const Button = ({
   const defaultIcon = buttonType && keyMap[buttonType]?.icon;
   const defaultkey = buttonType && keyMap[buttonType]?.key;
 
+  // Filter out props that shouldn't be passed to DOM
+  const domProps = { ...props };
+  delete domProps.loading; // Remove loading from DOM props
+
   return (
     <button
       type={isIcon ? "button" : type}
@@ -61,7 +67,8 @@ const Button = ({
             } flex items-center cursor-pointer`.trim()
       }
       onClick={onClick}
-      {...props}
+      disabled={disabled || loading}
+      {...domProps}
     >
       {(startIcon || defaultIcon) && (
         <span className="mr-2 flex items-center space-x-2">
@@ -77,7 +84,9 @@ const Button = ({
         </span>
       )}
 
-      <span className="flex items-center">{children}</span>
+      <span className="flex items-center">
+        {loading ? "Loading..." : children}
+      </span>
       {endIcon && <span className="ml-2 flex items-center">{endIcon}</span>}
     </button>
   );

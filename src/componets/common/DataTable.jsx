@@ -47,48 +47,50 @@ const DataTable = ({
     <div className="bg-white border border-gray-200 shadow-sm rounded-lg overflow-hidden">
       <div
         ref={tableContainerRef}
-        style={{ maxHeight: 400, overflowY: "auto" }}
+        className="no-scrollbar"
+        style={{ maxHeight: 'calc(100vh - 300px)', overflowY: 'auto' }}
       >
         <table
           className="min-w-full divide-y divide-gray-200 text-xs sm:text-sm"
-          style={{ tableLayout: "fixed", width: "100%" }}
+          style={{ tableLayout: 'fixed', width: '100%' }}
         >
           <thead className="bg-blue-400 sticky top-0 z-10">
             <tr>
               {columns.map((column, idx) => (
                 <th
                   key={idx}
-                  className={`px-2 py-2 text-center text-[10px] sm:text-xs font-medium text-white uppercase tracking-wider bg-blue-400 sticky top-0 z-10 ${
-                    "border-r border-gray-400" 
+                  className={`px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider bg-blue-400 sticky top-0 z-10 ${
+                    idx === 0 ? 'w-3/4' : 'w-1/4'
                   }`}
                 >
                   {column.title}
                 </th>
               ))}
               {(onView || onEdit || onDelete) && (
-                <th className="px-2 py-2 text-center text-[10px] sm:text-xs font-medium text-white uppercase tracking-wider bg-blue-400 sticky top-0 z-10">
+                <th className="px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider bg-blue-400 sticky top-0 z-10 w-24">
                   Actions
                 </th>
               )}
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-400">
+          <tbody className="bg-white divide-y divide-gray-200">
             {Array.isArray(data) && data.length > 0 ? (
               data.map((row, index) => (
                 <tr
                   key={row.id || index}
                   ref={(el) => (rowRefs.current[index] = el)}
-                  className={`hover:bg-blue-200 cursor-pointer ${
+                  className={`hover:bg-blue-50 cursor-pointer transition-colors ${
                     selectedRow && selectedRow.id === row.id
-                      ? "bg-blue-100"
-                      : ""
+                      ? 'bg-blue-100 border-l-4 border-blue-500'
+                      : ''
                   }`}
                   onClick={() => onRowSelect && onRowSelect(row)}
                 >
                   {columns.map((column, idx) => (
                     <td
                       key={idx}
-                      className={`px-2 py-2 whitespace-nowrap text-xs sm:text-sm text-gray-900 ${"border-r border-gray-400"
+                      className={`px-4 py-3 whitespace-nowrap text-sm text-gray-900 ${
+                        idx === 0 ? 'w-3/4' : 'w-1/4'
                       }`}
                     >
                       {column.render
@@ -97,12 +99,15 @@ const DataTable = ({
                     </td>
                   ))}
                   {(onView || onEdit || onDelete) && (
-                    <td className="px-2 py-2 whitespace-nowrap text-center text-xs sm:text-sm font-medium">
-                      <div className="flex justify-center gap-1 sm:gap-2">
+                    <td className="px-4 py-3 whitespace-nowrap text-center text-sm font-medium w-24">
+                      <div className="flex justify-center gap-2">
                         {onView && (
                           <Button
-                            onClick={() => onView(row)}
-                            className="text-blue-600 hover:text-blue-900 p-1 rounded transition-colors min-w-0"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onView(row);
+                            }}
+                            className="text-blue-600 hover:text-blue-900 hover:bg-blue-50 p-1.5 rounded transition-colors"
                             title="View"
                           >
                             <Eye className="w-4 h-4" />
@@ -110,8 +115,11 @@ const DataTable = ({
                         )}
                         {onEdit && (
                           <Button
-                            onClick={() => onEdit(row)}
-                            className="text-indigo-600 hover:text-indigo-900 hover:bg-gray-100 p-1 rounded transition-colors min-w-0"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onEdit(row);
+                            }}
+                            className="text-indigo-600 hover:text-indigo-900 hover:bg-indigo-50 p-1.5 rounded transition-colors"
                             title="Edit"
                           >
                             <Edit className="w-4 h-4" />
@@ -119,8 +127,11 @@ const DataTable = ({
                         )}
                         {onDelete && (
                           <Button
-                            onClick={() => onDelete(row)}
-                            className="text-red-600 hover:text-red-900 hover:bg-gray-100 p-1 rounded transition-colors min-w-0"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onDelete(row);
+                            }}
+                            className="text-red-600 hover:text-red-900 hover:bg-red-50 p-1.5 rounded transition-colors"
                             title="Delete"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -137,7 +148,7 @@ const DataTable = ({
                   colSpan={
                     columns.length + (onView || onEdit || onDelete ? 1 : 0)
                   }
-                  className="px-2 py-6 text-center text-xs sm:text-sm text-gray-500"
+                  className="px-4 py-8 text-center text-sm text-gray-500"
                 >
                   No data available
                 </td>

@@ -1,0 +1,204 @@
+/* Group Management Styles */
+
+.group-row {
+  transition: background-color 0.2s ease;
+}
+
+.group-row:hover {
+  background-color: #f9fafb;
+}
+
+.group-row.default-group {
+  background-color: #fefefe;
+}
+
+.group-row.custom-group {
+  background-color: #ffffff;
+}
+
+.group-row.selected {
+  background-color: #fef3c7 !important; /* Yellow highlight like in the image */
+}
+
+.name-cell {
+  padding: 12px 24px;
+  vertical-align: middle;
+}
+
+.action-cell {
+  padding: 12px 24px;
+  vertical-align: middle;
+  width: 120px;
+}
+
+.group-name {
+  font-size: 14px;
+  color: #374151;
+  font-weight: 500;
+}
+
+.default-group .group-name {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.expand-button {
+  transition: all 0.2s ease;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.expand-button:hover {
+  background-color: #e5e7eb;
+  border-radius: 4px;
+}
+
+.expand-button:focus {
+  outline: none;
+  ring: 2px;
+  ring-color: #3b82f6;
+}
+
+/* Table header styling */
+table thead th {
+  background-color: #f0fdfa; /* Light teal background */
+  color: #374151;
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 12px 24px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Table body styling */
+table tbody tr {
+  border-bottom: 1px solid #f3f4f6;
+}
+
+table tbody tr:last-child {
+  border-bottom: none;
+}
+
+/* Action buttons styling */
+.action-cell .flex {
+  gap: 8px;
+}
+
+.action-cell button {
+  padding: 6px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-cell button:hover {
+  transform: scale(1.05);
+}
+
+.action-cell button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.action-cell button:disabled:hover {
+  transform: none;
+  background-color: transparent;
+}
+
+/* Default group styling */
+.default-group .action-cell button {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.default-group .action-cell button:hover {
+  transform: none;
+  background-color: transparent;
+}
+
+/* Group type badge */
+.group-type-badge {
+  background-color: #f3f4f6;
+  color: #6b7280;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 500;
+  margin-left: 8px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .name-cell,
+  .action-cell {
+    padding: 8px 12px;
+  }
+  
+  .group-name {
+    font-size: 13px;
+  }
+  
+  .action-cell {
+    width: 100px;
+  }
+}
+
+/* Loading state */
+.loading-row {
+  background-color: #f9fafb;
+}
+
+.loading-row td {
+  padding: 16px 24px;
+  text-align: center;
+  color: #6b7280;
+}
+
+/* Empty state */
+.empty-state {
+  padding: 48px 24px;
+  text-align: center;
+  color: #6b7280;
+}
+
+.empty-state p {
+  font-size: 14px;
+  margin: 0;
+}
+
+/* Focus states for accessibility */
+.group-row:focus-within {
+  outline: 2px solid #3b82f6;
+  outline-offset: -2px;
+}
+
+.expand-button:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Print styles */
+@media print {
+  .action-cell {
+    display: none;
+  }
+  
+  .expand-button {
+    display: none;
+  }
+  
+  .group-row {
+    break-inside: avoid;
+  }
+} 
