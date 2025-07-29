@@ -36,6 +36,9 @@ export default function CompanyForm({
   const [addCompany, { isLoading: isCreating }] = useAddCompanyMutation();
   const [editCompany, { isLoading: isEditing }] = useEditCompanyMutation();
   const { data: companies } = useGetCompaniesQuery();
+
+  console.log("companies", companies);
+  
   const navigate = useNavigate();
 
   console.log("companies", companies);
@@ -52,7 +55,7 @@ export default function CompanyForm({
 
   useEffect(() => {
     if (isEditMode && id && companies) {
-      const company = companies.find(
+      const company = companies?.data?.find(
         (company) => parseInt(company.id) === parseInt(id)
       );
       if (company) setFormData(company);

@@ -1,6 +1,7 @@
-import { useEffect, useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import { Edit, Trash2, Eye, Plus } from "lucide-react";
 import Button from "./Button";
+import IconButton from "./IconButton";
 import Loader from "./Loader";
 
 const DataTable = ({
@@ -13,6 +14,7 @@ const DataTable = ({
   handleAddItem,
   selectedRow,
   onRowSelect,
+  fullHeight = false,
 }) => {
   const rowRefs = useRef([]);
   const tableContainerRef = useRef(null);
@@ -48,7 +50,7 @@ const DataTable = ({
       <div
         ref={tableContainerRef}
         className="no-scrollbar"
-        style={{ maxHeight: 'calc(100vh - 300px)', overflowY: 'auto' }}
+        style={{ maxHeight: fullHeight ? 'calc(100vh - 200px)' : 'calc(100vh - 300px)', overflowY: 'auto' }}
       >
         <table
           className="min-w-full divide-y divide-gray-200 text-xs sm:text-sm"
@@ -81,7 +83,7 @@ const DataTable = ({
                   ref={(el) => (rowRefs.current[index] = el)}
                   className={`hover:bg-blue-50 cursor-pointer transition-colors ${
                     selectedRow && selectedRow.id === row.id
-                      ? 'bg-blue-100 border-l-4 border-blue-500'
+                      ? 'bg-blue-100'
                       : ''
                   }`}
                   onClick={() => onRowSelect && onRowSelect(row)}
@@ -102,40 +104,43 @@ const DataTable = ({
                     <td className="px-4 py-3 whitespace-nowrap text-center text-sm font-medium w-24">
                       <div className="flex justify-center gap-2">
                         {onView && (
-                          <Button
+                          <IconButton
+                            icon={Eye}
                             onClick={(e) => {
                               e.stopPropagation();
                               onView(row);
                             }}
-                            className="text-blue-600 hover:text-blue-900 hover:bg-blue-50 p-1.5 rounded transition-colors"
+                            variant="outline"
+                            size="sm"
                             title="View"
-                          >
-                            <Eye className="w-4 h-4" />
-                          </Button>
+                            className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 hover:border-blue-300"
+                          />
                         )}
                         {onEdit && (
-                          <Button
+                          <IconButton
+                            icon={Edit}
                             onClick={(e) => {
                               e.stopPropagation();
                               onEdit(row);
                             }}
-                            className="text-indigo-600 hover:text-indigo-900 hover:bg-indigo-50 p-1.5 rounded transition-colors"
+                            variant="outline"
+                            size="sm"
                             title="Edit"
-                          >
-                            <Edit className="w-4 h-4" />
-                          </Button>
+                            className="text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 hover:border-indigo-300"
+                          />
                         )}
                         {onDelete && (
-                          <Button
+                          <IconButton
+                            icon={Trash2}
                             onClick={(e) => {
                               e.stopPropagation();
                               onDelete(row);
                             }}
-                            className="text-red-600 hover:text-red-900 hover:bg-red-50 p-1.5 rounded transition-colors"
+                            variant="outline"
+                            size="sm"
                             title="Delete"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50 hover:border-red-300"
+                          />
                         )}
                       </div>
                     </td>

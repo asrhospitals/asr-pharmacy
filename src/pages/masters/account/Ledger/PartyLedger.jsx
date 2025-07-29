@@ -5,6 +5,7 @@ import Select from '../../../../componets/common/Select';
 import Button from '../../../../componets/common/Button';
 import Modal from '../../../../componets/common/Modal';
 import Loader from '../../../../componets/common/Loader';
+import IconButton from '../../../../componets/common/IconButton';
 
 export default function PartyLedger (){
 
@@ -294,9 +295,14 @@ export default function PartyLedger (){
                         onChange={(e) => handleInputChange('whatsappNo', e.target.value)}
                         className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
-                      <Button className="ml-2 p-2 text-green-600 hover:bg-green-50 rounded-md">
-                        <Plus className="w-4 h-4" />
-                      </Button>
+                      <IconButton
+                        icon={Plus}
+                        onClick={() => {}}
+                        variant="outline"
+                        size="sm"
+                        title="Add WhatsApp"
+                        className="text-green-600 hover:text-green-700 hover:bg-green-50 hover:border-green-300"
+                      />
                     </div>
                   </div>
                 </div>

@@ -1,11 +1,18 @@
 import React from "react";
-import InventoryPageLayout from "../../../../componets/layout/InventoryPageLayout";
 import Button from "../../../../componets/common/Button";
-import { Plus, ChevronDown, ChevronRight } from "lucide-react";
+import IconButton from "../../../../componets/common/IconButton";
+import {
+  Plus,
+  ChevronDown,
+  ChevronRight,
+  Edit,
+  Trash2,
+  MoreVertical,
+} from "lucide-react";
 import { useGroupManagement } from "./hooks/useGroupManagement";
 import CreateGroupModal from "./components/CreateGroupModal";
 import EditGroupModal from "./components/EditGroupModal";
-import GroupTable from "./components/GroupTable";
+import DeleteConfirmationModal from "./components/DeleteConfirmationModal";
 
 const Group = () => {
   const {
@@ -13,167 +20,260 @@ const Group = () => {
     expandedGroups,
     selectedGroup,
     isLoading,
-    
+
     showCreateModal,
     showEditModal,
+    showDeleteModal,
+    groupToDelete,
     createFormData,
     editFormData,
     availableParents,
     parentsLoading,
-    
+
     creatingGroup,
     updatingGroup,
     deletingGroup,
-    
+
     toggleExpanded,
     handleRowClick,
     handleEdit,
     handleDelete,
     handleCreateGroup,
     handleUpdateGroup,
+    confirmDelete,
     resetCreateForm,
     closeCreateModal,
     closeEditModal,
+    closeDeleteModal,
     openCreateModal,
     setEditFormData,
     setCreateFormData,
   } = useGroupManagement();
 
-  const transformGroupsForTable = (groups, level = 0) => {
-    const transformed = [];
-    
-    groups.forEach((group) => {
-      transformed.push({
-        ...group,
-        displayName: group.groupName,
-        level,
-        hasChildren: group.children && group.children.length > 0,
-        isExpanded: expandedGroups.has(group.id),
-        isDefault: group.isDefault,
-      });
-      
-      if (
-        group.children &&
-        group.children.length > 0 &&
-        expandedGroups.has(group.id)
-      ) {
-        transformed.push(...transformGroupsForTable(group.children, level + 1));
-      }
-    });
-    
-    return transformed;
-  };
+  const renderGroupCard = (group, level = 0) => {
+    const hasChildren = group.children && group.children.length > 0;
+    const isExpanded = expandedGroups.has(group.id);
+    const isSelected = selectedGroup?.id === group.id;
 
-  const tableData = transformGroupsForTable(groups);
+    return (
+      <div key={group.id} className="mb-2">
+        <div
+          className={`
+            group-card group-row-level-${level} 
+            cursor-pointer transition-all duration-200 hover:shadow-md
+            ${isSelected ? "ring-2 ring-blue-500 ring-opacity-50" : ""}
+            ${level === 0 ? "border-l-4 border-blue-500" : ""}
+            ${level === 1 ? "border-l-4 border-green-500" : ""}
+            ${level === 2 ? "border-l-4 border-orange-500" : ""}
+            ${level >= 3 ? "border-l-4 border-purple-500" : ""}
+          `}
+          onClick={() => handleRowClick(group)}
+          style={{
+            marginLeft: `${level * 24}px`,
+          }}
+        >
+          <div className="flex items-center justify-between p-2">
+            {/* Left Section */}
+            <div className="flex items-center flex-1">
+              {/* Expand/Collapse Button */}
+              {hasChildren && (
+                <IconButton
+                  icon={isExpanded ? ChevronDown : ChevronRight}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleExpanded(group.id);
+                  }}
+                  variant="outline"
+                  size="sm"
+                  title={isExpanded ? "Collapse" : "Expand"}
+                  className="text-gray-600 hover:text-gray-800 hover:bg-gray-50 hover:border-gray-300 mr-3"
+                />
+              )}
 
-  const columns = [
-    {
-      key: "displayName",
-      title: "Group Name",
-      render: (value, row) => (
-        <div className="flex items-center">
-          {row.hasChildren && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                toggleExpanded(row.id);
-              }}
-              className=" hover:bg-gray-100 rounded transition-colors"
-              title={row.isExpanded ? "Collapse" : "Expand"}
-            >
-              {row.isExpanded ? (
-                <ChevronDown className="w-4 h-4 text-gray-600" />
-              ) : (
-                <ChevronRight className="w-4 h-4 text-gray-600" />
-              )}
-            </button>
-          )}
-          
-          <div className="flex items-center flex-1">
-            <div
-              className="flex items-center"
-              style={{ paddingLeft: `${row.level * 20}px` }}
-            >
-              {row.level > 0 && (
-                <div className="flex items-center mr-2">
-                  {Array.from({ length: row.level }, (_, i) => (
-                    <div
-                      key={i}
-                      className="w-px h-4 bg-gray-300 mr-2"
-                      style={{
-                        marginLeft: i === 0 ? "0" : "8px",
-                        backgroundColor:
-                          i === row.level - 1 ? "#6b7280" : "#e5e7eb",
-                      }}
-                    />
-                  ))}
-                </div>
-              )}
-              
-              <span
-                className={`${
-                  row.isDefault
-                    ? "font-semibold text-gray-900"
-                    : "text-gray-700"
-                } ${row.level > 0 ? "" : "ml-2"}`}
-              >
-                {row.groupName}
-              </span>
-              
-              {row.isDefault && (
-                <span className="ml-2 px-2 py-0.5 text-xs bg-yellow-100 text-yellow-800 rounded-full border border-yellow-200">
-                  Default
+              <div className="flex items-center mr-4">
+                <div className={`level-indicator-${Math.min(level, 3)}`}></div>
+              </div>
+
+              <div className="flex items-center flex-1">
+                <span
+                  className={`
+                    ${group.isDefault ? "font-semibold text-gray-900" : ""}
+                    ${level === 0 ? "text-lg font-medium text-gray-800" : ""}
+                    ${level === 1 ? "text-base font-medium text-gray-700" : ""}
+                    ${level >= 2 ? "text-sm text-gray-600" : ""}
+                  `}
+                >
+                  {group.groupName}
+                </span>
+
+                <span
+                  className={`
+                  ml-3 px-3 py-1 text-xs rounded-full border font-medium
+                  ${
+                    level === 0
+                      ? "bg-blue-100 text-blue-800 border-blue-200"
+                      : ""
+                  }
+                  ${
+                    level === 1
+                      ? "bg-green-100 text-green-800 border-green-200"
+                      : ""
+                  }
+                  ${
+                    level === 2
+                      ? "bg-orange-100 text-orange-800 border-orange-200"
+                      : ""
+                  }
+                  ${
+                    level >= 3
+                      ? "bg-purple-100 text-purple-800 border-purple-200"
+                      : ""
+                  }
+                `}
+                >
+                  {level === 0
+                    ? "Primary"
+                    : level === 1
+                    ? "Sub"
+                    : level === 2
+                    ? "Sub-Sub"
+                    : `${level}rd`}
+                </span>
+
+                {group.isDefault && (
+                  <span className="ml-2 px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-full border border-yellow-200">
+                    Default
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Right Section */}
+            <div className="flex items-center space-x-3">
+              {/* Group Type Badge */}
+              {group.groupType && (
+                <span className="px-3 py-1 text-xs bg-gray-100 text-gray-800 rounded-lg border border-gray-200 font-medium">
+                  {group.groupType}
                 </span>
               )}
+
+              {/* Action Buttons */}
+              <div className="flex items-center space-x-1">
+                <IconButton
+                  icon={Edit}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleEdit(group, { stopPropagation: () => {} });
+                  }}
+                  variant="outline"
+                  title="Edit Group"
+                  className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 hover:border-blue-300"
+                />
+
+                {!group.isDefault && (
+                  <IconButton
+                    icon={Trash2}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(group, { stopPropagation: () => {} });
+                    }}
+                    variant="outline"
+                    title="Delete Group"
+                    className="text-red-600 hover:text-red-700 hover:bg-red-50 hover:border-red-300"
+                  />
+                )}
+              </div>
             </div>
           </div>
-          
-          {row.groupType && (
-            <span className="ml-2 px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded border border-blue-200 font-medium">
-              {row.groupType}
-            </span>
-          )}
         </div>
-      ),
-    },
-  ];
 
-  const handleRowSelect = (row) => {
-    handleRowClick(row);
+        {/* Children */}
+        {hasChildren && isExpanded && (
+          <div className="mt-2">
+            {group.children.map((child) => renderGroupCard(child, level + 1))}
+          </div>
+        )}
+      </div>
+    );
   };
 
-  const handleEditRow = (row) => {
-    handleEdit(row, { stopPropagation: () => {} });
-  };
-
-  const handleDeleteRow = (row) => {
-    handleDelete(row, { stopPropagation: () => {} });
-  };
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-between mb-8 bg-white">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">
+                Group Management
+              </h1>
+            </div>
+            <Button
+              onClick={openCreateModal}
+              startIcon={<Plus className="w-4 h-4" />}
+              className="w-full sm:w-auto"
+              disabled
+            >
+              Add Group
+            </Button>
+          </div>
+          <div className="flex items-center justify-center h-64">
+            <div className="loader"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
-      <InventoryPageLayout
-        title="Group Management"
-        subtitle="Manage your accounting groups"
-        actions={[
-          <Button
-            key="add"
-            onClick={openCreateModal}
-            startIcon={<Plus className="w-4 h-4" />}
-            className="w-full sm:w-auto"
-          >
-            Add Group
-          </Button>,
-        ]}
-        tableData={tableData}
-        columns={columns}
-        isLoading={isLoading}
-        selectedRow={selectedGroup}
-        onRowSelect={handleRowSelect}
-        onAdd={openCreateModal}
-        onEdit={handleEditRow}
-        onDelete={handleDeleteRow}
-      />
+      <div className="min-h-screen bg-gray-50 p-6">
+        <div className="max-w-7xl mx-auto">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">
+                Group Management
+              </h1>
+            </div>
+            <Button
+              onClick={openCreateModal}
+              startIcon={<Plus className="w-4 h-4" />}
+              className="w-full sm:w-auto"
+            >
+              Add Group
+            </Button>
+          </div>
+
+          {/* Groups Container */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            {groups.length === 0 ? (
+              <div className="text-center flex flex-col justify-center align-center py-12">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Plus className="w-8 h-8 text-gray-400" />
+                </div>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  No groups found
+                </h3>
+                <p className="text-gray-600 mb-6">
+                  Get started by creating your first accounting group.
+                </p>
+                <div className="flex justify-center">
+                  <Button
+                    onClick={openCreateModal}
+                    startIcon={<Plus className="w-4 h-4" />}
+                  >
+                    Create First Group
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {groups.map((group) => renderGroupCard(group))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
 
       <CreateGroupModal
         isOpen={showCreateModal}
@@ -193,6 +293,14 @@ const Group = () => {
         onFormChange={setEditFormData}
         onSubmit={handleUpdateGroup}
         updatingGroup={updatingGroup}
+      />
+
+      <DeleteConfirmationModal
+        isOpen={showDeleteModal}
+        onClose={closeDeleteModal}
+        onConfirm={confirmDelete}
+        group={groupToDelete}
+        isDeleting={deletingGroup}
       />
     </>
   );

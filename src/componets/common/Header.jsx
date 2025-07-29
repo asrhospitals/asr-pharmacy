@@ -5,6 +5,7 @@ import { User, LogOut, HelpCircle, Menu, Bell, Settings } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import Button from "./Button";
 import Card from "./Card";
+import IconButton from "./IconButton";
 
 export default function DefaultHeader({ title, onMenuClick }) {
   const user = useSelector((state) => state.user.user);
@@ -78,15 +79,14 @@ export default function DefaultHeader({ title, onMenuClick }) {
         </div>
         {/* Settings Dropdown Icon */}
         <div className="relative md:hidden" ref={settingsRef}>
-          <div
-            className="bg-gray-300 p-1 rounded-full flex items-center justify-center cursor-pointer border-2 border-white shadow hover:text-blue-600 hover:border-blue-600"
+          <IconButton
+            icon={Settings}
             onClick={() => setSettingsOpen((prev) => !prev)}
-            tabIndex={0}
-            aria-label="Open settings menu"
-            onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') setSettingsOpen(prev => !prev); }}
-          >
-            <Settings className="w-5 h-5 text-white" />
-          </div>
+            variant="default"
+            size="sm"
+            title="Settings"
+            className="bg-gray-300 border-2 border-white shadow hover:text-blue-600 hover:border-blue-600"
+          />
           {settingsOpen && (
             <div className="absolute right-0 mt-3 w-44 bg-white rounded-xl shadow-2xl z-50 border border-gray-100 p-2 animate-fade-in flex flex-col gap-2">
               <button className="flex items-center gap-2 px-3 py-2 rounded hover:bg-blue-50 transition text-gray-700" tabIndex={0}>
@@ -102,20 +102,37 @@ export default function DefaultHeader({ title, onMenuClick }) {
           )}
         </div>
         {/* Hide these icons inline on small screens, show only in dropdown */}
-        <HelpCircle className="w-5 h-5 text-gray-500 cursor-pointer hover:text-blue-600 hidden md:inline" />
-        <Settings className="w-5 h-5 text-gray-500 cursor-pointer hover:text-blue-600 hidden md:inline" />
-        <Bell className="w-5 h-5 text-gray-500 cursor-pointer hover:text-blue-600 hidden md:inline" />
+        <IconButton
+          icon={HelpCircle}
+          variant="ghost"
+          size="sm"
+          title="Help"
+          className="text-gray-500 hover:text-blue-600 hidden md:inline"
+        />
+        <IconButton
+          icon={Settings}
+          variant="ghost"
+          size="sm"
+          title="Settings"
+          className="text-gray-500 hover:text-blue-600 hidden md:inline"
+        />
+        <IconButton
+          icon={Bell}
+          variant="ghost"
+          size="sm"
+          title="Notifications"
+          className="text-gray-500 hover:text-blue-600 hidden md:inline"
+        />
         {/* User Dropdown */}
         <div className="relative" ref={cardRef}>
-          <div
-            className="bg-gray-300 p-1 rounded-full flex items-center justify-center cursor-pointer border-2 border-white shadow hover:text-blue-600 hover:border-blue-600"
+          <IconButton
+            icon={User}
             onClick={() => setCardOpen((prev) => !prev)}
-            tabIndex={0}
-            aria-label="User menu"
-            onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') setCardOpen(prev => !prev); }}
-          >
-            <User className="w-5 h-5 text-white" />
-          </div>
+            variant="default"
+            size="sm"
+            title="User menu"
+            className="bg-gray-300 border-2 border-white shadow hover:text-blue-600 hover:border-blue-600"
+          />
           {cardOpen && (
             <Card className="absolute right-0 mt-3 w-72 md:w-80 bg-white rounded-xl shadow-2xl z-50 border border-gray-100 p-0 animate-fade-in">
               <div className="flex flex-col items-center p-6 pb-4 border-b border-gray-100">

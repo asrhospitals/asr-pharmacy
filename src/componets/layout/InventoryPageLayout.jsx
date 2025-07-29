@@ -25,6 +25,7 @@ const InventoryPageLayout = ({
   onDelete,
   rowInfoPanel = null,
   onArrowNavigation = null,
+  fullTableHeight = false,
 }) => {
   const tableRef = useRef();
 
@@ -76,6 +77,7 @@ const InventoryPageLayout = ({
                 onDelete={onDelete}
                 selectedRow={selectedRow}
                 onRowSelect={onRowSelect}
+                fullHeight={fullTableHeight}
               />
             )}
             </div>

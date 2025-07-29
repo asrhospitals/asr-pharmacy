@@ -1,6 +1,7 @@
 import React from 'react';
 import { ChevronDown, ChevronRight, Edit, Trash2 } from 'lucide-react';
 import Button from '../../../../../componets/common/Button';
+import IconButton from '../../../../../componets/common/IconButton';
 import Toast from '../../../../../componets/common/Toast';
 
 const GroupTable = ({ 
@@ -49,19 +50,17 @@ const GroupTable = ({
           <td className="name-cell">
             <div className="flex items-center" style={{ paddingLeft: `${level * 24}px` }}>
               {hasChildren ? (
-                <button
+                <IconButton
+                  icon={isExpanded ? ChevronDown : ChevronRight}
                   onClick={(e) => {
                     e.stopPropagation();
                     onToggleExpanded(group.id);
                   }}
-                  className="expand-button mr-2 p-1 hover:bg-gray-100 rounded"
-                >
-                  {isExpanded ? (
-                    <ChevronDown size={16} className="text-gray-600" />
-                  ) : (
-                    <ChevronRight size={16} className="text-gray-600" />
-                  )}
-                </button>
+                  variant="ghost"
+                  size="sm"
+                  title={isExpanded ? "Collapse" : "Expand"}
+                  className="text-gray-600 hover:text-gray-800 hover:bg-gray-100 mr-2"
+                />
               ) : (
                 <div className="w-6 mr-2" />
               )}
@@ -79,27 +78,25 @@ const GroupTable = ({
           </td>
           <td className="action-cell">
             <div className="flex items-center space-x-2">
-              <Button
-                variant="ghost"
-                size="sm"
+              <IconButton
+                icon={Edit}
                 onClick={(e) => handleEditClick(group, e)}
-                className="p-1 hover:bg-blue-50 text-blue-600"
+                variant="outline"
+                size="sm"
                 disabled={updatingGroup || isDefault}
                 title={isDefault ? "Default groups cannot be edited" : "Edit group"}
-              >
-                <Edit size={16} />
-              </Button>
+                className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 hover:border-blue-300"
+              />
               
-              <Button
-                variant="ghost"
-                size="sm"
+              <IconButton
+                icon={Trash2}
                 onClick={(e) => handleDeleteClick(group, e)}
-                className="p-1 hover:bg-red-50 text-red-600"
+                variant="outline"
+                size="sm"
                 disabled={deletingGroup || isDefault}
                 title={isDefault ? "Default groups cannot be deleted" : "Delete group"}
-              >
-                <Trash2 size={16} />
-              </Button>
+                className="text-red-600 hover:text-red-700 hover:bg-red-50 hover:border-red-300"
+              />
             </div>
           </td>
         </tr>

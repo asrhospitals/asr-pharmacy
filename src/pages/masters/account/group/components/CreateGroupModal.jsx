@@ -2,7 +2,7 @@ import React from 'react';
 import Modal from '../../../../../componets/common/Modal';
 import Button from '../../../../../componets/common/Button';
 import Input from '../../../../../componets/common/Input';
-import Select from '../../../../../componets/common/Select';
+import SearchableSelect from '../../../../../componets/common/SearchableSelect';
 
 const CreateGroupModal = ({ 
   isOpen, 
@@ -14,22 +14,19 @@ const CreateGroupModal = ({
   parentsLoading, 
   creatingGroup 
 }) => {
-  const groupTypes = [
-    { value: 'Asset', label: 'Asset' },
-    { value: 'Liability', label: 'Liability' },
-    { value: 'Income', label: 'Income' },
-    { value: 'Expense', label: 'Expense' },
-    { value: 'Capital', label: 'Capital' }
+  const prohibitOptions = [
+    { value: 'No', label: 'No' },
+    { value: 'Yes', label: 'Yes' }
   ];
 
-  const handleParentChange = (e) => {
-    const parentId = e.target.value || null;
+  const handleParentChange = (option) => {
+    const parentId = option?.value || '';
     const parent = availableParents.find(p => p.id == parentId);
+    console.log(parent);
     onFormChange({
       ...formData,
       parentGroupId: parentId,
-      parentGroupName: parent ? parent.groupName : '',
-      undergroup: parent ? parent.groupName : formData.groupName
+      groupType: parent ? parent.groupType : ''
     });
   };
 
@@ -41,7 +38,7 @@ const CreateGroupModal = ({
       className="max-w-2xl"
     >
       <div className="space-y-4">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Group Name <span className="text-red-500">*</span>
@@ -56,65 +53,39 @@ const CreateGroupModal = ({
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Parent Group
+              Parent Group <span className="text-red-500">*</span>
             </label>
-            <Select
+            <SearchableSelect
+              options={availableParents.map(parent => ({
+                value: parent.id,
+                label: `${parent.groupName} (${parent.groupType})`,
+                groupType: parent.groupType
+              }))}
               value={formData.parentGroupId || ''}
               onChange={handleParentChange}
-              disabled={parentsLoading}
-            >
-              <option value="">No Parent (Top Level)</option>
-              {availableParents.map((parent) => (
-                <option key={parent.id} value={parent.id}>
-                  {parent.groupName} ({parent.groupType})
-                </option>
-              ))}
-            </Select>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Group Type <span className="text-red-500">*</span>
-            </label>
-            <Select
-              value={formData.groupType || ''}
-              onChange={(e) => onFormChange({ ...formData, groupType: e.target.value })}
-              required
-            >
-              <option value="">Select Group Type</option>
-              {groupTypes.map((type) => (
-                <option key={type.value} value={type.value}>
-                  {type.label}
-                </option>
-              ))}
-            </Select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Under Group
-            </label>
-            <Input
-              value={formData.undergroup || ''}
-              onChange={(e) => onFormChange({ ...formData, undergroup: e.target.value })}
-              placeholder="Parent group name"
+              placeholder="Search parent group..."
+              getOptionLabel={opt => opt.label}
             />
           </div>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Description
-          </label>
-          <textarea
-            value={formData.description || ''}
-            onChange={(e) => onFormChange({ ...formData, description: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            rows={3}
-            placeholder="Enter group description"
-          />
+        <div className="grid grid-cols-1 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Prohibited
+            </label>
+            <select
+              className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={formData.prohibit || 'No'}
+              onChange={(e) => onFormChange({ ...formData, prohibit: e.target.value })}
+            >
+              {prohibitOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         <div className="flex justify-end space-x-3 pt-4">
@@ -127,7 +98,7 @@ const CreateGroupModal = ({
           </Button>
           <Button
             onClick={onSubmit}
-            disabled={!formData.groupName || !formData.groupType || creatingGroup}
+            disabled={!formData.groupName || !formData.parentGroupId || creatingGroup}
             loading={creatingGroup}
           >
             Create Group

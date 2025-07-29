@@ -24,7 +24,7 @@ import {
   useDeleteGroupLedgerMutation,
 } from '../../../../services/groupApi';
 import Button from '../../../../componets/common/Button';
-import Toast from '../../../../componets/common/Toast';
+import Toast, { showToast } from '../../../../componets/common/Toast';
 
 const GroupApiExample = () => {
   const [selectedGroupId, setSelectedGroupId] = useState(null);
@@ -153,10 +153,10 @@ const GroupApiExample = () => {
     
     try {
       await deleteGroup(selectedGroupId).unwrap();
-      Toast.success('Group deleted successfully');
+      showToast('Group deleted successfully', { type: 'success' });
       setSelectedGroupId(null);
     } catch (error) {
-      Toast.error('Failed to delete group');
+      showToast('Failed to delete group', { type: 'error' });
       console.error('Error:', error);
     }
   };

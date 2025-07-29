@@ -52,9 +52,8 @@ const Button = ({
   const defaultIcon = buttonType && keyMap[buttonType]?.icon;
   const defaultkey = buttonType && keyMap[buttonType]?.key;
 
-  // Filter out props that shouldn't be passed to DOM
   const domProps = { ...props };
-  delete domProps.loading; // Remove loading from DOM props
+  delete domProps.loading;
 
   return (
     <button

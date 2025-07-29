@@ -18,7 +18,7 @@ import Modal from '../../../../componets/common/Modal';
 import Input from '../../../../componets/common/Input';
 import Select from '../../../../componets/common/Select';
 import Loader from '../../../../componets/common/Loader';
-import Toast from '../../../../componets/common/Toast';
+import Toast, { showToast } from '../../../../componets/common/Toast';
 import {
   useGetGroupHierarchyQuery,
   useGetAvailableParentsQuery,
@@ -112,10 +112,10 @@ const HierarchicalGroupManager = () => {
 
     try {
       await deleteGroup(groupId).unwrap();
-      Toast.success('Group deleted successfully');
+      showToast('Group deleted successfully', { type: 'success' });
     } catch (error) {
       const message = error?.data?.message || 'Failed to delete group';
-      Toast.error(message);
+      showToast(message, { type: 'error' });
     }
   };
 

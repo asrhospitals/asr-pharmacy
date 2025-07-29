@@ -1,31 +1,32 @@
-import { useState } from 'react';
+import { useState } from "react";
 import {
   useGetGroupHierarchyQuery,
   useDeleteGroupMutation,
   useUpdateGroupMutation,
   useCreateGroupMutation,
   useGetAvailableParentsQuery,
-} from '../../../../../services/groupApi';
-import { showToast } from '../../../../../componets/common/Toast';
+} from "../../../../../services/groupApi";
+import { showToast } from "../../../../../componets/common/Toast";
 
 export const useGroupManagement = () => {
   const [expandedGroups, setExpandedGroups] = useState(new Set());
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [groupToDelete, setGroupToDelete] = useState(null);
   const [editFormData, setEditFormData] = useState({});
-  const [createFormData, setCreateFormData] = useState({});
+  const [createFormData, setCreateFormData] = useState({
+    groupName: "",
+    parentGroupId: "",
+    prohibit: "No",
+    groupType: "",
+  });
 
-  const { 
-    data: groups = [], 
-    isLoading, 
-    error 
-  } = useGetGroupHierarchyQuery();
+  const { data: groups = [], isLoading, error } = useGetGroupHierarchyQuery();
 
-  const { 
-    data: availableParents = [], 
-    isLoading: parentsLoading 
-  } = useGetAvailableParentsQuery();
+  const { data: availableParents = [], isLoading: parentsLoading } =
+    useGetAvailableParentsQuery();
 
   const [deleteGroup, { isLoading: deletingGroup }] = useDeleteGroupMutation();
   const [updateGroup, { isLoading: updatingGroup }] = useUpdateGroupMutation();
@@ -47,54 +48,46 @@ export const useGroupManagement = () => {
 
   const handleEdit = (group, e) => {
     e.stopPropagation();
-    
+
     if (group.isDefault) {
-      showToast('You cannot edit predefined/default groups');
+      showToast("You cannot edit predefined/default groups", {
+        type: "warning",
+      });
       return;
     }
-    
+
     setSelectedGroup(group);
     setEditFormData({
       groupName: group.groupName,
-      groupType: group.groupType,
-      description: group.description || '',
-      undergroup: group.undergroup || ''
+      prohibit: group.prohibit || "No",
+      parentGroupId: group.parentGroupId || "",
+      groupType: group.groupType || "",
     });
     setShowEditModal(true);
   };
 
   const handleDelete = async (group, e) => {
     e.stopPropagation();
-    
+
     if (group.isDefault) {
-      showToast('You cannot delete predefined/default groups');
-      return;
-    }
-    
-    if (!window.confirm(`Are you sure you want to delete "${group.groupName}"? This action cannot be undone.`)) {
+      showToast("You cannot delete predefined/default groups", {
+        type: "warning",
+      });
       return;
     }
 
-    try {
-      await deleteGroup(group.id).unwrap();
-      showToast('Group deleted successfully');
-      if (selectedGroup?.id === group.id) {
-        setSelectedGroup(null);
-      }
-    } catch (error) {
-      const message = error?.data?.message || 'Failed to delete group';
-      showToast(message);
-    }
+    setGroupToDelete(group);
+    setShowDeleteModal(true);
   };
 
   const handleUpdateGroup = async () => {
     try {
       await updateGroup({ id: selectedGroup.id, ...editFormData }).unwrap();
-      showToast('Group updated successfully');
+      showToast("Group updated successfully");
       setShowEditModal(false);
       setSelectedGroup(null);
     } catch (error) {
-      const message = error?.data?.message || 'Failed to update group';
+      const message = error?.data?.message || "Failed to update group";
       showToast(message);
     }
   };
@@ -102,23 +95,21 @@ export const useGroupManagement = () => {
   const handleCreateGroup = async () => {
     try {
       await createGroup(createFormData).unwrap();
-      showToast('Group created successfully');
+      showToast("Group created successfully");
       setShowCreateModal(false);
       resetCreateForm();
     } catch (error) {
-      const message = error?.data?.message || 'Failed to create group';
-      showToast(message, { type: 'error' });
+      const message = error?.data?.message || "Failed to create group";
+      showToast(message, { type: "error" });
     }
   };
 
   const resetCreateForm = () => {
     setCreateFormData({
-      groupName: '',
-      groupType: '',
-      description: '',
-      parentGroupId: null,
-      parentGroupName: '',
-      undergroup: ''
+      groupName: "",
+      parentGroupId: "",
+      prohibit: "No",
+      groupType: "",
     });
   };
 
@@ -136,6 +127,27 @@ export const useGroupManagement = () => {
     setShowCreateModal(true);
   };
 
+  const closeDeleteModal = () => {
+    setShowDeleteModal(false);
+    setGroupToDelete(null);
+  };
+
+  const confirmDelete = async () => {
+    if (!groupToDelete) return;
+
+    try {
+      await deleteGroup(groupToDelete.id).unwrap();
+      showToast("Group deleted successfully", { type: "success" });
+      if (selectedGroup?.id === groupToDelete.id) {
+        setSelectedGroup(null);
+      }
+      closeDeleteModal();
+    } catch (error) {
+      const message = error?.data?.message || "Failed to delete group";
+      showToast(message, { type: "error" });
+    }
+  };
+
   return {
     groups,
     isLoading,
@@ -146,6 +158,8 @@ export const useGroupManagement = () => {
     selectedGroup,
     showEditModal,
     showCreateModal,
+    showDeleteModal,
+    groupToDelete,
     editFormData,
     createFormData,
     deletingGroup,
@@ -158,10 +172,12 @@ export const useGroupManagement = () => {
     handleDelete,
     handleUpdateGroup,
     handleCreateGroup,
+    confirmDelete,
     setEditFormData,
     setCreateFormData,
     closeEditModal,
     closeCreateModal,
+    closeDeleteModal,
     openCreateModal,
   };
-}; 
+};

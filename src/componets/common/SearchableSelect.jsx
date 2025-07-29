@@ -84,7 +84,7 @@ export default function SearchableSelect({
       <input
         ref={inputRef}
         type="text"
-        className={`w-full border border-gray-00 rounded-lg ${
+        className={`w-full border border-gray-300 rounded-lg ${
             noPadding ? "p-0" : startIcon ? "pl-10 pr-2 py-2" : "p-2"
           } focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm`}
         placeholder={placeholder}
@@ -105,7 +105,7 @@ export default function SearchableSelect({
       {isOpen && (
         <ul
           ref={listRef}
-          className="absolute z-50 mt-1 w-full bg-white border border-gray-200 rounded shadow-lg max-h-56 overflow-auto text-sm"
+          className="absolute z-50 mt-1 w-full bg-white border border-gray-200 rounded shadow-lg max-h-40 overflow-auto text-sm no-scrollbar"
         >
           {filteredOptions.length === 0 && !allowCreate && (
             <li className="px-3 py-2 text-gray-400">No options</li>
