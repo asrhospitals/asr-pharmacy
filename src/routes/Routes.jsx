@@ -3,7 +3,7 @@ import React, { Suspense } from "react";
 import ProtectedRoute from "./ProtectedRoute";
 const Unauthorized = React.lazy(() => import("../pages/Unauthorized"));
 import Loader from "../componets/common/Loader";
-import routeConfig from "./routeConfig";
+import { routeConfig } from "./routeConfig";
 
 const AppRoutes = () => {
   return (

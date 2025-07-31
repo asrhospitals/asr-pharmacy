@@ -36,6 +36,7 @@ export const permissions = {
     accounting_ledgers: "V",
     accounting_transactions: "V",
     accounting_reports: "V",
+    opening_balance: "V",
   },
   assistant: {
     view_prescription: "V",
@@ -43,6 +44,8 @@ export const permissions = {
     gst_billing: "VC",
     accounting_groups: "V",
     accounting_ledgers: "V",
+    accounting_transactions: "V",
+    opening_balance: "V",
   },
   store_manager: {
     dashboard: "V",
@@ -56,6 +59,7 @@ export const permissions = {
     accounting_ledgers: "V",
     accounting_transactions: "V",
     accounting_reports: "V",
+    opening_balance: "V",
   },
   accounts_officer: {
     dashboard: "V",
@@ -98,6 +102,7 @@ export const permissions = {
     accounting_ledgers: "V",
     accounting_transactions: "V",
     accounting_reports: "V",
+    opening_balance: "V",
   },
   scheme_desk: {
     dashboard: "V",
@@ -109,6 +114,8 @@ export const permissions = {
     accounting_groups: "V",
     accounting_ledgers: "V",
     accounting_transactions: "V",
+    accounting_reports: "V",
+    opening_balance: "V",
   },
   viewer: {
     dashboard: "V",
@@ -116,6 +123,7 @@ export const permissions = {
     accounting_ledgers: "V",
     accounting_transactions: "V",
     accounting_reports: "V",
+    opening_balance: "V",
   },
 };
 

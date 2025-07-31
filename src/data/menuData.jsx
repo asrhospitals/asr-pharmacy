@@ -34,8 +34,9 @@ const adminMenu = [
         title: "Accounts Master",
         icon: BookMinus,
         children: [
-          { title: "Ledger", path: "/master/accounts/ledger" },
+          { title: "Ledger", path: "/master/account/ledger" },
           { title: "Group", path: "/master/accounts/group" },
+          { title: "Transaction", path: "/master/account/transaction" },
           { title: "Sale", path: "/master/accounts/sale" },
           { title: "Purchase", path: "/master/accounts/purchase" },
         ],

@@ -27,15 +27,17 @@ const LoginPage = () => {
         pwd: password || "password",
       };
       const response = await login(credentials).unwrap();
+
+      const userData = response.data.user;      
       
       const user = {
-        id: response.id,
-        role: response.role,
-        module: response.module,
-        username: response.username,
+        id: userData.id,
+        role: userData.role,
+        module: userData.module,
+        username: userData.username,
       };
-      dispatch(setUser({ user, token: response.token }));
-      localStorage.setItem('token', response.token);
+      dispatch(setUser({ user, token: response.data.accessToken }));
+      localStorage.setItem('token', response.data.accessToken);
       localStorage.setItem('user', JSON.stringify(user));
       navigate("/dashboard", { replace: true });
     } catch (err) {

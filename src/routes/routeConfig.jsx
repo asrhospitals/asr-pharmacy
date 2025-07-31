@@ -33,6 +33,18 @@ const Price = React.lazy(() => import("../pages/masters/rate/Price"));
 const Viewledger = React.lazy(() =>
   import("../pages/masters/account/Ledger/Viewledger")
 );
+const CreateLedger = React.lazy(() =>
+  import("../pages/masters/account/Ledger/CreateLedger")
+);
+const LedgerDetails = React.lazy(() =>
+  import("../pages/masters/account/Ledger/LedgerDetails")
+);
+const TransactionList = React.lazy(() =>
+  import("../pages/masters/account/Transaction/TransactionList")
+);
+const CreateTransaction = React.lazy(() =>
+  import("../pages/masters/account/Transaction/CreateTransaction")
+);
 const CreateCompanyPage = React.lazy(() =>
   import("../pages/masters/inventory/company/CreateCompanyPage")
 );
@@ -64,7 +76,7 @@ const CreatePrescriptionPage = React.lazy(() => import("../pages/masters/other/p
 const BillList = React.lazy(() => import("../pages/sales/Bill/BillList"));
 const BillForm = React.lazy(() => import("../pages/sales/Bill/BillForm"));
 
-const routeConfig = [
+export const routeConfig = [
   {
     path: "/dashboard",
     module: "dashboard",
@@ -72,10 +84,46 @@ const routeConfig = [
     element: <Dashboard />,
   },
   {
-    path: "/master/accounts/ledger",
-    module: "audit_logs",
+    path: "/master/account/ledger",
+    module: "accounting_ledgers",
     action: "V",
     element: <Viewledger />,
+  },
+  {
+    path: "/master/account/ledger/create",
+    module: "accounting_ledgers",
+    action: "C",
+    element: <CreateLedger />,
+  },
+  {
+    path: "/master/account/ledger/edit/:id",
+    module: "accounting_ledgers",
+    action: "E",
+    element: <CreateLedger />,
+  },
+  {
+    path: "/master/account/ledger/details/:id",
+    module: "accounting_ledgers",
+    action: "V",
+    element: <LedgerDetails />,
+  },
+  {
+    path: "/master/account/transaction",
+    module: "accounting_transactions",
+    action: "V",
+    element: <TransactionList />,
+  },
+  {
+    path: "/master/account/transaction/create",
+    module: "accounting_transactions",
+    action: "C",
+    element: <CreateTransaction />,
+  },
+  {
+    path: "/master/account/transaction/edit/:id",
+    module: "accounting_transactions",
+    action: "E",
+    element: <CreateTransaction />,
   },
   {
     path: "/master/accounts/group",

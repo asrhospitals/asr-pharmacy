@@ -1,10 +1,13 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { buildQueryParams } from '../utils/queryParams';
+import { createBaseQueryWithAuth } from "./apiBase";
+
+const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL
+  ? `${import.meta.env.VITE_BACKEND_BASE_URL}/pharmacy/admin/master/inventory`
+  : "/api/inventory";
 
 const baseQueryWithAuth = fetchBaseQuery({
-  baseUrl: import.meta.env.VITE_BACKEND_BASE_URL
-    ? `${import.meta.env.VITE_BACKEND_BASE_URL}/admin/master/inventory`
-    : "/api/inventory",
+  baseUrl,
   prepareHeaders: (headers, { getState }) => {
     const token = getState()?.user?.token || localStorage.getItem("token");
     if (token) {
@@ -16,7 +19,7 @@ const baseQueryWithAuth = fetchBaseQuery({
 
 export const companyApi = createApi({
   reducerPath: "companyApi",
-  baseQuery: baseQueryWithAuth,
+  baseQuery: createBaseQueryWithAuth(baseUrl),
   endpoints: (builder) => ({
     getCompanies: builder.query({
       query: ({ page = 1, limit = 10, search = '', filters = {} } = {}) => ({
