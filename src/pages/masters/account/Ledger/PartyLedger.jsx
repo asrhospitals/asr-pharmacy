@@ -48,18 +48,18 @@ export default function PartyLedger (){
   return (
     <div className="min-h-screen bg-gray-100 p-4">
       <div className="max-w-max mx-auto">
-        {/* Header */}
+        
         <div className="flex items-center justify-start mb-6">
           <div className="flex items-center gap-4">
             <h1 className="text-xl font-semibold text-gray-800">Create Party</h1>
           </div>
         </div>
 
-        {/* Main Content */}
+        
         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 p-6">
             
-            {/* Left Section - General Info */}
+            
             <div className="lg:col-span-2 space-y-6">
               <div>
                 <h2 className="text-lg font-medium text-gray-800 mb-4">General Info</h2>
@@ -211,7 +211,7 @@ export default function PartyLedger (){
               </div>
             </div>
 
-            {/* Right Section - Balance & Contact */}
+            
             <div className="space-y-6">
               <div>
                 <h2 className="text-lg font-medium text-gray-800 mb-4">Balance</h2>
@@ -310,7 +310,7 @@ export default function PartyLedger (){
             </div>
           </div>
 
-          {/* Tabs Section */}
+          
           <div className="border-t border-gray-200">
             <div className="flex">
               {tabs.map((tab) => (
@@ -328,7 +328,7 @@ export default function PartyLedger (){
               ))}
             </div>
 
-            {/* Tab Content */}
+            
             <div className="p-6">
               {activeTab === 'GST/Tax Details' && (
                 <div className="space-y-4">
@@ -378,7 +378,7 @@ export default function PartyLedger (){
             </div>
           </div>
 
-          {/* Footer Actions */}
+          
           <div className="border-t border-gray-200 p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">

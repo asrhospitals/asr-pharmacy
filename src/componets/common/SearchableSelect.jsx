@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from "react";
-import { showToast } from "./Toast";
 
 export default function SearchableSelect({
   options = [],
@@ -27,7 +26,7 @@ export default function SearchableSelect({
   );
 
   const filteredOptions = normalizedOptions.filter((opt) =>
-    opt.label.toLowerCase().includes(inputValue.toLowerCase())
+    opt.label?.toLowerCase().includes(inputValue.toLowerCase())
   );
 
   useEffect(() => {
@@ -84,9 +83,9 @@ export default function SearchableSelect({
       <input
         ref={inputRef}
         type="text"
-        className={`w-full border border-gray-300 rounded-lg ${
+        className={`w-full border border-gray-500 rounded-lg ${
             noPadding ? "p-0" : startIcon ? "pl-10 pr-2 py-2" : "p-2"
-          } focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm`}
+          } focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs`}
         placeholder={placeholder}
         value={
           isOpen
@@ -94,9 +93,14 @@ export default function SearchableSelect({
             : normalizedOptions.find((opt) => opt.value === value)?.label || ""
         }
         onChange={(e) => {
-          setInputValue(e.target.value);
+          const newValue = e.target.value;
+          setInputValue(newValue);
           setIsOpen(true);
           setHighlightedIndex(0);
+          
+          if (newValue === "" && value) {
+            onChange && onChange(null);
+          }
         }}
         onFocus={() => setIsOpen(true)}
         onKeyDown={handleKeyDown}

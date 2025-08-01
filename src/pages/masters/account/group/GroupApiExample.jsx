@@ -30,7 +30,7 @@ const GroupApiExample = () => {
   const [selectedGroupId, setSelectedGroupId] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Example 1: Get group hierarchy
+
   const { 
     data: hierarchy = [], 
     isLoading: hierarchyLoading, 
@@ -38,7 +38,7 @@ const GroupApiExample = () => {
     refetch: refetchHierarchy 
   } = useGetGroupHierarchyQuery();
 
-  // Example 2: Get groups with pagination and filters
+
   const { 
     data: groups = [], 
     isLoading: groupsLoading 
@@ -49,17 +49,17 @@ const GroupApiExample = () => {
     filters: { groupType: 'Asset' }
   });
 
-  // Example 3: Get groups by type
+
   const { 
     data: assetGroups = [] 
   } = useGetGroupsByTypeQuery('Asset');
 
-  // Example 4: Get available parent groups
+
   const { 
     data: availableParents = [] 
   } = useGetAvailableParentsQuery();
 
-  // Example 5: Get specific group by ID
+
   const { 
     data: selectedGroup,
     isLoading: selectedGroupLoading 
@@ -67,7 +67,7 @@ const GroupApiExample = () => {
     skip: !selectedGroupId
   });
 
-  // Example 6: Search groups
+
   const { 
     data: searchResults = [] 
   } = useSearchGroupsQuery({
@@ -75,12 +75,12 @@ const GroupApiExample = () => {
     groupType: 'Asset'
   });
 
-  // Example 7: Get group statistics
+
   const { 
     data: groupStats = {} 
   } = useGetGroupStatsQuery();
 
-  // Example 8: Mutations
+
   const [createGroup, { isLoading: creatingGroup }] = useCreateGroupMutation();
   const [updateGroup, { isLoading: updatingGroup }] = useUpdateGroupMutation();
   const [deleteGroup, { isLoading: deletingGroup }] = useDeleteGroupMutation();
@@ -90,7 +90,7 @@ const GroupApiExample = () => {
   const [moveGroup, { isLoading: movingGroup }] = useMoveGroupMutation();
   const [duplicateGroup, { isLoading: duplicatingGroup }] = useDuplicateGroupMutation();
 
-  // Example 9: Permission operations
+
   const { 
     data: groupPermissions = [] 
   } = useGetGroupPermissionsQuery(selectedGroupId, {
@@ -100,7 +100,7 @@ const GroupApiExample = () => {
   const [setGroupPermission] = useSetGroupPermissionMutation();
   const [applyPermissionTemplate] = useApplyPermissionTemplateMutation();
 
-  // Example 10: Ledger operations
+
   const { 
     data: groupLedgers = [] 
   } = useGetGroupLedgersQuery(selectedGroupId, {
@@ -111,7 +111,7 @@ const GroupApiExample = () => {
   const [updateGroupLedger] = useUpdateGroupLedgerMutation();
   const [deleteGroupLedger] = useDeleteGroupLedgerMutation();
 
-  // Example functions demonstrating usage
+
   const handleCreateGroup = async () => {
     try {
       const newGroup = {
@@ -183,7 +183,7 @@ const GroupApiExample = () => {
       const result = await exportGroups({ format: 'json' }).unwrap();
       Toast.success('Groups exported successfully');
       
-      // Handle file download
+
       const blob = new Blob([JSON.stringify(result.data)], { type: 'application/json' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -291,9 +291,9 @@ const GroupApiExample = () => {
     <div className="p-6 space-y-6">
       <h1 className="text-2xl font-bold">RTK Query Group API Examples</h1>
       
-      {/* Data Display */}
+      
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* Hierarchy */}
+        
         <div className="bg-white p-4 rounded-lg shadow">
           <h3 className="font-semibold mb-2">Group Hierarchy</h3>
           {hierarchyLoading ? (
@@ -310,7 +310,7 @@ const GroupApiExample = () => {
           )}
         </div>
 
-        {/* Groups */}
+        
         <div className="bg-white p-4 rounded-lg shadow">
           <h3 className="font-semibold mb-2">Groups</h3>
           {groupsLoading ? (
@@ -329,19 +329,19 @@ const GroupApiExample = () => {
           )}
         </div>
 
-        {/* Asset Groups */}
+        
         <div className="bg-white p-4 rounded-lg shadow">
           <h3 className="font-semibold mb-2">Asset Groups</h3>
           <p className="text-sm text-gray-600">Total: {assetGroups.length}</p>
         </div>
 
-        {/* Available Parents */}
+        
         <div className="bg-white p-4 rounded-lg shadow">
           <h3 className="font-semibold mb-2">Available Parents</h3>
           <p className="text-sm text-gray-600">Total: {availableParents.length}</p>
         </div>
 
-        {/* Group Stats */}
+        
         <div className="bg-white p-4 rounded-lg shadow">
           <h3 className="font-semibold mb-2">Group Statistics</h3>
           <div className="text-sm text-gray-600">
@@ -351,7 +351,7 @@ const GroupApiExample = () => {
           </div>
         </div>
 
-        {/* Selected Group */}
+        
         <div className="bg-white p-4 rounded-lg shadow">
           <h3 className="font-semibold mb-2">Selected Group</h3>
           <input
@@ -374,7 +374,7 @@ const GroupApiExample = () => {
         </div>
       </div>
 
-      {/* Action Buttons */}
+      
       <div className="bg-white p-4 rounded-lg shadow">
         <h3 className="font-semibold mb-4">Actions</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -460,9 +460,9 @@ const GroupApiExample = () => {
         </div>
       </div>
 
-      {/* Data Lists */}
+      
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Search Results */}
+        
         <div className="bg-white p-4 rounded-lg shadow">
           <h3 className="font-semibold mb-2">Search Results</h3>
           <div className="space-y-1">
@@ -474,7 +474,7 @@ const GroupApiExample = () => {
           </div>
         </div>
 
-        {/* Group Permissions */}
+        
         <div className="bg-white p-4 rounded-lg shadow">
           <h3 className="font-semibold mb-2">Group Permissions</h3>
           <div className="space-y-1">
@@ -486,7 +486,7 @@ const GroupApiExample = () => {
           </div>
         </div>
 
-        {/* Group Ledgers */}
+        
         <div className="bg-white p-4 rounded-lg shadow">
           <h3 className="font-semibold mb-2">Group Ledgers</h3>
           <div className="space-y-1">

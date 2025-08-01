@@ -97,7 +97,7 @@ const MFRPage = () => {
         onAdd={handleAddItem}
         onEdit={handleEdit}
         onDelete={(row) => handleDelete(row.id)}
-        // onEditSave={handleEditSave}
+
         onArrowNavigation={handleKeyDown}
         rowInfoPanel={
           selectedRow && (

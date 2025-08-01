@@ -66,7 +66,7 @@ export default function SaltForm({
     },
   });
 
-  // Keep form value in sync with showMoreOptions state
+
   useEffect(() => {
     setValue && setValue("showMoreOptions", showMoreOptions);
   }, [showMoreOptions, setValue]);
@@ -122,7 +122,7 @@ export default function SaltForm({
     setError("");
     setSuccess("");
     try {
-      // Check if all variants are empty
+
       const allEmpty = variants.every(
         v =>
           !v.strength &&
@@ -260,7 +260,7 @@ export default function SaltForm({
           {showMoreOptions && (
             <InputFields register={register} errors={errors} />
           )}
-          {/* Salt Variants Section */}
+          
           <SaltVariTable
             variants={variants}
             handleVariantChange={handleVariantChange}

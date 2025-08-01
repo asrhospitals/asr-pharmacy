@@ -102,7 +102,7 @@ const BillForm = ({ billId, onSuccess, onCancel }) => {
     0
   );
 
-  // When patient is selected from modal
+
   const handlePatientSelect = (patient) => {
     setForm((prev) => ({
       ...prev,
@@ -111,10 +111,10 @@ const BillForm = ({ billId, onSuccess, onCancel }) => {
       address: patient.address,
     }));
     setShowPatientModal(false);
-    // Optionally: setShowDoctorModal(true); // Uncomment if you want to prompt doctor selection immediately
+
   };
 
-  // When doctor is selected from modal
+
   const handleDoctorSelect = (doctor) => {
     setForm((prev) => ({
       ...prev,
@@ -146,7 +146,7 @@ const BillForm = ({ billId, onSuccess, onCancel }) => {
         </div>
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-4 gap-4 mb-4">
-            {/* Row 1 */}
+            
             <div className="col-span-2">
               <Input
                 label="Party Name"
@@ -177,7 +177,7 @@ const BillForm = ({ billId, onSuccess, onCancel }) => {
               />
             </div>
 
-            {/* Row 2 */}
+            
             <div>
               <Input
                 label="Patient Mob./ID"
@@ -207,7 +207,7 @@ const BillForm = ({ billId, onSuccess, onCancel }) => {
               />
             </div>
 
-            {/* Row 3 */}
+            
             <div>
               <Input
                 label="Doctor Mob./ID"

@@ -41,7 +41,7 @@ const LedgerDetails = () => {
   }, [dateRange, refetch]);
 
   const handleExport = (type) => {
-    // TODO: Implement export functionality
+
     console.log(`Exporting as ${type}`);
   };
 
@@ -50,7 +50,7 @@ const LedgerDetails = () => {
   };
 
   const handleShare = () => {
-    // TODO: Implement share functionality
+
     console.log('Sharing ledger details');
   };
 
@@ -97,11 +97,11 @@ const LedgerDetails = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
+      
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            {/* Left side */}
+            
             <div className="flex items-center space-x-4">
               <Button
                 variant="ghost"
@@ -127,9 +127,9 @@ const LedgerDetails = () => {
               </div>
             </div>
 
-            {/* Right side */}
+            
             <div className="flex items-center space-x-3">
-              {/* Date Range */}
+              
               <div className="flex items-center space-x-2">
                 <Calendar className="h-4 w-4 text-gray-500" />
                 <span className="text-sm text-gray-600">
@@ -137,7 +137,7 @@ const LedgerDetails = () => {
                 </span>
               </div>
 
-              {/* View Selector */}
+              
               <Select
                 value={viewType}
                 onChange={(e) => setViewType(e.target.value)}
@@ -148,7 +148,7 @@ const LedgerDetails = () => {
                 <option value="Summary">Summary</option>
               </Select>
 
-              {/* Action Buttons */}
+              
               <div className="flex items-center space-x-2">
                 <Button
                   variant="ghost"
@@ -213,7 +213,7 @@ const LedgerDetails = () => {
         </div>
       </div>
 
-      {/* Filters */}
+      
       {showFilters && (
         <div className="bg-white border-b border-gray-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -248,10 +248,10 @@ const LedgerDetails = () => {
         </div>
       )}
 
-      {/* Main Content */}
+      
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="bg-white shadow-sm rounded-lg overflow-hidden">
-          {/* Table */}
+          
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">

@@ -234,7 +234,7 @@ const Sidebar = ({
 
   return (
     <>
-      {/* Overlay for mobile */}
+      
       <div
         className={`fixed inset-0 bg-black/30 z-50 transition-opacity duration-300 lg:hidden ${
           mobileOpen

@@ -24,7 +24,7 @@ const ItemsPage = () => {
 
   const { data, isLoading } = useGetItemsQuery({ page, limit, search: debouncedSearch, filters: selectedStore ? { storeid: selectedStore } : {} });
   const { data: stores = [] } = useGetStoresQuery();  
-  // const [deleteItem] = useDeleteItemMutation();
+
 
   const handleAddItem = () => navigate("/master/inventory/items/create");
 

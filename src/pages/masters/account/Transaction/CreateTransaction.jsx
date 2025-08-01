@@ -40,7 +40,7 @@ const CreateTransaction = () => {
   const watchedDebitLedger = watch("debitLedgerId");
   const watchedCreditLedger = watch("creditLedgerId");
 
-  // RTK Query hooks
+
   const { data: ledgers = [], isLoading: ledgersLoading } = useGetLedgersQuery({ limit: 1000 });
   const { data: transactionData, isLoading: transactionLoading } = useGetTransactionByIdQuery(id, {
     skip: !isEditMode,
@@ -48,7 +48,7 @@ const CreateTransaction = () => {
   const [createTransaction, { isLoading: createLoading }] = useCreateTransactionMutation();
   const [updateTransaction, { isLoading: updateLoading }] = useUpdateTransactionMutation();
 
-  // Load transaction data for editing
+
   useEffect(() => {
     if (transactionData && isEditMode) {
       reset({
@@ -65,7 +65,7 @@ const CreateTransaction = () => {
   }, [transactionData, isEditMode, reset]);
 
   const onSubmit = async (data) => {
-    // Validate that debit and credit ledgers are different
+
     if (data.debitLedgerId === data.creditLedgerId) {
       showToast("Debit and Credit ledgers cannot be the same", "error");
       return;
@@ -122,7 +122,7 @@ const CreateTransaction = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Voucher Type */}
+              
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Voucher Type <span className="text-red-500">*</span>
@@ -145,7 +145,7 @@ const CreateTransaction = () => {
                 )}
               </div>
 
-              {/* Voucher Date */}
+              
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Voucher Date <span className="text-red-500">*</span>
@@ -162,7 +162,7 @@ const CreateTransaction = () => {
                 )}
               </div>
 
-              {/* Amount */}
+              
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Amount <span className="text-red-500">*</span>
@@ -182,7 +182,7 @@ const CreateTransaction = () => {
                 )}
               </div>
 
-              {/* Reference Number */}
+              
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Reference Number
@@ -195,7 +195,7 @@ const CreateTransaction = () => {
                 />
               </div>
 
-              {/* Debit Ledger */}
+              
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Debit Ledger <span className="text-red-500">*</span>
@@ -218,7 +218,7 @@ const CreateTransaction = () => {
                 )}
               </div>
 
-              {/* Credit Ledger */}
+              
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Credit Ledger <span className="text-red-500">*</span>
@@ -241,7 +241,7 @@ const CreateTransaction = () => {
                 )}
               </div>
 
-              {/* Status */}
+              
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Status
@@ -257,7 +257,7 @@ const CreateTransaction = () => {
               </div>
             </div>
 
-            {/* Description */}
+            
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Description
@@ -270,7 +270,7 @@ const CreateTransaction = () => {
               />
             </div>
 
-            {/* Validation Message */}
+            
             {watchedDebitLedger && watchedCreditLedger && watchedDebitLedger === watchedCreditLedger && (
               <div className="bg-red-50 border border-red-200 rounded-lg p-3">
                 <p className="text-red-600 text-sm">Debit and Credit ledgers cannot be the same</p>
@@ -278,7 +278,7 @@ const CreateTransaction = () => {
             )}
           </div>
 
-          {/* Footer Action Buttons */}
+          
           <div className="flex justify-end gap-3 mt-8 pt-6 border-t">
             <Button
               type="button"

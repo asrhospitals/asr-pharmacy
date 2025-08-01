@@ -310,12 +310,12 @@ export const routeConfig = [
     action: "C",
     element: <CreatePrescriptionPage />,
   },
-  // {
-  //   path: "/master/other/prescription/edit/:id",
-  //   module: "other",
-  //   action: "E",
-  //   element: <PatientForm isEditMode={true} />,
-  // },
+
+
+
+
+
+
   {
     path: "/opening/:type",
     module: "inventory",

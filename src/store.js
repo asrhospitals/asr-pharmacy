@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { authApi } from './services/authApi';
-// import { inventoryBaseApi } from './services/inventoryBaseApi';
+
 import { billApi } from './services/billApi';
 import { companyApi } from './services/companyApi';
 import { storeApi } from './services/storeApi';
@@ -18,11 +18,12 @@ import { ledgerApi } from './services/ledgerApi';
 import { transactionApi } from './services/transactionApi';
 import userReducer from './services/userSlice';
 import { salesBillApi } from './services/salesBillApi';
+import { ledgerEntryApi } from './services/ledgerEntryApi';
 
 export const store = configureStore({
   reducer: {
     [authApi.reducerPath]: authApi.reducer,
-    // [inventoryBaseApi.reducerPath]: inventoryBaseApi.reducer,
+
     [billApi.reducerPath]: billApi.reducer,
     [companyApi.reducerPath]: companyApi.reducer,
     [storeApi.reducerPath]: storeApi.reducer,
@@ -39,12 +40,13 @@ export const store = configureStore({
     [ledgerApi.reducerPath]: ledgerApi.reducer,
     [transactionApi.reducerPath]: transactionApi.reducer,
     [salesBillApi.reducerPath] : salesBillApi.reducer,
+    [ledgerEntryApi.reducerPath]: ledgerEntryApi.reducer,
      user: userReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
       authApi.middleware,
-      // inventoryBaseApi.middleware,
+
       billApi.middleware,
       companyApi.middleware,
       storeApi.middleware,
@@ -61,5 +63,6 @@ export const store = configureStore({
       ledgerApi.middleware,
       transactionApi.middleware,
       salesBillApi.middleware,
+      ledgerEntryApi.middleware,
     ),
 }); 

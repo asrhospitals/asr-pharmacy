@@ -79,6 +79,7 @@ const Viewledger = () => {
     page,
     limit: 10,
   });
+  
 
   const [deleteLedger] = useDeleteLedgerMutation();
 
@@ -141,7 +142,7 @@ const Viewledger = () => {
       ]}
       search={search}
       onSearchChange={e => { setSearch(e.target.value); setPage(1); }}
-      tableData={data?.data || []}
+      tableData={data|| []}
       columns={columns}
       isLoading={isLoading}
       selectedRow={selectedRow}

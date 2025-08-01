@@ -2,7 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { logout } from "./userSlice";
 import { showToast } from "../componets/common/Toast";
 
-// Create a base query with auth and token expiration handling
+
 const createBaseQueryWithAuth = (baseUrl) => {
   const baseQuery = fetchBaseQuery({
     baseUrl,
@@ -31,7 +31,7 @@ const createBaseQueryWithAuth = (baseUrl) => {
         console.log('Logging out due to token expiration');
         showToast("Session expired. Please login again.", { type: "warning" });
         api.dispatch(logout());
-        // Small delay to ensure toast is shown before redirect
+
         setTimeout(() => {
           window.location.href = "/";
         }, 1000);

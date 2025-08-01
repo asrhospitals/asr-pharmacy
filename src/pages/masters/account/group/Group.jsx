@@ -73,9 +73,9 @@ const Group = () => {
           }}
         >
           <div className="flex items-center justify-between p-2">
-            {/* Left Section */}
+            
             <div className="flex items-center flex-1">
-              {/* Expand/Collapse Button */}
+              
               {hasChildren && (
                 <IconButton
                   icon={isExpanded ? ChevronDown : ChevronRight}
@@ -148,16 +148,16 @@ const Group = () => {
               </div>
             </div>
 
-            {/* Right Section */}
+            
             <div className="flex items-center space-x-3">
-              {/* Group Type Badge */}
+              
               {group.groupType && (
                 <span className="px-3 py-1 text-xs bg-gray-100 text-gray-800 rounded-lg border border-gray-200 font-medium">
                   {group.groupType}
                 </span>
               )}
 
-              {/* Action Buttons */}
+              
               <div className="flex items-center space-x-1">
                 <IconButton
                   icon={Edit}
@@ -187,7 +187,7 @@ const Group = () => {
           </div>
         </div>
 
-        {/* Children */}
+        
         {hasChildren && isExpanded && (
           <div className="mt-2">
             {group.children.map((child) => renderGroupCard(child, level + 1))}
@@ -228,7 +228,7 @@ const Group = () => {
     <>
       <div className="min-h-screen bg-gray-50 p-6">
         <div className="max-w-7xl mx-auto">
-          {/* Header */}
+          
           <div className="flex items-center justify-between mb-8">
             <div>
               <h1 className="text-3xl font-bold text-gray-900">
@@ -244,7 +244,7 @@ const Group = () => {
             </Button>
           </div>
 
-          {/* Groups Container */}
+          
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             {groups.length === 0 ? (
               <div className="text-center flex flex-col justify-center align-center py-12">

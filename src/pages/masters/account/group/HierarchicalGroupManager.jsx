@@ -36,7 +36,7 @@ const HierarchicalGroupManager = () => {
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [expandedGroups, setExpandedGroups] = useState(new Set());
 
-  // Form states
+
   const [formData, setFormData] = useState({
     groupName: '',
     undergroup: '',
@@ -54,7 +54,7 @@ const HierarchicalGroupManager = () => {
     { value: 'Capital', label: 'Capital' }
   ];
 
-  // RTK Query hooks
+
   const { 
     data: groups = [], 
     isLoading: groupsLoading, 
@@ -71,7 +71,7 @@ const HierarchicalGroupManager = () => {
   const [updateGroup, { isLoading: updatingGroup }] = useUpdateGroupMutation();
   const [deleteGroup, { isLoading: deletingGroup }] = useDeleteGroupMutation();
 
-  // Get permissions for selected group
+
   const { 
     data: groupPermissions = [],
     isLoading: permissionsLoading 
@@ -587,7 +587,7 @@ const HierarchicalGroupManager = () => {
   );
 };
 
-// Helper component for displaying permission status
+
 const PermissionItem = ({ label, value }) => (
   <div className="flex items-center justify-between">
     <span className="text-sm text-gray-700">{label}</span>

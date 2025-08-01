@@ -312,7 +312,7 @@ export default function CompanyForm({
               </>
             )}
           </div>
-          {/* Error, Success, and Buttons */}
+          
           {error && <div className="text-red-500 mb-2">{error}</div>}
           {success && <div className="text-green-500 mb-2">{success}</div>}
           <div className="flex gap-2 mt-2 justify-end">

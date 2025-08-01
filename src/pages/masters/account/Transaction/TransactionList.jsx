@@ -116,7 +116,7 @@ const TransactionList = () => {
     },
   ];
 
-  // RTK Query hooks
+
   const { data, isLoading, error, refetch } = useGetTransactionsQuery({
     search,
     page,
@@ -127,7 +127,7 @@ const TransactionList = () => {
   const [deleteTransaction] = useDeleteTransactionMutation();
   const [postTransaction] = usePostTransactionMutation();
 
-  // Set first transaction as selected when data loads
+
   useEffect(() => {
     if (data?.data && data.data.length > 0 && !selectedRow) {
       setSelectedRow(data.data[0]);
@@ -259,7 +259,7 @@ const TransactionList = () => {
         )
       }
     >
-      {/* Additional Filters */}
+      
       <div className="flex flex-wrap gap-2 mb-4">
         <select
           className="px-3 py-2 border border-gray-300 rounded-md text-sm"
@@ -285,7 +285,7 @@ const TransactionList = () => {
         </select>
       </div>
 
-      {/* Pagination */}
+      
       {data?.totalPages > 1 && (
         <div className="flex justify-center mt-4">
           <div className="flex gap-2">

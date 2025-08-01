@@ -9,7 +9,7 @@ const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL
 export const ledgerApi = createApi({
   reducerPath: "ledgerApi",
   baseQuery: createBaseQueryWithAuth(baseUrl),
-  tagTypes: ['Ledger', 'LedgerBalance', 'LedgerTransactions', 'LedgerDetails'],
+  tagTypes: ['Ledger', 'LedgerBalance', 'LedgerTransactions', 'LedgerDetails', 'DefaultLedgers'],
   endpoints: (builder) => ({
     getLedgers: builder.query({
       query: ({ page = 1, limit = 10, search = '', groupId, balanceType, status, isActive } = {}) => ({
@@ -90,6 +90,15 @@ export const ledgerApi = createApi({
       providesTags: (result, error, { id }) => [{ type: 'LedgerDetails', id }],
       transformResponse: (response) => response.data || {},
     }),
+
+    getDefaultLedgers: builder.query({
+      query: ({ groupId } = {}) => ({
+        url: `/ledger/v1/default-ledgers${groupId ? `?groupId=${groupId}` : ''}`,
+        method: 'GET',
+      }),
+      providesTags: ['DefaultLedgers'],
+      transformResponse: (response) => response.data || [],
+    }),
   }),
   overrideExisting: false,
 });
@@ -104,4 +113,5 @@ export const {
   useGetLedgerTransactionsQuery,
   useGetLedgerDetailsQuery,
   useUpdateOpeningBalanceMutation,
+  useGetDefaultLedgersQuery,
 } = ledgerApi; 

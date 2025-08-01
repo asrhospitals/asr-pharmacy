@@ -101,7 +101,7 @@ const GroupTable = ({
           </td>
         </tr>
         
-        {/* Render child groups as separate rows with proper indentation */}
+        
         {hasChildren && isExpanded && group.children.map(child => renderGroupRow(child, level + 1))}
       </React.Fragment>
     );
