@@ -1,7 +1,6 @@
 const Loader = ({ text = "Loading..." }) => (
-  <div className="flex flex-col items-center justify-center py-8">
+  <div className="flex flex-col items-center justify-center p-0">
     <span className="loader"></span>
-    <span className="text-gray-600 text-sm mt-2">{text}</span>
   </div>
 );
 

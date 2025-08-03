@@ -19,8 +19,13 @@ import { hasPermission } from "../../data/permissions";
 
 const pathToPermission = {
   "/dashboard": "dashboard",
-  "/master/accounts/ledger": "reports",
-  "/master/accounts/group": "reports",
+  "/master/account/ledger": "accounting_ledgers",
+  "/master/account/ledger/create": "accounting_ledgers",
+  "/master/account/ledger/edit": "accounting_ledgers",
+  "/master/account/transaction": "accounting_transactions",
+  "/master/account/transaction/create": "accounting_transactions",
+  "/master/account/transaction/edit": "accounting_transactions",
+  "/master/accounts/group": "accounting_groups",
   "/master/accounts/sale": "gst_billing",
   "/master/accounts/purchase": "purchase_orders",
   "/master/inventory/items": "inventory",
@@ -229,7 +234,7 @@ const Sidebar = ({
 
   return (
     <>
-      {/* Overlay for mobile */}
+      
       <div
         className={`fixed inset-0 bg-black/30 z-50 transition-opacity duration-300 lg:hidden ${
           mobileOpen

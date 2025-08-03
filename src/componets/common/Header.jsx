@@ -43,7 +43,7 @@ export default function DefaultHeader({ title, onMenuClick }) {
 
   return (
     <header className="sticky top-0 z-50 bg-white p-4 border-b border-l border-gray-200 flex items-center justify-between w-full min-h-[56px]">
-      {/* Left: Logo, Hamburger, Company Name */}
+      
       <div className="flex items-center gap-2 md:gap-3 min-w-0">
         <button
           className="rounded-md hover:bg-gray-100 flex-shrink-0 cursor-pointer"
@@ -67,9 +67,9 @@ export default function DefaultHeader({ title, onMenuClick }) {
           v 4.1.80.b
         </div>
       </div>
-      {/* Center: (optional) */}
+      
       <div className="flex-1 flex justify-center items-center min-w-0"></div>
-      {/* Right: User, Settings, Dropdowns */}
+      
       <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
         <div className="flex items-center gap-1 md:gap-2 text-xs md:text-sm text-gray-700 bg-blue-50 px-2 py-1 rounded truncate max-w-[120px] md:max-w-none">
           <span className="hidden sm:inline">Financial Year:</span>
@@ -77,7 +77,7 @@ export default function DefaultHeader({ title, onMenuClick }) {
             01-04-2025 - 31-03-2026
           </span>
         </div>
-        {/* Settings Dropdown Icon */}
+        
         <div className="relative md:hidden" ref={settingsRef}>
           <IconButton
             icon={Settings}
@@ -101,7 +101,7 @@ export default function DefaultHeader({ title, onMenuClick }) {
             </div>
           )}
         </div>
-        {/* Hide these icons inline on small screens, show only in dropdown */}
+        
         <IconButton
           icon={HelpCircle}
           variant="ghost"
@@ -123,7 +123,7 @@ export default function DefaultHeader({ title, onMenuClick }) {
           title="Notifications"
           className="text-gray-500 hover:text-blue-600 hidden md:inline"
         />
-        {/* User Dropdown */}
+        
         <div className="relative" ref={cardRef}>
           <IconButton
             icon={User}

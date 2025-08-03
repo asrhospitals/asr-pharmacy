@@ -1,22 +1,14 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import { buildQueryParams } from '../utils/queryParams';
+import { createBaseQueryWithAuth } from './apiBase';
 
-const baseQueryWithAuth = fetchBaseQuery({
-  baseUrl: import.meta.env.VITE_BACKEND_BASE_URL
-    ? `${import.meta.env.VITE_BACKEND_BASE_URL}/api`
-    : "/api",
-  prepareHeaders: (headers, { getState }) => {
-    const token = getState()?.user?.token || localStorage.getItem("token");
-    if (token) {
-      headers.set("Authorization", `Bearer ${token}`);
-    }
-    return headers;
-  },
-});
+const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL
+  ? `${import.meta.env.VITE_BACKEND_BASE_URL}/pharmacy/api`
+  : "/api";
 
 export const groupApi = createApi({
   reducerPath: "groupApi",
-  baseQuery: baseQueryWithAuth,
+  baseQuery: createBaseQueryWithAuth(baseUrl),
   tagTypes: ['Group', 'GroupHierarchy', 'GroupPermissions', 'AvailableParents'],
   endpoints: (builder) => ({
     getGroupHierarchy: builder.query({
@@ -56,8 +48,8 @@ export const groupApi = createApi({
     }),
 
     getAvailableParents: builder.query({
-      query: () => ({
-        url: '/groups/available-parents',
+      query: (excludeId) => ({
+        url: `/groups/available-parents${excludeId ? `?exclude=${excludeId}` : ''}`,
         method: 'GET',
       }),
       providesTags: ['AvailableParents'],
@@ -89,10 +81,9 @@ export const groupApi = createApi({
         body: groupData,
       }),
       invalidatesTags: (result, error, { id }) => [
-        'Group', 
+        { type: 'Group', id },
         'GroupHierarchy', 
-        'AvailableParents',
-        { type: 'Group', id }
+        'AvailableParents'
       ],
     }),
 
@@ -117,139 +108,11 @@ export const groupApi = createApi({
       query: ({ groupId, userId, permissions }) => ({
         url: `/groups/${groupId}/permissions/${userId}`,
         method: 'POST',
-        body: permissions,
-      }),
-      invalidatesTags: (result, error, { groupId }) => [
-        { type: 'GroupPermissions', id: groupId }
-      ],
+        body: { permissions },
     }),
-
-    getGroupLedgers: builder.query({
-      query: (groupId) => ({
-        url: `/groups/${groupId}/ledgers`,
-        method: 'GET',
-      }),
-      providesTags: (result, error, groupId) => [{ type: 'GroupLedgers', id: groupId }],
-      transformResponse: (response) => response.data || [],
-    }),
-
-    createGroupLedger: builder.mutation({
-      query: ({ groupId, ledgerData }) => ({
-        url: `/groups/${groupId}/ledgers`,
-        method: 'POST',
-        body: ledgerData,
-      }),
-      invalidatesTags: (result, error, { groupId }) => [
-        { type: 'GroupLedgers', id: groupId }
-      ],
-    }),
-
-    updateGroupLedger: builder.mutation({
-      query: ({ groupId, ledgerId, ledgerData }) => ({
-        url: `/groups/${groupId}/ledgers/${ledgerId}`,
-        method: 'PUT',
-        body: ledgerData,
-      }),
-      invalidatesTags: (result, error, { groupId }) => [
-        { type: 'GroupLedgers', id: groupId }
-      ],
-    }),
-
-    deleteGroupLedger: builder.mutation({
-      query: ({ groupId, ledgerId }) => ({
-        url: `/groups/${groupId}/ledgers/${ledgerId}`,
-        method: 'DELETE',
-      }),
-      invalidatesTags: (result, error, { groupId }) => [
-        { type: 'GroupLedgers', id: groupId }
-      ],
-    }),
-
-    bulkCreateGroups: builder.mutation({
-      query: (groupsData) => ({
-        url: '/groups/bulk',
-        method: 'POST',
-        body: groupsData,
-      }),
-      invalidatesTags: ['Group', 'GroupHierarchy', 'AvailableParents'],
-    }),
-
-    searchGroups: builder.query({
-      query: ({ search, groupType, isDefault, parentGroupId } = {}) => ({
-        url: `/groups/search?${buildQueryParams({ search, groupType, isDefault, parentGroupId })}`,
-        method: 'GET',
-      }),
-      providesTags: ['Group'],
-      transformResponse: (response) => response.data || [],
-    }),
-
-    getGroupStats: builder.query({
-      query: () => ({
-        url: '/groups/stats',
-        method: 'GET',
-      }),
-      providesTags: ['GroupStats'],
-      transformResponse: (response) => response.data || {},
-    }),
-
-    exportGroups: builder.mutation({
-      query: ({ format = 'json', filters = {} } = {}) => ({
-        url: `/groups/export?${buildQueryParams({ format, ...filters })}`,
-        method: 'GET',
-        responseHandler: async (response) => {
-          const blob = await response.blob();
-          return { data: blob, type: response.headers.get('content-type') };
-        },
-      }),
-    }),
-
-    importGroups: builder.mutation({
-      query: (importData) => ({
-        url: '/groups/import',
-        method: 'POST',
-        body: importData,
-      }),
-      invalidatesTags: ['Group', 'GroupHierarchy', 'AvailableParents'],
-    }),
-
-    moveGroup: builder.mutation({
-      query: ({ groupId, newParentId }) => ({
-        url: `/groups/${groupId}/move`,
-        method: 'PUT',
-        body: { newParentId },
-      }),
-      invalidatesTags: ['Group', 'GroupHierarchy', 'AvailableParents'],
-    }),
-
-    duplicateGroup: builder.mutation({
-      query: ({ groupId, newName, newParentId }) => ({
-        url: `/groups/${groupId}/duplicate`,
-        method: 'POST',
-        body: { newName, newParentId },
-      }),
-      invalidatesTags: ['Group', 'GroupHierarchy', 'AvailableParents'],
-    }),
-
-    getPermissionTemplates: builder.query({
-      query: () => ({
-        url: '/groups/permission-templates',
-        method: 'GET',
-      }),
-      providesTags: ['PermissionTemplates'],
-      transformResponse: (response) => response.data || [],
-    }),
-
-    applyPermissionTemplate: builder.mutation({
-      query: ({ groupId, templateId }) => ({
-        url: `/groups/${groupId}/apply-template/${templateId}`,
-        method: 'POST',
-      }),
-      invalidatesTags: (result, error, { groupId }) => [
-        { type: 'GroupPermissions', id: groupId }
-      ],
+      invalidatesTags: (result, error, { groupId }) => [{ type: 'GroupPermissions', id: groupId }],
     }),
   }),
-  overrideExisting: false,
 });
 
 export const {
@@ -259,25 +122,9 @@ export const {
   useGetGroupsByParentQuery,
   useGetAvailableParentsQuery,
   useGetGroupByIdQuery,
-  useSearchGroupsQuery,
-  useGetGroupStatsQuery,
-  useGetPermissionTemplatesQuery,
-
   useCreateGroupMutation,
   useUpdateGroupMutation,
   useDeleteGroupMutation,
-  useBulkCreateGroupsMutation,
-  useExportGroupsMutation,
-  useImportGroupsMutation,
-  useMoveGroupMutation,
-  useDuplicateGroupMutation,
-
   useGetGroupPermissionsQuery,
   useSetGroupPermissionMutation,
-  useApplyPermissionTemplateMutation,
-
-  useGetGroupLedgersQuery,
-  useCreateGroupLedgerMutation,
-  useUpdateGroupLedgerMutation,
-  useDeleteGroupLedgerMutation,
 } = groupApi; 

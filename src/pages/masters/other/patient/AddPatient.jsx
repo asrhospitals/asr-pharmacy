@@ -113,7 +113,7 @@ export default function AddPatient({ isEditMode = false }) {
           </Button>
         </div>
         <form onSubmit={handleSubmit(handleSave)}>
-          {/* Patient Details */}
+          
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -176,7 +176,7 @@ export default function AddPatient({ isEditMode = false }) {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Ledger <span className="text-red-500">*</span></label>
-              {/* TODO: Replace with SearchableSelect and fetch ledgers from API */}
+              
               <Select
                 {...register("ledger", { required: "Ledger is required" })}
                 options={[
@@ -210,7 +210,7 @@ export default function AddPatient({ isEditMode = false }) {
             </div>
           </div>
 
-          {/* Other Details (collapsible) */}
+          
           <div
             className={`transition-all duration-500 overflow-hidden px-1 ${
               showMoreOptions ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"
@@ -248,7 +248,7 @@ export default function AddPatient({ isEditMode = false }) {
             )}
           </div>
 
-          {/* Error, Success, and Buttons */}
+          
           {error && <div className="text-red-500 mb-2">{error}</div>}
           {success && <div className="text-green-500 mb-2">{success}</div>}
           <div className="flex gap-2 mt-2 justify-end">

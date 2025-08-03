@@ -16,7 +16,7 @@ const columns = [
   { title: 'Status', key: 'status', render: (val) => <StatusBadge status={val} /> },
 ];
 
-// Mock transform for demo (since mockData.items doesn't have all columns)
+
 const enrichItems = (items) =>
   items.map((item, idx) => ({
     ...item,
@@ -34,7 +34,7 @@ export default function PriceListPage() {
   const { data: itemsData = {}, isLoading } = useGetItemsQuery();
   const items = itemsData?.data || [];
 
-  // Transform API data to match columns (fallback to 0 if price missing)
+
   const enrichItems = (items) =>
     (items || []).map((item, idx) => ({
       ...item,
@@ -78,9 +78,9 @@ export default function PriceListPage() {
         selectedRow={selectedRow}
         onRowSelect={setSelectedRow}
         loading={isLoading}
-        // onEdit, onDelete, onView can be added as needed
+
       />
-      {/* Info Section */}
+      
       {selected && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
           <Card className="col-span-1">

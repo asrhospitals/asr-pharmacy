@@ -83,7 +83,7 @@ const RackPage = () => {
   };
 
   const handleRowSelect = (row) => {
-    // Always select from tableData to ensure storename is present
+
     const found = tableData.find((r) => r.id === row.id);
     setSelectedRow(found || row);
   };

@@ -1,22 +1,27 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import { buildQueryParams } from '../utils/queryParams';
+import { createBaseQueryWithAuth } from "./apiBase";
 
-const baseQueryWithAuth = fetchBaseQuery({
-  baseUrl: import.meta.env.VITE_BACKEND_BASE_URL
-    ? `${import.meta.env.VITE_BACKEND_BASE_URL}/admin/master/inventory`
-    : "/api/inventory",
-  prepareHeaders: (headers, { getState }) => {
-    const token = getState()?.user?.token || localStorage.getItem("token");
-    if (token) {
-      headers.set("Authorization", `Bearer ${token}`);
-    }
-    return headers;
-  },
-});
+const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL
+  ? `${import.meta.env.VITE_BACKEND_BASE_URL}/pharmacy/admin/master/inventory`
+  : "/api/inventory";
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export const unitApi = createApi({
   reducerPath: "unitApi",
-  baseQuery: baseQueryWithAuth,
+  baseQuery: createBaseQueryWithAuth(baseUrl),
   endpoints: (builder) => ({
     getUnits: builder.query({
       query: ({ page = 1, limit = 10, search = '', filters = {} } = {}) => ({

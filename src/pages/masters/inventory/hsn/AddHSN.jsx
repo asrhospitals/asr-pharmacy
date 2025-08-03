@@ -86,7 +86,7 @@ export default function CreateHsnSacForm({
           </label>
           <Input type="text" {...register("hsnsacname")} className="w-full" />
         </div>
-        {/* Removed in-UI error and success messages, use toasts only */}
+        
         <div className="flex flex-col sm:flex-row gap-2 mt-4 sm:mt-6">
           <Button
             type="submit"

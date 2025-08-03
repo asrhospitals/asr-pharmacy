@@ -20,14 +20,14 @@ const DeleteConfirmationModal = ({
       className="max-w-md"
     >
       <div className="space-y-4">
-        {/* Warning Icon */}
+        
         <div className="flex justify-center">
           <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
             <AlertTriangle className="w-8 h-8 text-red-600" />
           </div>
         </div>
 
-        {/* Warning Message */}
+        
         <div className="text-center space-y-2">
           <h3 className="text-lg font-semibold text-gray-900">
             Delete Group
@@ -37,7 +37,7 @@ const DeleteConfirmationModal = ({
             <span className="font-semibold text-gray-900">"{group.groupName}"</span>?
           </p>
           
-          {/* Additional Warning for Groups with Children */}
+          
           {group.children && group.children.length > 0 && (
             <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
               <p className="text-sm text-yellow-800">
@@ -47,7 +47,7 @@ const DeleteConfirmationModal = ({
             </div>
           )}
 
-          {/* Additional Warning for Groups with Ledgers */}
+          
           {group.ledgerCount > 0 && (
             <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
               <p className="text-sm text-red-800">
@@ -58,7 +58,7 @@ const DeleteConfirmationModal = ({
           )}
         </div>
 
-        {/* Action Buttons */}
+        
         <div className="flex justify-end space-x-3 pt-4">
           <Button
             variant="outline"

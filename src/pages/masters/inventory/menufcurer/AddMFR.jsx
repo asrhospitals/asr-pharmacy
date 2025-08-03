@@ -164,13 +164,13 @@ export default function CreateManufacturerPage() {
             </div>
           )}
 
-          {/* Messages */}
+          
           {error && <div className="text-red-500 mb-4 text-xs">{error}</div>}
           {success && (
             <div className="text-green-500 mb-4 text-xs">{success}</div>
           )}
 
-          {/* Action Buttons */}
+          
           <div className="flex gap-2 mt-4 justify-end">
             <Button
               type="submit"

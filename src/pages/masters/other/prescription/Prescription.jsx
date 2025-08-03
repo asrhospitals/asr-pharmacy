@@ -6,10 +6,10 @@ import Pagination from "../../../../componets/common/Pagination";
 import { useDebounce } from "../../../../utils/useDebounce";
 import { useNavigate } from "react-router-dom";
 import StatusBadge from "../../../../componets/common/StatusBadge";
-// import {
-//   useDeletePrescriptionMutation,
-//   useGetPrescriptionsQuery,
-// } from "../../../../services/prescriptionApi";
+
+
+
+
 
 const PrescriptionList = () => {
   const [page, setPage] = useState(1);
@@ -18,14 +18,14 @@ const PrescriptionList = () => {
   const debouncedSearch = useDebounce(search, 300);
   const navigate = useNavigate();
 
-//   const { data: prescriptions, isLoading } = useGetPrescriptionsQuery({
-//     page,
-//     limit,
-//     search: debouncedSearch,
-//   });
+
+
+
+
+
 
 const data = [];
-//   const [deletePrescription] = useDeletePrescriptionMutation();
+
   const [selectedPrescription, setSelectedPrescription] = useState(null);
 
   const tableData = useMemo(() => data?.data || [], [data]);

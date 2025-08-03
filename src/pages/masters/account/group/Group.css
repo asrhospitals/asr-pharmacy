@@ -1,4 +1,4 @@
-/* Group Management Styles */
+
 
 .group-row {
   transition: background-color 0.2s ease;
@@ -17,7 +17,7 @@
 }
 
 .group-row.selected {
-  background-color: #fef3c7 !important; /* Yellow highlight like in the image */
+  background-color: #fef3c7 !important; 
 }
 
 .name-cell {
@@ -63,9 +63,9 @@
   ring-color: #3b82f6;
 }
 
-/* Table header styling */
+
 table thead th {
-  background-color: #f0fdfa; /* Light teal background */
+  background-color: #f0fdfa; 
   color: #374151;
   font-weight: 600;
   font-size: 12px;
@@ -75,7 +75,7 @@ table thead th {
   border-bottom: 1px solid #e5e7eb;
 }
 
-/* Table body styling */
+
 table tbody tr {
   border-bottom: 1px solid #f3f4f6;
 }
@@ -84,7 +84,7 @@ table tbody tr:last-child {
   border-bottom: none;
 }
 
-/* Action buttons styling */
+
 .action-cell .flex {
   gap: 8px;
 }
@@ -116,7 +116,7 @@ table tbody tr:last-child {
   background-color: transparent;
 }
 
-/* Default group styling */
+
 .default-group .action-cell button {
   opacity: 0.5;
   cursor: not-allowed;
@@ -127,7 +127,7 @@ table tbody tr:last-child {
   background-color: transparent;
 }
 
-/* Group type badge */
+
 .group-type-badge {
   background-color: #f3f4f6;
   color: #6b7280;
@@ -138,7 +138,7 @@ table tbody tr:last-child {
   margin-left: 8px;
 }
 
-/* Responsive design */
+
 @media (max-width: 768px) {
   .name-cell,
   .action-cell {
@@ -154,7 +154,7 @@ table tbody tr:last-child {
   }
 }
 
-/* Loading state */
+
 .loading-row {
   background-color: #f9fafb;
 }
@@ -165,7 +165,7 @@ table tbody tr:last-child {
   color: #6b7280;
 }
 
-/* Empty state */
+
 .empty-state {
   padding: 48px 24px;
   text-align: center;
@@ -177,7 +177,7 @@ table tbody tr:last-child {
   margin: 0;
 }
 
-/* Focus states for accessibility */
+
 .group-row:focus-within {
   outline: 2px solid #3b82f6;
   outline-offset: -2px;
@@ -188,7 +188,7 @@ table tbody tr:last-child {
   outline-offset: 2px;
 }
 
-/* Print styles */
+
 @media print {
   .action-cell {
     display: none;

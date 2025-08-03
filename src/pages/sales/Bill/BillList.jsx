@@ -88,7 +88,7 @@ const BillList = ({ onCreate, onEdit }) => {
       onEdit={handleEdit}
       onDelete={(row) => handleDelete(row.id)}
       onArrowNavigation={handleKeyDown}
-      // rowInfoPanel={...} // Optionally add a details panel here
+
     />
   );
 };

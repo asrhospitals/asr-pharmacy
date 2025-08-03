@@ -1,0 +1,116 @@
+import { createApi } from "@reduxjs/toolkit/query/react";
+import { buildQueryParams } from '../utils/queryParams';
+import { createBaseQueryWithAuth } from './apiBase';
+
+const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL
+  ? `${import.meta.env.VITE_BACKEND_BASE_URL}/pharmacy/admin/master`
+  : "/pharmacy/admin/master";
+
+export const ledgerApi = createApi({
+  reducerPath: "ledgerApi",
+  baseQuery: createBaseQueryWithAuth(baseUrl),
+  tagTypes: ['Ledger', 'LedgerBalance', 'LedgerTransactions', 'LedgerDetails', 'DefaultLedgers'],
+  endpoints: (builder) => ({
+    getLedgers: builder.query({
+      query: ({ page = 1, limit = 10, search = '', groupId, balanceType, status, isActive } = {}) => ({
+        url: `/ledger/v1/get-ledger?${buildQueryParams({ page, limit, search, groupId, balanceType, status, isActive })}`,
+        method: 'GET',
+      }),
+      providesTags: ['Ledger'],
+    }),
+
+    getLedgerById: builder.query({
+      query: (id) => ({
+        url: `/ledger/v1/get-ledger/${id}`,
+        method: 'GET',
+      }),
+      providesTags: (result, error, id) => [{ type: 'Ledger', id }],
+      transformResponse: (response) => response.data || {},
+    }),
+
+    createLedger: builder.mutation({
+      query: (ledgerData) => ({
+        url: '/ledger/v1/add-ledger',
+        method: 'POST',
+        body: ledgerData,
+      }),
+      invalidatesTags: ['Ledger'],
+    }),
+
+    updateLedger: builder.mutation({
+      query: ({ id, ...ledgerData }) => ({
+        url: `/ledger/v1/update-ledger/${id}`,
+        method: 'PUT',
+        body: ledgerData,
+      }),
+      invalidatesTags: (result, error, { id }) => [{ type: 'Ledger', id }, 'Ledger'],
+    }),
+
+    deleteLedger: builder.mutation({
+      query: (id) => ({
+        url: `/ledger/v1/delete-ledger/${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Ledger'],
+    }),
+
+    getLedgerBalance: builder.query({
+      query: ({ id, asOfDate } = {}) => ({
+        url: `/ledger/v1/${id}/balance${asOfDate ? `?asOfDate=${asOfDate}` : ''}`,
+        method: 'GET',
+      }),
+      providesTags: (result, error, { id }) => [{ type: 'LedgerBalance', id }],
+      transformResponse: (response) => response.data || {},
+    }),
+
+    getLedgerTransactions: builder.query({
+      query: ({ id, page = 1, limit = 10, startDate, endDate } = {}) => ({
+        url: `/ledger/v1/${id}/transactions?${buildQueryParams({ page, limit, startDate, endDate })}`,
+        method: 'GET',
+      }),
+      providesTags: (result, error, { id }) => [{ type: 'LedgerTransactions', id }],
+      transformResponse: (response) => response.data || [],
+    }),
+
+    updateOpeningBalance: builder.mutation({
+      query: ({ id, openingBalance }) => ({
+        url: `/ledger/v1/${id}/opening-balance`,
+        method: 'PUT',
+        body: { openingBalance },
+      }),
+      invalidatesTags: (result, error, { id }) => [{ type: 'Ledger', id }, 'Ledger'],
+    }),
+
+    getLedgerDetails: builder.query({
+      query: ({ id, startDate, endDate, page = 1, limit = 50 } = {}) => ({
+        url: `/ledger/v1/${id}/details?${buildQueryParams({ startDate, endDate, page, limit })}`,
+        method: 'GET',
+      }),
+      providesTags: (result, error, { id }) => [{ type: 'LedgerDetails', id }],
+      transformResponse: (response) => response.data || {},
+    }),
+
+    getDefaultLedgers: builder.query({
+      query: ({ groupId } = {}) => ({
+        url: `/ledger/v1/default-ledgers${groupId ? `?groupId=${groupId}` : ''}`,
+        method: 'GET',
+      }),
+      providesTags: ['DefaultLedgers'],
+      transformResponse: (response) => response.data || [],
+    }),
+  }),
+  overrideExisting: false,
+});
+
+export const {
+  useGetLedgersQuery,
+  useGetLedgerByIdQuery,
+  useCreateLedgerMutation,
+  useUpdateLedgerMutation,
+  useDeleteLedgerMutation,
+  useGetLedgerBalanceQuery,
+  useGetLedgerTransactionsQuery,
+  useGetLedgerDetailsQuery,
+  useUpdateOpeningBalanceMutation,
+  useGetDefaultLedgersQuery,
+} = ledgerApi; 

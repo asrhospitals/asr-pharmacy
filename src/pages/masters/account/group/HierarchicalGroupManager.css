@@ -1,4 +1,4 @@
-/* Hierarchical Group Manager Styles */
+
 
 .group-tree {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -159,7 +159,7 @@
   padding-left: 12px;
 }
 
-/* Level-specific styling */
+
 .level-0 {
   font-weight: 600;
 }
@@ -187,7 +187,7 @@
   opacity: 0.7;
 }
 
-/* Permission modal styles */
+
 .permission-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -239,7 +239,7 @@
   color: #dc2626;
 }
 
-/* Responsive design */
+
 @media (max-width: 768px) {
   .group-content {
     flex-direction: column;
@@ -261,7 +261,7 @@
   }
 }
 
-/* Animation for expand/collapse */
+
 .group-children {
   animation: slideDown 0.3s ease-out;
 }
@@ -277,7 +277,7 @@
   }
 }
 
-/* Loading states */
+
 .group-row.loading {
   opacity: 0.6;
   pointer-events: none;
@@ -287,7 +287,7 @@
   opacity: 0;
 }
 
-/* Empty state */
+
 .empty-state {
   text-align: center;
   padding: 48px 24px;
@@ -314,7 +314,7 @@
   margin-bottom: 24px;
 }
 
-/* Tooltip styles */
+
 .group-tooltip {
   position: relative;
   display: inline-block;
@@ -343,7 +343,7 @@
   opacity: 1;
 }
 
-/* Status indicators */
+
 .status-indicator {
   display: inline-block;
   width: 8px;
@@ -364,7 +364,7 @@
   background-color: #f59e0b;
 }
 
-/* Search and filter styles */
+
 .group-filters {
   display: flex;
   gap: 16px;
@@ -400,7 +400,7 @@
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-/* Bulk actions */
+
 .bulk-actions {
   display: flex;
   gap: 8px;
@@ -415,7 +415,7 @@
   display: none;
 }
 
-/* Selection styles */
+
 .group-row.selected {
   background-color: #dbeafe;
   border-color: #3b82f6;
@@ -425,7 +425,7 @@
   background-color: #bfdbfe;
 }
 
-/* Drag and drop styles */
+
 .group-row.dragging {
   opacity: 0.5;
   transform: rotate(5deg);
@@ -436,7 +436,7 @@
   background-color: #eff6ff;
 }
 
-/* Print styles */
+
 @media print {
   .group-actions,
   .bulk-actions,

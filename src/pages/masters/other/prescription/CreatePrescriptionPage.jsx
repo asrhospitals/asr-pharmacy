@@ -140,7 +140,7 @@ const CreatePrescriptionPage = ({ isEdit = false, initialData = null }) => {
       <div className="flex flex-col overflow-auto no-scrollbar">
         <form className="flex-1 flex flex-col relative" onSubmit={handleSubmit(onSubmit)}>
           <div className="bg-white rounded shadow p-2 md:p-4 transition-all duration-500">
-            {/* Header */}
+            
             <div className="flex flex-col md:flex-row items-start md:items-center justify-between sticky top-0 z-10 mb-2 md:mb-4 gap-2">
               <h1 className="text-lg md:text-xl font-bold">
                 {isEdit
@@ -151,7 +151,7 @@ const CreatePrescriptionPage = ({ isEdit = false, initialData = null }) => {
                 &#8592; Back
               </Button>
             </div>
-            {/* Top Row */}
+            
             <div className="flex flex-col md:flex-row gap-2 md:gap-4 mb-2 md:mb-4">
               <Input
                 label="Pres. No."
@@ -183,9 +183,9 @@ const CreatePrescriptionPage = ({ isEdit = false, initialData = null }) => {
                 />
               </label>
             </div>
-            {/* Details Section */}
+            
             <div className="flex flex-col lg:flex-row gap-2 md:gap-4 mb-2 md:mb-4">
-              {/* Patient Details */}
+              
               <div className="flex-1 w-full lg:w-1/3 border border-gray-300 p-2 md:p-3 rounded min-w-0">
                 <div className="font-semibold mb-2">Patient Details</div>
                 <Input
@@ -213,7 +213,7 @@ const CreatePrescriptionPage = ({ isEdit = false, initialData = null }) => {
                 />
               </div>
 
-              {/* Doctor Details */}
+              
               <div className="flex-1 w-full lg:w-1/3 border border-gray-300 p-2 md:p-3 rounded min-w-0">
                 <div className="font-semibold mb-2">Doctor Details</div>
                 <Input
@@ -241,7 +241,7 @@ const CreatePrescriptionPage = ({ isEdit = false, initialData = null }) => {
                 />
               </div>
 
-              {/* Other Details with width transition */}
+              
               <div
                 className={`prescription-more-details rounded transition-all duration-500 border-gray-300
           ${moreOption ? "lg:w-1/3 w-full p-2 md:p-3 border" : "lg:w-0 w-0"}
@@ -262,7 +262,7 @@ const CreatePrescriptionPage = ({ isEdit = false, initialData = null }) => {
                   ))}
               </div>
             </div>
-            {/* Item Table */}
+            
             <div className="border border-blue-400 rounded mb-2 md:mb-4">
               <div className="bg-blue-200 font-bold p-2 rounded-t">
                 Item Description
@@ -362,10 +362,10 @@ const CreatePrescriptionPage = ({ isEdit = false, initialData = null }) => {
                 Total : {itemFields.length} Product
               </div>
             </div>
-            {/* Error/Success */}
+            
             {error && <div className="text-red-500 mb-2">{error}</div>}
             {success && <div className="text-green-600 mb-2">{success}</div>}
-            {/* Footer Buttons */}
+            
             <div className="flex flex-col md:flex-row gap-2 mt-4 md:mt-6 justify-end">
               <Button buttonType={isEdit ? "update" : "save"} type="submit" variant="primary" className="w-full md:w-auto">
                 Save

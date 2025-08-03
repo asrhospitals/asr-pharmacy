@@ -1,22 +1,27 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import { buildQueryParams } from "../utils/queryParams";
+import { createBaseQueryWithAuth } from "./apiBase";
 
-const baseQueryWithAuth = fetchBaseQuery({
-  baseUrl: import.meta.env.VITE_BACKEND_BASE_URL
-    ? `${import.meta.env.VITE_BACKEND_BASE_URL}/admin/master/other`
-    : "/api/other",
-  prepareHeaders: (headers, { getState }) => {
-    const token = getState()?.user?.token || localStorage.getItem("token");
-    if (token) {
-      headers.set("Authorization", `Bearer ${token}`);
-    }
-    return headers;
-  },
-});
+const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL
+  ? `${import.meta.env.VITE_BACKEND_BASE_URL}/pharmacy/admin/master/other`
+  : "/api/other";
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export const prescriptionApi = createApi({
   reducerPath: "prescriptionApi",
-  baseQuery: baseQueryWithAuth,
+  baseQuery: createBaseQueryWithAuth(baseUrl),
   tagTypes: ["Prescription"],
   endpoints: (builder) => ({
     getPrescriptions: builder.query({

@@ -4,12 +4,12 @@
   font-size: 16px;
 }
 
-/* Custom colors for group hierarchy */
+
 .bg-gray-25 {
   background-color: #fafafa;
 }
 
-/* Group hierarchy styling */
+
 .group-row-level-0 {
   background-color: #f8fafc;
   border-left: 4px solid #3b82f6;
@@ -41,7 +41,7 @@
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
-/* Level indicator dots */
+
 .level-indicator-0 {
   width: 8px;
   height: 8px;
@@ -70,7 +70,7 @@
   border-radius: 50%;
 }
 
-/* Card-based group layout styling */
+
 .group-card {
   background-color: #ffffff;
   border-radius: 12px;
@@ -90,7 +90,7 @@
   transform: translateY(0);
 }
 
-/* Group card level-specific styling */
+
 .group-card.group-row-level-0 {
   background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
   border: 1px solid #e2e8f0;
@@ -111,7 +111,7 @@
   border: 1px solid #e5e7eb;
 }
 
-/* Action buttons styling */
+
 .group-card .action-buttons {
   opacity: 0;
   transition: opacity 0.2s ease-in-out;
@@ -121,7 +121,7 @@
   opacity: 1;
 }
 
-/* Enhanced action button styling */
+
 .action-button {
   background-color: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(4px);
@@ -144,7 +144,7 @@
   border-color: #ef4444;
 }
 
-/* Empty state styling */
+
 .empty-state {
   background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
   border: 2px dashed #d1d5db;

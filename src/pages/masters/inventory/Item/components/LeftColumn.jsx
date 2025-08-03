@@ -24,7 +24,7 @@ const LeftColumn = ({ errors, register, allData, states, setters, setValue, onCr
         label="Packing"
         name="packing"
       />
-      {/* Rack (Store) */}
+      
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Rack *
@@ -49,7 +49,7 @@ const LeftColumn = ({ errors, register, allData, states, setters, setValue, onCr
           </div>
         )}
       </div>
-      {/* Company */}
+      
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Company *
@@ -74,7 +74,7 @@ const LeftColumn = ({ errors, register, allData, states, setters, setValue, onCr
           </div>
         )}
       </div>
-      {/* Salt */}
+      
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Salt
@@ -99,7 +99,7 @@ const LeftColumn = ({ errors, register, allData, states, setters, setValue, onCr
           </div>
         )}
       </div>
-      {/* Unit */}
+      
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Unit *
@@ -124,7 +124,7 @@ const LeftColumn = ({ errors, register, allData, states, setters, setValue, onCr
           </div>
         )}
       </div>
-      {/* HSN */}
+      
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
           HSN/SAC *
@@ -149,7 +149,7 @@ const LeftColumn = ({ errors, register, allData, states, setters, setValue, onCr
           </div>
         )}
       </div>
-      {/* Other fields */}
+      
       <TextField
         register={register}
         errors={errors}

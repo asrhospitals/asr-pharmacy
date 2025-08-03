@@ -81,7 +81,7 @@ export default function AddRack({
         isOpen={isStoreModalOpen}
         onClose={() => {
           setIsStoreModalOpen(false);
-          // Optionally re-open AddRack if it was closed for store creation
+
           if (shouldReopenRack) {
             setTimeout(() => {
               setShouldReopenRack(false);
@@ -127,7 +127,7 @@ export default function AddRack({
             required
             noStyle={true}
           />
-          {/* Removed in-UI error and success messages, use toasts only */}
+          
           <div className="flex gap-2 mt-6">
             <Button
               type="submit"

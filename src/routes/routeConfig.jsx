@@ -33,6 +33,18 @@ const Price = React.lazy(() => import("../pages/masters/rate/Price"));
 const Viewledger = React.lazy(() =>
   import("../pages/masters/account/Ledger/Viewledger")
 );
+const CreateLedger = React.lazy(() =>
+  import("../pages/masters/account/Ledger/CreateLedger")
+);
+const LedgerDetails = React.lazy(() =>
+  import("../pages/masters/account/Ledger/LedgerDetails")
+);
+const TransactionList = React.lazy(() =>
+  import("../pages/masters/account/Transaction/TransactionList")
+);
+const CreateTransaction = React.lazy(() =>
+  import("../pages/masters/account/Transaction/CreateTransaction")
+);
 const CreateCompanyPage = React.lazy(() =>
   import("../pages/masters/inventory/company/CreateCompanyPage")
 );
@@ -63,8 +75,10 @@ const PrescriptionList = React.lazy(() => import("../pages/masters/other/prescri
 const CreatePrescriptionPage = React.lazy(() => import("../pages/masters/other/prescription/CreatePrescriptionPage"));
 const BillList = React.lazy(() => import("../pages/sales/Bill/BillList"));
 const BillForm = React.lazy(() => import("../pages/sales/Bill/BillForm"));
+const SaleMaster = React.lazy(() => import("../pages/masters/account/SaleMaster/SaleMaster"));
+const CreateSaleMaster = React.lazy(() => import("../pages/masters/account/SaleMaster/CreateSaleMaster"));
 
-const routeConfig = [
+export const routeConfig = [
   {
     path: "/dashboard",
     module: "dashboard",
@@ -72,10 +86,46 @@ const routeConfig = [
     element: <Dashboard />,
   },
   {
-    path: "/master/accounts/ledger",
-    module: "audit_logs",
+    path: "/master/account/ledger",
+    module: "accounting_ledgers",
     action: "V",
     element: <Viewledger />,
+  },
+  {
+    path: "/master/account/ledger/create",
+    module: "accounting_ledgers",
+    action: "C",
+    element: <CreateLedger />,
+  },
+  {
+    path: "/master/account/ledger/edit/:id",
+    module: "accounting_ledgers",
+    action: "E",
+    element: <CreateLedger />,
+  },
+  {
+    path: "/master/account/ledger/details/:id",
+    module: "accounting_ledgers",
+    action: "V",
+    element: <LedgerDetails />,
+  },
+  {
+    path: "/master/account/transaction",
+    module: "accounting_transactions",
+    action: "V",
+    element: <TransactionList />,
+  },
+  {
+    path: "/master/account/transaction/create",
+    module: "accounting_transactions",
+    action: "C",
+    element: <CreateTransaction />,
+  },
+  {
+    path: "/master/account/transaction/edit/:id",
+    module: "accounting_transactions",
+    action: "E",
+    element: <CreateTransaction />,
   },
   {
     path: "/master/accounts/group",
@@ -93,7 +143,19 @@ const routeConfig = [
     path: "/master/accounts/sale",
     module: "gst_billing",
     action: "V",
-    element: <GenericPage title="Sale" />,
+    element: <SaleMaster />,
+  },
+  {
+    path: "/master/accounts/sale/create",
+    module: "gst_billing",
+    action: "C",
+    element: <CreateSaleMaster />,
+  },
+  {
+    path: "/master/accounts/sale/edit/:id",
+    module: "gst_billing",
+    action: "E",
+    element: <CreateSaleMaster />,
   },
   {
     path: "/master/accounts/purchase",
@@ -262,12 +324,12 @@ const routeConfig = [
     action: "C",
     element: <CreatePrescriptionPage />,
   },
-  // {
-  //   path: "/master/other/prescription/edit/:id",
-  //   module: "other",
-  //   action: "E",
-  //   element: <PatientForm isEditMode={true} />,
-  // },
+
+
+
+
+
+
   {
     path: "/opening/:type",
     module: "inventory",

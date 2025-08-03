@@ -10,7 +10,7 @@ const specializationOptions = [
   { value: "cardiology", label: "Cardiology" },
   { value: "dermatology", label: "Dermatology" },
   { value: "neurology", label: "Neurology" },
-  // Add more as needed
+
 ];
 
 const CreateDoctorModal = ({ open, onClose, onSave }) => {
@@ -52,7 +52,7 @@ const CreateDoctorModal = ({ open, onClose, onSave }) => {
       className="max-w-4xl"
     >
       <div className="flex flex-col md:flex-row gap-4">
-        {/* Doctor List Section */}
+        
         <div className="flex-1 border border-gray-300 rounded p-3">
           <div className="font-bold mb-2">Doctor List</div>
           <Input
@@ -111,7 +111,7 @@ const CreateDoctorModal = ({ open, onClose, onSave }) => {
             className="mb-2"
           />
         </div>
-        {/* Contact Details Section */}
+        
         <div className="flex-1">
           <div className="flex-1 border border-gray-300 rounded p-3">
             <div className="font-bold mb-2">Contact Details</div>
