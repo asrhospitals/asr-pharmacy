@@ -1,5 +1,5 @@
+import { ShieldCheckIcon } from 'lucide-react';
 import React from 'react';
-import { ShieldCheckIcon } from '@heroicons/react/24/outline';
 
 const DefaultLedgerIndicator = ({ ledger, className = "" }) => {
   if (!ledger?.isDefault) return null;

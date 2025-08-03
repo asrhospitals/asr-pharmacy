@@ -17,7 +17,6 @@ export const ledgerApi = createApi({
         method: 'GET',
       }),
       providesTags: ['Ledger'],
-      transformResponse: (response) => response.data || [],
     }),
 
     getLedgerById: builder.query({

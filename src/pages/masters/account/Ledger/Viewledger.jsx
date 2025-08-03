@@ -7,7 +7,10 @@ import Select from "../../../../componets/common/Select";
 import Button from "../../../../componets/common/Button";
 import Loader from "../../../../componets/common/Loader";
 import { showToast } from "../../../../componets/common/Toast";
-import { useGetLedgersQuery, useDeleteLedgerMutation } from "../../../../services/ledgerApi";
+import {
+  useGetLedgersQuery,
+  useDeleteLedgerMutation,
+} from "../../../../services/ledgerApi";
 import InventoryPageLayout from "../../../../componets/layout/InventoryPageLayout";
 
 const Viewledger = () => {
@@ -15,7 +18,10 @@ const Viewledger = () => {
   const [selectedSearchField, setSelectedSearchField] = useState("ledgerName");
   const [selectedRow, setSelectedRow] = useState(null);
   const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
   const navigate = useNavigate();
+
+  const [data, setData] = useState([]);
 
   const searchOptions = [
     { value: "ledgerName", label: "Ledger Name" },
@@ -40,9 +46,13 @@ const Viewledger = () => {
       key: "balanceType",
       title: "Balance Type",
       render: (value) => (
-        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-          value === 'Debit' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'
-        }`}>
+        <span
+          className={`px-2 py-1 rounded-full text-xs font-medium ${
+            value === "Debit"
+              ? "bg-blue-100 text-blue-800"
+              : "bg-green-100 text-green-800"
+          }`}
+        >
           {value}
         </span>
       ),
@@ -51,10 +61,10 @@ const Viewledger = () => {
       key: "openingBalance",
       title: "Opening Balance",
       render: (value) => {
-        const formattedAmount = new Intl.NumberFormat('en-IN', {
-          style: 'currency',
-          currency: 'INR',
-          minimumFractionDigits: 2
+        const formattedAmount = new Intl.NumberFormat("en-IN", {
+          style: "currency",
+          currency: "INR",
+          minimumFractionDigits: 2,
         }).format(value || 0);
         return (
           <div className="font-medium text-gray-900">{formattedAmount}</div>
@@ -65,21 +75,36 @@ const Viewledger = () => {
       key: "isActive",
       title: "Status",
       render: (value) => (
-        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-          value ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-        }`}>
-          {value ? 'Active' : 'Inactive'}
+        <span
+          className={`px-2 py-1 rounded-full text-xs font-medium ${
+            value ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+          }`}
+        >
+          {value ? "Active" : "Inactive"}
         </span>
       ),
     },
   ];
 
-  const { data, isLoading, error, refetch } = useGetLedgersQuery({
+  const {
+    data: ledgerData,
+    isLoading,
+    isFetching,
+    error,
+    refetch,
+  } = useGetLedgersQuery({
     search,
     page,
-    limit: 10,
+    limit: limit,
   });
-  
+
+  useEffect(() => {
+    if (ledgerData?.data) {
+      setData(ledgerData?.data);
+    }
+  }, [ledgerData]);
+
+  const pagination = ledgerData?.pagination;
 
   const [deleteLedger] = useDeleteLedgerMutation();
 
@@ -98,11 +123,14 @@ const Viewledger = () => {
   };
 
   const handleDelete = async (row) => {
-    if (window.confirm(`Are you sure you want to delete ledger "${row.ledgerName}"?`)) {
+    if (
+      window.confirm(
+        `Are you sure you want to delete ledger "${row.ledgerName}"?`
+      )
+    ) {
       try {
         await deleteLedger(row.id).unwrap();
         showToast("Ledger deleted successfully", "success");
-        refetch();
       } catch (error) {
         showToast(error?.data?.message || "Failed to delete ledger", "error");
       }
@@ -132,6 +160,12 @@ const Viewledger = () => {
     }
   };
 
+  const handleLoadMore = () => {
+    if (pagination?.totalItems > limit) {
+      setLimit(limit + 10);
+    }
+  };
+
   return (
     <InventoryPageLayout
       title="Ledger Management"
@@ -141,8 +175,11 @@ const Viewledger = () => {
         </Button>,
       ]}
       search={search}
-      onSearchChange={e => { setSearch(e.target.value); setPage(1); }}
-      tableData={data|| []}
+      onSearchChange={(e) => {
+        setSearch(e.target.value);
+        setPage(1);
+      }}
+      tableData={data || []}
       columns={columns}
       isLoading={isLoading}
       selectedRow={selectedRow}
@@ -152,59 +189,51 @@ const Viewledger = () => {
       onDelete={(row) => handleDelete(row)}
       onView={handleViewDetails}
       onArrowNavigation={handleKeyDown}
-      rowInfoPanel={
-        selectedRow && (
-          <div className="flex flex-col gap-1 text-xs">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
-              <div className="border border-gray-300 rounded-lg p-1 bg-gray-50">
-                <div className="font-semibold mb-0.5">Ledger Name</div>
-                <div>{selectedRow.ledgerName || "-"}</div>
-                <div className="font-semibold mb-0.5 mt-1">Group</div>
-                <div>{selectedRow.Group?.groupName || "-"}</div>
-                <div className="font-semibold mb-0.5 mt-1">Balance Type</div>
-                <div>{selectedRow.balanceType || "-"}</div>
-              </div>
-              <div className="border border-gray-300 rounded-lg p-1 bg-gray-50">
-                <div className="font-semibold mb-0.5">Opening Balance</div>
-                <div>₹{new Intl.NumberFormat('en-IN').format(selectedRow.openingBalance || 0)}</div>
-                <div className="font-semibold mb-0.5 mt-1">Status</div>
-                <div>{selectedRow.isActive ? 'Active' : 'Inactive'}</div>
-                <div className="font-semibold mb-0.5 mt-1">Description</div>
-                <div>{selectedRow.description || "-"}</div>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-1 bg-gray-100 rounded p-1 mt-1 text-xs">
-              <div><b>Parent Ledger:</b> {selectedRow.parentLedger || "-"}</div>
-              <div><b>Created:</b> {selectedRow.createdAt ? new Date(selectedRow.createdAt).toLocaleDateString('en-IN') : "-"}</div>
-            </div>
-          </div>
-        )
-      }
-    >
-      {data?.totalPages > 1 && (
-        <div className="flex justify-center mt-4">
-          <div className="flex gap-2">
-            <Button
-              variant="secondary"
-              onClick={() => setPage(Math.max(1, page - 1))}
-              disabled={page === 1}
-            >
-              Previous
-            </Button>
-            <span className="px-3 py-2 text-sm">
-              Page {page} of {data.totalPages}
-            </span>
-            <Button
-              variant="secondary"
-              onClick={() => setPage(Math.min(data.totalPages, page + 1))}
-              disabled={page === data.totalPages}
-            >
-              Next
-            </Button>
-          </div>
-        </div>
-      )}
-    </InventoryPageLayout>
+      // rowInfoPanel={
+      //   // selectedRow && (
+      //     <div className="flex flex-col gap-1 text-xs">
+      //       <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
+      //         <div className="border border-gray-300 rounded-lg p-1 bg-gray-50">
+      //           <div className="font-semibold mb-0.5">Ledger Name</div>
+      //           <div>{selectedRow?.ledgerName || "-"}</div>
+      //           <div className="font-semibold mb-0.5 mt-1">Group</div>
+      //           <div>{selectedRow?.Group?.groupName || "-"}</div>
+      //           <div className="font-semibold mb-0.5 mt-1">Balance Type</div>
+      //           <div>{selectedRow?.balanceType || "-"}</div>
+      //         </div>
+      //         <div className="border border-gray-300 rounded-lg p-1 bg-gray-50">
+      //           <div className="font-semibold mb-0.5">Opening Balance</div>
+      //           <div>
+      //             ₹
+      //             {new Intl.NumberFormat("en-IN").format(
+      //               selectedRow?.openingBalance || 0
+      //             )}
+      //           </div>
+      //           <div className="font-semibold mb-0.5 mt-1">Status</div>
+      //           <div>{selectedRow?.isActive ? "Active" : "Inactive"}</div>
+      //           <div className="font-semibold mb-0.5 mt-1">Description</div>
+      //           <div>{selectedRow?.description || "-"}</div>
+      //         </div>
+      //       </div>
+      //       <div className="grid grid-cols-2 gap-1 bg-gray-100 rounded p-1 mt-1 text-xs">
+      //         <div>
+      //           <b>Parent Ledger:</b> {selectedRow?.parentLedger || "-"}
+      //         </div>
+      //         <div>
+      //           <b>Created:</b>{" "}
+      //           {selectedRow?.createdAt
+      //             ? new Date(selectedRow?.createdAt).toLocaleDateString("en-IN")
+      //             : "-"}
+      //         </div>
+      //       </div>
+      //     </div>
+      //   // )
+      // }
+      loadMore={true}
+      handleLoadMore={handleLoadMore}
+      isMoreLoading={isFetching}
+      maxDataLoaded={pagination?.totalItems <= limit}
+    />
   );
 };
 

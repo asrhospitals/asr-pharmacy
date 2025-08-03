@@ -19,6 +19,7 @@ import { transactionApi } from './services/transactionApi';
 import userReducer from './services/userSlice';
 import { salesBillApi } from './services/salesBillApi';
 import { ledgerEntryApi } from './services/ledgerEntryApi';
+import { saleMasterApi } from './services/saleMasterApi';
 
 export const store = configureStore({
   reducer: {
@@ -41,6 +42,7 @@ export const store = configureStore({
     [transactionApi.reducerPath]: transactionApi.reducer,
     [salesBillApi.reducerPath] : salesBillApi.reducer,
     [ledgerEntryApi.reducerPath]: ledgerEntryApi.reducer,
+    [saleMasterApi.reducerPath]: saleMasterApi.reducer,
      user: userReducer,
   },
   middleware: (getDefaultMiddleware) =>
@@ -64,5 +66,6 @@ export const store = configureStore({
       transactionApi.middleware,
       salesBillApi.middleware,
       ledgerEntryApi.middleware,
+      saleMasterApi.middleware,
     ),
 }); 

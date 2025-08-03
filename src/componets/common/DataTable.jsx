@@ -119,6 +119,7 @@ const DataTable = ({
                         {onEdit && (
                           <IconButton
                             icon={Edit}
+                            disabled={row.isDefault}
                             onClick={(e) => {
                               e.stopPropagation();
                               onEdit(row);
@@ -132,6 +133,7 @@ const DataTable = ({
                         {onDelete && (
                           <IconButton
                             icon={Trash2}
+                            disabled={row.isDefault}
                             onClick={(e) => {
                               e.stopPropagation();
                               onDelete(row);

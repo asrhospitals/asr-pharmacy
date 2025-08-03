@@ -27,8 +27,8 @@ export const storeApi = createApi({
       invalidatesTags: ['Store'],
     }),
     deleteStore: builder.mutation({
-      query: (id) => ({
-        url: `/store/v1/delete-store/${id}`,
+      query: ({ id, cascade = false }) => ({
+        url: `/store/v1/delete-store/${id}${cascade ? '?cascade=true' : ''}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Store'],

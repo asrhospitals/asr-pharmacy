@@ -75,6 +75,8 @@ const PrescriptionList = React.lazy(() => import("../pages/masters/other/prescri
 const CreatePrescriptionPage = React.lazy(() => import("../pages/masters/other/prescription/CreatePrescriptionPage"));
 const BillList = React.lazy(() => import("../pages/sales/Bill/BillList"));
 const BillForm = React.lazy(() => import("../pages/sales/Bill/BillForm"));
+const SaleMaster = React.lazy(() => import("../pages/masters/account/SaleMaster/SaleMaster"));
+const CreateSaleMaster = React.lazy(() => import("../pages/masters/account/SaleMaster/CreateSaleMaster"));
 
 export const routeConfig = [
   {
@@ -141,7 +143,19 @@ export const routeConfig = [
     path: "/master/accounts/sale",
     module: "gst_billing",
     action: "V",
-    element: <GenericPage title="Sale" />,
+    element: <SaleMaster />,
+  },
+  {
+    path: "/master/accounts/sale/create",
+    module: "gst_billing",
+    action: "C",
+    element: <CreateSaleMaster />,
+  },
+  {
+    path: "/master/accounts/sale/edit/:id",
+    module: "gst_billing",
+    action: "E",
+    element: <CreateSaleMaster />,
   },
   {
     path: "/master/accounts/purchase",
