@@ -13,7 +13,7 @@ export const salesBillApi = createApi({
   tagTypes: ['SalesBill'],
   endpoints: (builder) => ({
     getBills: builder.query({
-      query: ({ page = 1, limit = 10, search = '', filters = {} } = {}) => ({
+      query: ({ page = 1, limit, search = '', filters = {} } = {}) => ({
         url: `/get-bills?${buildQueryParams({ page, limit, search, filters })}`,
         method: 'GET',
       }),

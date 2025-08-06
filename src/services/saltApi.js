@@ -24,7 +24,7 @@ export const saltApi = createApi({
   baseQuery: createBaseQueryWithAuth(baseUrl),
   endpoints: (builder) => ({
     getSalts: builder.query({
-      query: ({ page = 1, limit = 10, search = '', filters = {} } = {}) => ({
+      query: ({ page = 1, limit, search = '', filters = {} } = {}) => ({
         url: `/salt/v1/get-salt?${buildQueryParams({ page, limit, search, filters })}`,
         method: 'GET',
       }),

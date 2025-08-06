@@ -12,7 +12,7 @@ export const transactionApi = createApi({
   tagTypes: ['Transaction', 'TransactionStats'],
   endpoints: (builder) => ({
     getTransactions: builder.query({
-      query: ({ page = 1, limit = 10, search = '', voucherType, status, isPosted, startDate, endDate } = {}) => ({
+      query: ({ page = 1, limit, search = '', voucherType, status, isPosted, startDate, endDate } = {}) => ({
         url: `/transaction/v1/get-transactions?${buildQueryParams({ page, limit, search, voucherType, status, isPosted, startDate, endDate })}`,
         method: 'GET',
       }),

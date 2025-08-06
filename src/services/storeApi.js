@@ -12,7 +12,7 @@ export const storeApi = createApi({
   baseQuery: createBaseQueryWithAuth(baseUrl),
   endpoints: (builder) => ({
     getStores: builder.query({
-      query: ({ page = 1, limit = 10, search = '', filters = {} } = {}) => ({
+      query: ({ page = 1, limit, search = '', filters = {} } = {}) => ({
         url: `/store/v1/get-store?${buildQueryParams({ page, limit, search, filters })}`,
         method: 'GET',
       }),

@@ -17,6 +17,7 @@ import { useGetHSNsQuery } from "../../../../services/hsnApi";
 import CreateUnitForm from "../unit/AddUnit";
 import CreateHsnSacForm from "../hsn/AddHSN";
 import AddRack from "../rack/AddRack";
+import { useGetPurchaseMastersQuery } from "../../../../services/purchaseMasterApi";
 
 const ADVANCE_TABS = ["Discount", "Quantity", "Other Info"];
 
@@ -30,15 +31,18 @@ export default function CreateItemPage() {
   const [selectedSalt, setSelectedSalt] = useState(null);
   const [selectedUnit, setSelectedUnit] = useState(null);
   const [selectedHSN, setSelectedHSN] = useState(null);
+  const [selectedTaxCategory, setSelectedTaxCategory] = useState(null);
   const [isUnitModalOpen, setIsUnitModalOpen] = useState(false);
   const [isHSNModalOpen, setIsHSNModalOpen] = useState(false);
   const [isRackModalOpen, setIsRackModalOpen] = useState(false);
+
 
   const { data: rackData } = useGetRacksQuery();
   const { data: companyData } = useGetCompaniesQuery();
   const { data: saltData } = useGetSaltsQuery();
   const { data: unitData } = useGetUnitsQuery();
   const { data: hsnData } = useGetHSNsQuery();
+  const {data : taxcategoryData} = useGetPurchaseMastersQuery();
 
   console.log(
     "rackData, companyData, saltData, unitData, hsnData",
@@ -55,6 +59,7 @@ export default function CreateItemPage() {
     saltData,
     unitData,
     hsnData,
+    taxcategoryData
   };
 
   const allSetters = {
@@ -63,6 +68,7 @@ export default function CreateItemPage() {
     setSelectedSalt,
     setSelectedUnit,
     setSelectedHSN,
+    setSelectedTaxCategory
   };
 
   const allStates = {
@@ -71,6 +77,7 @@ export default function CreateItemPage() {
     selectedSalt,
     selectedUnit,
     selectedHSN,
+    selectedTaxCategory
   };
 
   const {

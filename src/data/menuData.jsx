@@ -74,7 +74,7 @@ const adminMenu = [
         children: [
           { title: "Patient", path: "/master/other/patient" },
           { title: "Prescription", path: "/master/other/prescription" },
-          { title: "Station", path: "/other/station" },
+          { title: "Station", path: "/master/other/station" },
         ],
       },
       {

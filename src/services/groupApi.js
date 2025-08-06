@@ -21,7 +21,7 @@ export const groupApi = createApi({
     }),
 
     getGroups: builder.query({
-      query: ({ page = 1, limit = 10, search = '', filters = {} } = {}) => ({
+      query: ({ page = 1, limit, search = '', filters = {} } = {}) => ({
         url: `/groups?${buildQueryParams({ page, limit, search, filters })}`,
         method: 'GET',
       }),

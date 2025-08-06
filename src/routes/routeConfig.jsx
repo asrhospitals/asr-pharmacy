@@ -1,6 +1,7 @@
 import React from "react";
 import HierarchicalGroupManager from "../pages/masters/account/group/HierarchicalGroupManager";
 import Group from "../pages/masters/account/group/Group";
+import Station from "../pages/masters/other/station/Station";
 
 const Dashboard = React.lazy(() => import("../pages/Dashboard"));
 const GenericPage = React.lazy(() => import("../pages/GenericPage"));
@@ -77,6 +78,8 @@ const BillList = React.lazy(() => import("../pages/sales/Bill/BillList"));
 const BillForm = React.lazy(() => import("../pages/sales/Bill/BillForm"));
 const SaleMaster = React.lazy(() => import("../pages/masters/account/SaleMaster/SaleMaster"));
 const CreateSaleMaster = React.lazy(() => import("../pages/masters/account/SaleMaster/CreateSaleMaster"));
+const PurchaseMaster = React.lazy(() => import("../pages/masters/account/PurchaseMaster/PurchaseMaster"));
+const CreatePurchaseMaster = React.lazy(() => import("../pages/masters/account/PurchaseMaster/CreatePurchaseMaster"));
 
 export const routeConfig = [
   {
@@ -159,9 +162,21 @@ export const routeConfig = [
   },
   {
     path: "/master/accounts/purchase",
-    module: "purchase_orders",
+    module: "purchase_masters",
     action: "V",
-    element: <GenericPage title="Purchase" />,
+    element: <PurchaseMaster />,
+  },
+  {
+    path: "/master/accounts/purchase/create",
+    module: "purchase_masters",
+    action: "C",
+    element: <CreatePurchaseMaster />,
+  },
+  {
+    path: "/master/accounts/purchase/edit/:id",
+    module: "purchase_masters",
+    action: "E",
+    element: <CreatePurchaseMaster />,
   },
 
   {
@@ -324,12 +339,12 @@ export const routeConfig = [
     action: "C",
     element: <CreatePrescriptionPage />,
   },
-
-
-
-
-
-
+  {
+    path: "/master/other/station",
+    module: "other",
+    action: "V",
+    element: <Station />,
+  },
   {
     path: "/opening/:type",
     module: "inventory",

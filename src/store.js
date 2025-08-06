@@ -20,6 +20,8 @@ import userReducer from './services/userSlice';
 import { salesBillApi } from './services/salesBillApi';
 import { ledgerEntryApi } from './services/ledgerEntryApi';
 import { saleMasterApi } from './services/saleMasterApi';
+import { purchaseMasterApi } from './services/purchaseMasterApi';
+import { stationApi } from './services/stationApi';
 
 export const store = configureStore({
   reducer: {
@@ -43,6 +45,8 @@ export const store = configureStore({
     [salesBillApi.reducerPath] : salesBillApi.reducer,
     [ledgerEntryApi.reducerPath]: ledgerEntryApi.reducer,
     [saleMasterApi.reducerPath]: saleMasterApi.reducer,
+    [purchaseMasterApi.reducerPath]: purchaseMasterApi.reducer,
+    [stationApi.reducerPath]: stationApi.reducer,
      user: userReducer,
   },
   middleware: (getDefaultMiddleware) =>
@@ -67,5 +71,7 @@ export const store = configureStore({
       salesBillApi.middleware,
       ledgerEntryApi.middleware,
       saleMasterApi.middleware,
+      purchaseMasterApi.middleware,
+      stationApi.middleware,
     ),
 }); 

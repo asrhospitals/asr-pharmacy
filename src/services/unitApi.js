@@ -24,7 +24,7 @@ export const unitApi = createApi({
   baseQuery: createBaseQueryWithAuth(baseUrl),
   endpoints: (builder) => ({
     getUnits: builder.query({
-      query: ({ page = 1, limit = 10, search = '', filters = {} } = {}) => ({
+      query: ({ page = 1, limit, search = '', filters = {} } = {}) => ({
         url: `/unit/v1/get-unit?${buildQueryParams({ page, limit, search, filters })}`,
         method: 'GET',
       }),

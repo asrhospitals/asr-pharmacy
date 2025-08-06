@@ -24,7 +24,7 @@ export const rackApi = createApi({
   baseQuery: createBaseQueryWithAuth(baseUrl),
   endpoints: (builder) => ({
     getRacks: builder.query({
-      query: ({ page = 1, limit = 10, search = '', filters = {} } = {}) => ({
+      query: ({ page = 1, limit, search = '', filters = {} } = {}) => ({
         url: `/rack/v1/get-rack?${buildQueryParams({ page, limit, search, filters })}`,
         method: 'GET',
       }),

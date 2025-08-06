@@ -51,7 +51,7 @@ const pathToPermission = {
   "/discount/itemwise": "gst_billing",
   "/master/other/patient": "other",
   "/master/other/prescription": "other",
-  "/other/station": "inventory",
+  "/master/other/station": "other",
   "/opening/ledger": "inventory",
   "/opening/stock": "inventory",
   "/tds": "financial_reports",

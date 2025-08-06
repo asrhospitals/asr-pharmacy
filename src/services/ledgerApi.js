@@ -12,7 +12,7 @@ export const ledgerApi = createApi({
   tagTypes: ['Ledger', 'LedgerBalance', 'LedgerTransactions', 'LedgerDetails', 'DefaultLedgers'],
   endpoints: (builder) => ({
     getLedgers: builder.query({
-      query: ({ page = 1, limit = 10, search = '', groupId, balanceType, status, isActive } = {}) => ({
+      query: ({ page = 1, limit, search = '', groupId, balanceType, status, isActive } = {}) => ({
         url: `/ledger/v1/get-ledger?${buildQueryParams({ page, limit, search, groupId, balanceType, status, isActive })}`,
         method: 'GET',
       }),
@@ -64,7 +64,7 @@ export const ledgerApi = createApi({
     }),
 
     getLedgerTransactions: builder.query({
-      query: ({ id, page = 1, limit = 10, startDate, endDate } = {}) => ({
+      query: ({ id, page = 1, limit, startDate, endDate } = {}) => ({
         url: `/ledger/v1/${id}/transactions?${buildQueryParams({ page, limit, startDate, endDate })}`,
         method: 'GET',
       }),

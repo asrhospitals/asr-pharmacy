@@ -25,7 +25,7 @@ export const hsnApi = createApi({
   baseQuery: createBaseQueryWithAuth(baseUrl),
   endpoints: (builder) => ({
     getHSNs: builder.query({
-      query: ({ page = 1, limit = 10, search = '', filters = {} } = {}) => ({
+      query: ({ page = 1, limit, search = '', filters = {} } = {}) => ({
         url: `/hsn/v1/get-hsn?${buildQueryParams({ page, limit, search, filters })}`,
         method: 'GET',
       }),

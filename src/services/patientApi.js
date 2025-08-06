@@ -24,7 +24,7 @@ export const patientApi = createApi({
   baseQuery: createBaseQueryWithAuth(baseUrl),
   endpoints: (builder) => ({
     getPatients: builder.query({
-      query: ({ page = 1, limit = 10, search = "", filters = {} } = {}) => ({
+      query: ({ page = 1, limit, search = "", filters = {} } = {}) => ({
         url: `/patient/v1/get-patient?${buildQueryParams({
           page,
           limit,

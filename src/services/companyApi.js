@@ -22,7 +22,7 @@ export const companyApi = createApi({
   baseQuery: createBaseQueryWithAuth(baseUrl),
   endpoints: (builder) => ({
     getCompanies: builder.query({
-      query: ({ page = 1, limit = 10, search = '', filters = {} } = {}) => ({
+      query: ({ page = 1, limit, search = '', filters = {} } = {}) => ({
         url: `/company/v1/get-companies?${buildQueryParams({ page, limit, search, filters })}`,
         method: 'GET',
       }),

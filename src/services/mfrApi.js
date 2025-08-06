@@ -24,7 +24,7 @@ export const mfrApi = createApi({
   baseQuery: createBaseQueryWithAuth(baseUrl),
   endpoints: (builder) => ({
     getManufacturers: builder.query({
-      query: ({ page = 1, limit = 10, search = '', filters = {} } = {}) => ({
+      query: ({ page = 1, limit, search = '', filters = {} } = {}) => ({
         url: `/manu/v1/get-manufacturer?${buildQueryParams({ page, limit, search, filters })}`,
         method: 'GET',
       }),

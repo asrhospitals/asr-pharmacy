@@ -1,4 +1,4 @@
-export function buildQueryParams({ page = 1, limit = 10, search = '', filters = {} }) {
+export function buildQueryParams({ page = 1, limit, search = '', filters = {} }) {
   const params = new URLSearchParams();
   params.append('page', page);
   params.append('limit', limit);

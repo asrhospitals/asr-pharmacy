@@ -25,7 +25,7 @@ export const prescriptionApi = createApi({
   tagTypes: ["Prescription"],
   endpoints: (builder) => ({
     getPrescriptions: builder.query({
-      query: ({ page = 1, limit = 10, search = "", filters = {} } = {}) => ({
+      query: ({ page = 1, limit, search = "", filters = {} } = {}) => ({
         url: `/prescription/v1/get-prescription?${buildQueryParams({
           page,
           limit,
