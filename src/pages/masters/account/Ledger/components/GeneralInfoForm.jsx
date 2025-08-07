@@ -107,7 +107,7 @@ const GeneralInfoForm = ({
           Parent Ledger
         </label>
         <SearchableSelect
-          options={parentLedgersData.map((ledger) => ({
+          options={parentLedgersData?.map((ledger) => ({
             label: ledger.ledgerName,
             value: ledger.id,
           }))}

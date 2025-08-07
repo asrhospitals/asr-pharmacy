@@ -140,11 +140,12 @@ const CreateLedger = () => {
 
 
   const defaultLedgerPermissions = useDefaultLedgerPermissions(ledgerData);
-  const { data: parentLedgersData = [], isLoading: parentLedgersLoading } =
+  const { data: parentLedgersResponse = [], isLoading: parentLedgersLoading } =
     useGetLedgersQuery(
       { groupId: watchedGroup, limit: 100 },
       { skip: !watchedGroup }
     );
+    const parentLedgersData = parentLedgersResponse.data || [];
   const [createLedger, { isLoading: createLoading }] =
     useCreateLedgerMutation();
   const [updateLedger, { isLoading: updateLoading }] =
@@ -429,7 +430,7 @@ const CreateLedger = () => {
                       Parent Ledger
                     </label>
                     <SearchableSelect
-                      options={parentLedgersData.map((ledger) => ({
+                      options={parentLedgersData?.map((ledger) => ({
                         label: ledger.ledgerName,
                         value: ledger.id,
                       }))}
