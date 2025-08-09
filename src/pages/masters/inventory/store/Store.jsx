@@ -9,7 +9,7 @@ import {
   useEditStoreMutation,
   useDeleteStoreMutation,
 } from "../../../../services/storeApi";
-import InventoryPageLayout from "../../../../componets/layout/InventoryPageLayout";
+import CommonPageLayout from "../../../../componets/layout/CommonPageLayout";
 import Pagination from '../../../../componets/common/Pagination';
 import { useDebounce } from '../../../../utils/useDebounce';
 import { showToast } from "../../../../componets/common/Toast";
@@ -142,7 +142,7 @@ const StorePage = () => {
 
   return (
     <>
-      <InventoryPageLayout
+      <CommonPageLayout
         title="Store Management"
         subtitle="Manage your Store"
         actions={[
@@ -177,7 +177,7 @@ const StorePage = () => {
           totalPages={data?.totalPages || 1}
           onPageChange={setPage}
         />
-      </InventoryPageLayout>
+      </CommonPageLayout>
       
       <AddStore isOpen={isModalOpen} onClose={handleCloseModal} />
       <AddStore

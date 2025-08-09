@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import InventoryPageLayout from "../../../../componets/layout/InventoryPageLayout";
+import CommonPageLayout from "../../../../componets/layout/CommonPageLayout";
 import { useGetPurchaseMastersQuery, useDeletePurchaseMasterMutation } from "../../../../services/purchaseMasterApi";
 import { useGetLedgersQuery } from "../../../../services/ledgerApi";
 import Toast from "../../../../componets/common/Toast";
@@ -174,7 +174,7 @@ const PurchaseMaster = () => {
 
   return (
     <>
-      <InventoryPageLayout
+      <CommonPageLayout
         title="Purchase Master (Purchase Only)"
         actions={actions}
         search={search}

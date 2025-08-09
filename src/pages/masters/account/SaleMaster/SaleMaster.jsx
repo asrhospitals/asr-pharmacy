@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import InventoryPageLayout from "../../../../componets/layout/InventoryPageLayout";
+import CommonPageLayout from "../../../../componets/layout/CommonPageLayout";
 import { useGetSaleMastersQuery, useDeleteSaleMasterMutation } from "../../../../services/saleMasterApi";
 import { useGetLedgersQuery } from "../../../../services/ledgerApi";
 import Toast from "../../../../componets/common/Toast";
@@ -174,7 +174,7 @@ const SaleMaster = () => {
 
   return (
     <>
-      <InventoryPageLayout
+      <CommonPageLayout
         title="Sale Master (Sales Only)"
         actions={actions}
         search={search}

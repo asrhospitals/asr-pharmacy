@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import InventoryPageLayout from "../../../../componets/layout/InventoryPageLayout";
+import CommonPageLayout from "../../../../componets/layout/CommonPageLayout";
 import Button from "../../../../componets/common/Button";
 import { Plus } from "lucide-react";
 import Pagination from "../../../../componets/common/Pagination";
@@ -88,7 +88,7 @@ const data = [];
 
   return (
     <>
-      <InventoryPageLayout
+      <CommonPageLayout
         title="Prescription List"
         actions={[
           <Button key="add" onClick={handleAddItem}>
@@ -109,7 +109,7 @@ const data = [];
           totalPages={data?.totalPages || 1}
           onPageChange={setPage}
         />
-      </InventoryPageLayout>
+      </CommonPageLayout>
     </>
   );
 };

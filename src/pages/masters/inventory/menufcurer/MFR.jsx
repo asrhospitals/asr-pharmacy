@@ -7,7 +7,7 @@ import {
   useEditManufacturerMutation,
   useGetManufacturersQuery,
 } from "../../../../services/mfrApi";
-import InventoryPageLayout from "../../../../componets/layout/InventoryPageLayout";
+import CommonPageLayout from "../../../../componets/layout/CommonPageLayout";
 import { useNavigate } from "react-router-dom";
 import Pagination from '../../../../componets/common/Pagination';
 import { useDebounce } from '../../../../utils/useDebounce';
@@ -79,7 +79,7 @@ const MFRPage = () => {
 
   return (
     <>
-      <InventoryPageLayout
+      <CommonPageLayout
         title="Manufacturer Management"
         subtitle="Manage your Manufacturer"
         actions={[
@@ -117,7 +117,7 @@ const MFRPage = () => {
           totalPages={data?.totalPages || 1}
           onPageChange={setPage}
         />
-      </InventoryPageLayout>
+      </CommonPageLayout>
     </>
   );
 };

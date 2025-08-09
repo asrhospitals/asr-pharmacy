@@ -3,7 +3,7 @@ import AddHSN from "./AddHSN";
 import Button from "../../../../componets/common/Button";
 import { Plus } from "lucide-react";
 import { useDeleteHSNMutation, useEditHSNMutation, useGetHSNsQuery } from "../../../../services/hsnApi";
-import InventoryPageLayout from "../../../../componets/layout/InventoryPageLayout";
+import CommonPageLayout from "../../../../componets/layout/CommonPageLayout";
 import Pagination from '../../../../componets/common/Pagination';
 import { useDebounce } from '../../../../utils/useDebounce';
 
@@ -82,7 +82,7 @@ const HSNPage = () => {
 
   return (
     <>
-      <InventoryPageLayout
+      <CommonPageLayout
         title="HSN Management"
         subtitle="Manage your HSN/SAC"
         actions={[
@@ -107,7 +107,7 @@ const HSNPage = () => {
           totalPages={data?.totalPages || 1}
           onPageChange={setPage}
         />
-      </InventoryPageLayout>
+      </CommonPageLayout>
       <AddHSN isOpen={isModalOpen} onClose={handleCloseModal} />
       <AddHSN
         initialData={editHSNData}

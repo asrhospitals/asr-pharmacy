@@ -11,7 +11,7 @@ import {
   useGetLedgersQuery,
   useDeleteLedgerMutation,
 } from "../../../../services/ledgerApi";
-import InventoryPageLayout from "../../../../componets/layout/InventoryPageLayout";
+import CommonPageLayout from "../../../../componets/layout/CommonPageLayout";
 
 const Viewledger = () => {
   const [search, setSearch] = useState("");
@@ -167,13 +167,14 @@ const Viewledger = () => {
   };
 
   return (
-    <InventoryPageLayout
+    <CommonPageLayout
       title="Ledger Management"
       actions={[
         <Button key="add" onClick={handleAddLedger}>
           <Plus className="w-4 h-4 mr-2" /> Create Ledger
         </Button>,
       ]}
+      justifyBetween={true}
       search={search}
       onSearchChange={(e) => {
         setSearch(e.target.value);

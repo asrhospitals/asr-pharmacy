@@ -6,7 +6,7 @@ import {
   useGetCompaniesQuery,
 } from "../../../../services/companyApi";
 import { useNavigate } from "react-router-dom";
-import InventoryPageLayout from "../../../../componets/layout/InventoryPageLayout";
+import CommonPageLayout from "../../../../componets/layout/CommonPageLayout";
 import Pagination from '../../../../componets/common/Pagination';
 import { useDebounce } from '../../../../utils/useDebounce';
 
@@ -66,7 +66,7 @@ const CompanyPage = () => {
   };
 
   return (
-    <InventoryPageLayout
+    <CommonPageLayout
       title="Company Management"
       subtitle="Manage your Company"
       actions={[
@@ -96,7 +96,7 @@ const CompanyPage = () => {
         totalPages={data?.totalPages || 1}
         onPageChange={setPage}
       />
-    </InventoryPageLayout>
+    </CommonPageLayout>
   );
 };
 

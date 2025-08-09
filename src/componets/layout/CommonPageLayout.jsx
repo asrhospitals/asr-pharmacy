@@ -6,7 +6,7 @@ import DataTable from "../common/DataTable";
 import Loader from "../common/Loader";
 import Button from "../common/Button";
 
-const InventoryPageLayout = ({
+const CommonPageLayout = ({
   title,
   subtitle,
   actions,
@@ -34,6 +34,7 @@ const InventoryPageLayout = ({
   handleLoadMore = () => {},
   isMoreLoading = false,
   maxDataLoaded = false,
+  justifyBetween = false
 }) => {
   const tableRef = useRef();
 
@@ -41,7 +42,11 @@ const InventoryPageLayout = ({
     <div className="flex space-y-2 flex-col h-[calc(100vh-120px)]">
       <PageHeader title={title} subtitle={subtitle} actions={actions} />
 
-      <div className="flex flex-wrap gap-2 px-6 items-center justify-between">
+      <div
+        className={`flex flex-wrap gap-2 px-6 items-center ${
+          justifyBetween ? "justify-between" : "justify-start"
+        }`}
+      >
         <Input
           type="text"
           className="w-full sm:w-64"
@@ -134,4 +139,4 @@ const InventoryPageLayout = ({
   );
 };
 
-export default InventoryPageLayout;
+export default CommonPageLayout;

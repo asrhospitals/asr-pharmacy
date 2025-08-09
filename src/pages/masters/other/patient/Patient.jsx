@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import InventoryPageLayout from "../../../../componets/layout/InventoryPageLayout";
+import CommonPageLayout from "../../../../componets/layout/CommonPageLayout";
 import Button from "../../../../componets/common/Button";
 import { Plus } from "lucide-react";
 import {
@@ -87,7 +87,7 @@ const Patient = () => {
 
   return (
     <>
-      <InventoryPageLayout
+      <CommonPageLayout
         title={"Patient"}
         actions={[
           <Button key="add" onClick={handleAddItem}>
@@ -108,7 +108,7 @@ const Patient = () => {
           totalPages={patients?.totalPages || 1}
           onPageChange={setPage}
         />
-      </InventoryPageLayout>
+      </CommonPageLayout>
     </>
   );
 };

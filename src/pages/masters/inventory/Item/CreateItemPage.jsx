@@ -30,6 +30,7 @@ export default function CreateItemPage() {
   const [selectedCompany, setSelectedCompany] = useState(null);
   const [selectedSalt, setSelectedSalt] = useState(null);
   const [selectedUnit, setSelectedUnit] = useState(null);
+  const [selectedUnit2, setSelectedUnit2] = useState(null);
   const [selectedHSN, setSelectedHSN] = useState(null);
   const [selectedTaxCategory, setSelectedTaxCategory] = useState(null);
   const [isUnitModalOpen, setIsUnitModalOpen] = useState(false);
@@ -43,15 +44,6 @@ export default function CreateItemPage() {
   const { data: unitData } = useGetUnitsQuery();
   const { data: hsnData } = useGetHSNsQuery();
   const {data : taxcategoryData} = useGetPurchaseMastersQuery();
-
-  console.log(
-    "rackData, companyData, saltData, unitData, hsnData",
-    rackData,
-    companyData,
-    saltData,
-    unitData,
-    hsnData
-  );
 
   const allData = {
     rackData,
@@ -67,6 +59,7 @@ export default function CreateItemPage() {
     setSelectedCompany,
     setSelectedSalt,
     setSelectedUnit,
+    setSelectedUnit2,
     setSelectedHSN,
     setSelectedTaxCategory
   };
@@ -76,6 +69,7 @@ export default function CreateItemPage() {
     selectedCompany,
     selectedSalt,
     selectedUnit,
+    selectedUnit2,
     selectedHSN,
     selectedTaxCategory
   };
@@ -92,8 +86,8 @@ export default function CreateItemPage() {
       goods: "Goods",
       packing: "",
       unit1: "",
-      unit2: "",
-      conversion: "",
+      unit2: null,
+      conversion: null,
       unitindecimal: "No",
       hsnsac: "",
       taxcategory: "",
@@ -113,9 +107,9 @@ export default function CreateItemPage() {
       colortype: "",
       status: "Continue",
       tbitem: "Normal",
-      discountType: "Applicable",
-      itemDisc1: "",
-      maxDisc: "",
+      discountType: "Not Applicable",
+      itemDisc1: null,
+      maxDisc: null,
       contraindications: "",
       relativeContraindications: "",
     },

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Button from "../../../componets/common/Button";
 import { Plus } from "lucide-react";
 import { useGetBillsQuery, useDeleteBillMutation } from "../../../services/salesBillApi";
-import InventoryPageLayout from "../../../componets/layout/InventoryPageLayout";
+import CommonPageLayout from "../../../componets/layout/CommonPageLayout";
 import Pagination from '../../../componets/common/Pagination';
 import { useDebounce } from '../../../utils/useDebounce';
 import { useNavigate } from "react-router-dom";
@@ -70,7 +70,7 @@ const BillList = ({ onCreate, onEdit }) => {
   };
 
   return (
-    <InventoryPageLayout
+    <CommonPageLayout
       title="GST Invoice List"
       actions={[
         <Button key="add" onClick={handleAddItem}>

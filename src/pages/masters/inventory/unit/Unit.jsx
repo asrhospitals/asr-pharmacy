@@ -3,7 +3,7 @@ import { Plus } from "lucide-react";
 import AddUnit from "../unit/AddUnit";
 import { useDeleteUnitMutation, useEditUnitMutation, useGetUnitsQuery } from "../../../../services/unitApi";
 import Button from "../../../../componets/common/Button";
-import InventoryPageLayout from "../../../../componets/layout/InventoryPageLayout";
+import CommonPageLayout from "../../../../componets/layout/CommonPageLayout";
 import Pagination from '../../../../componets/common/Pagination';
 import { useDebounce } from '../../../../utils/useDebounce';
 
@@ -81,7 +81,7 @@ const UnitPage = () => {
 
   return (
     <>
-      <InventoryPageLayout
+      <CommonPageLayout
         title="Unit Management"
         subtitle="Manage your Unit"
         actions={[
@@ -106,7 +106,7 @@ const UnitPage = () => {
           totalPages={data?.totalPages || 1}
           onPageChange={setPage}
         />
-      </InventoryPageLayout>
+      </CommonPageLayout>
       <AddUnit isOpen={isModalOpen} onClose={handleCloseModal} />
       <AddUnit
         initialData={editUnitData}

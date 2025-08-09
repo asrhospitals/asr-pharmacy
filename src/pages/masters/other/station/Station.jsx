@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import InventoryPageLayout from "../../../../componets/layout/InventoryPageLayout";
+import CommonPageLayout from "../../../../componets/layout/CommonPageLayout";
 import Button from "../../../../componets/common/Button";
 import Pagination from "../../../../componets/common/Pagination";
 import { Plus } from "lucide-react";
@@ -77,7 +77,7 @@ const Station = () => {
 
   return (
     <>
-      <InventoryPageLayout
+      <CommonPageLayout
         title="Station List"
         actions={[
           <Button key="add" onClick={handleAddItem}>

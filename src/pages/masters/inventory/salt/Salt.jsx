@@ -3,7 +3,7 @@ import Button from "../../../../componets/common/Button";
 import { Plus } from "lucide-react";
 import { useDeleteSaltMutation, useGetSaltsQuery } from "../../../../services/saltApi";
 import { useNavigate } from "react-router-dom";
-import InventoryPageLayout from "../../../../componets/layout/InventoryPageLayout";
+import CommonPageLayout from "../../../../componets/layout/CommonPageLayout";
 import Pagination from '../../../../componets/common/Pagination';
 import { useDebounce } from '../../../../utils/useDebounce';
 
@@ -65,7 +65,7 @@ const SaltPage = () => {
   };
 
   return (
-    <InventoryPageLayout
+    <CommonPageLayout
       title="Salt Management"
       subtitle="Manage your Salt"
       actions={[
@@ -120,7 +120,7 @@ const SaltPage = () => {
         totalPages={data?.totalPages || 1}
         onPageChange={setPage}
       />
-    </InventoryPageLayout>
+    </CommonPageLayout>
   );
 };
 

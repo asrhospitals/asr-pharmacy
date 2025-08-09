@@ -8,7 +8,7 @@ import {
   useDeleteTransactionMutation, 
   usePostTransactionMutation 
 } from "../../../../services/transactionApi";
-import InventoryPageLayout from "../../../../componets/layout/InventoryPageLayout";
+import CommonPageLayout from "../../../../componets/layout/CommonPageLayout";
 
 const TransactionList = () => {
   const [search, setSearch] = useState("");
@@ -200,7 +200,7 @@ const TransactionList = () => {
   };
 
   return (
-    <InventoryPageLayout
+    <CommonPageLayout
       title="Transaction Management"
       subtitle="Manage your Transactions"
       actions={[
@@ -309,7 +309,7 @@ const TransactionList = () => {
           </div>
         </div>
       )}
-    </InventoryPageLayout>
+    </CommonPageLayout>
   );
 };
 

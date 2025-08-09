@@ -7,7 +7,7 @@ import { Plus } from "lucide-react";
 import Input from "../../../../componets/common/Input";
 import Select from "../../../../componets/common/Select";
 import Loader from "../../../../componets/common/Loader";
-import InventoryPageLayout from "../../../../componets/layout/InventoryPageLayout";
+import CommonPageLayout from "../../../../componets/layout/CommonPageLayout";
 import Pagination from '../../../../componets/common/Pagination';
 import { useDebounce } from '../../../../utils/useDebounce';
 
@@ -38,7 +38,7 @@ const ItemsPage = () => {
   ];
 
   return (
-    <InventoryPageLayout
+    <CommonPageLayout
       title="Items Management"
       actions={[
         <Button key="add" onClick={handleAddItem}>
@@ -114,7 +114,7 @@ const ItemsPage = () => {
         totalPages={data?.totalPages || 1}
         onPageChange={setPage}
       />
-    </InventoryPageLayout>
+    </CommonPageLayout>
   );
 };
 

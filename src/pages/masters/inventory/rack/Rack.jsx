@@ -7,7 +7,7 @@ import {
   useEditRackMutation,
   useGetRacksQuery,
 } from "../../../../services/rackApi";
-import InventoryPageLayout from "../../../../componets/layout/InventoryPageLayout";
+import CommonPageLayout from "../../../../componets/layout/CommonPageLayout";
 import Pagination from "../../../../componets/common/Pagination";
 import { useDebounce } from "../../../../utils/useDebounce";
 
@@ -105,7 +105,7 @@ const RackPage = () => {
 
   return (
     <>
-      <InventoryPageLayout
+      <CommonPageLayout
         title="Rack Management"
         subtitle="Manage your Rack"
         actions={[
@@ -133,7 +133,7 @@ const RackPage = () => {
           totalPages={data?.totalPages || 1}
           onPageChange={setPage}
         />
-      </InventoryPageLayout>
+      </CommonPageLayout>
       <AddRack isOpen={isModalOpen} onClose={handleCloseModal} />
       <AddRack
         initialData={editRackData}
