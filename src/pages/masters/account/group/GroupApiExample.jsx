@@ -253,7 +253,7 @@ const GroupApiExample = () => {
       
       const result = await setGroupPermission({
         groupId: selectedGroupId,
-        userId: 1, // Replace with actual user ID
+        userId: 1,
         permissions
       }).unwrap();
       Toast.success('Permissions set successfully');

@@ -34,7 +34,7 @@ export const useDefaultLedgerPermissions = (ledger = null) => {
 
   const isFieldEditable = (fieldName) => {
     if (!ledger) return true;
-    if (!isDefaultLedger()) return true; // Non-default ledgers are fully editable
+    if (!isDefaultLedger()) return true;
     
     return ledger.editableFields?.includes(fieldName) || false;
   };
@@ -116,13 +116,13 @@ export const useDefaultLedgerPermissions = (ledger = null) => {
 
   const canCreate = () => {
 
-    return true; // For now, assume all users can create
+    return true;
   };
 
 
   const canView = () => {
 
-    return true; // For now, assume all users can view
+    return true;
   };
 
   return {

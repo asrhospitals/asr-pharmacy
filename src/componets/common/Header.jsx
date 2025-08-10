@@ -6,6 +6,7 @@ import { useState, useRef, useEffect } from "react";
 import Button from "./Button";
 import Card from "./Card";
 import IconButton from "./IconButton";
+import { useLogoutMutation } from "../../services/authApi";
 
 export default function DefaultHeader({ title, onMenuClick }) {
   const user = useSelector((state) => state.user.user);
@@ -15,6 +16,7 @@ export default function DefaultHeader({ title, onMenuClick }) {
   const cardRef = useRef(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const settingsRef = useRef(null);
+  const [logout, { isLoading: isLoggingOut }] = useLogoutMutation();
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -33,17 +35,27 @@ export default function DefaultHeader({ title, onMenuClick }) {
       }
     };
     document.addEventListener("mousedown", handleClickOutsideSettings);
-    return () => document.removeEventListener("mousedown", handleClickOutsideSettings);
+    return () =>
+      document.removeEventListener("mousedown", handleClickOutsideSettings);
   }, []);
 
-  const handleLogout = () => {
-    dispatch(logoutAction());
-    setCardOpen(false);
+  const handleLogout = async () => {
+    try {
+      const data = await logout().unwrap();
+
+      if (data.success) {
+        dispatch(logoutAction());
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error("Logout failed:", error);
+    } finally {
+      setCardOpen(false);
+    }
   };
 
   return (
     <header className="sticky top-0 z-50 bg-white p-4 border-b border-l border-gray-200 flex items-center justify-between w-full min-h-[56px]">
-      
       <div className="flex items-center gap-2 md:gap-3 min-w-0">
         <button
           className="rounded-md hover:bg-gray-100 flex-shrink-0 cursor-pointer"
@@ -56,9 +68,7 @@ export default function DefaultHeader({ title, onMenuClick }) {
           <span className="text-white font-bold text-sm">ASR</span>
         </div>
         <div className="font-bold text-base md:text-lg text-blue-700 truncate max-w-[120px] sm:max-w-[200px] md:max-w-[300px] lg:max-w-none">
-          <span className="truncate block">
-            Chemist Demo Pvt Ltd (CDPL)
-          </span>
+          <span className="truncate block">Chemist Demo Pvt Ltd (CDPL)</span>
         </div>
         <div className="ml-2 text-xs text-gray-500 hidden lg:block truncate max-w-[180px]">
           Books From 01.04.2024 to 31.03.2026
@@ -67,9 +77,9 @@ export default function DefaultHeader({ title, onMenuClick }) {
           v 4.1.80.b
         </div>
       </div>
-      
+
       <div className="flex-1 flex justify-center items-center min-w-0"></div>
-      
+
       <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
         <div className="flex items-center gap-1 md:gap-2 text-xs md:text-sm text-gray-700 bg-blue-50 px-2 py-1 rounded truncate max-w-[120px] md:max-w-none">
           <span className="hidden sm:inline">Financial Year:</span>
@@ -77,7 +87,7 @@ export default function DefaultHeader({ title, onMenuClick }) {
             01-04-2025 - 31-03-2026
           </span>
         </div>
-        
+
         <div className="relative md:hidden" ref={settingsRef}>
           <IconButton
             icon={Settings}
@@ -89,19 +99,28 @@ export default function DefaultHeader({ title, onMenuClick }) {
           />
           {settingsOpen && (
             <div className="absolute right-0 mt-3 w-44 bg-white rounded-xl shadow-2xl z-50 border border-gray-100 p-2 animate-fade-in flex flex-col gap-2">
-              <button className="flex items-center gap-2 px-3 py-2 rounded hover:bg-blue-50 transition text-gray-700" tabIndex={0}>
+              <button
+                className="flex items-center gap-2 px-3 py-2 rounded hover:bg-blue-50 transition text-gray-700"
+                tabIndex={0}
+              >
                 <HelpCircle className="w-5 h-5 text-blue-500" /> Help
               </button>
-              <button className="flex items-center gap-2 px-3 py-2 rounded hover:bg-blue-50 transition text-gray-700" tabIndex={0}>
+              <button
+                className="flex items-center gap-2 px-3 py-2 rounded hover:bg-blue-50 transition text-gray-700"
+                tabIndex={0}
+              >
                 <Settings className="w-5 h-5 text-blue-500" /> Settings
               </button>
-              <button className="flex items-center gap-2 px-3 py-2 rounded hover:bg-blue-50 transition text-gray-700" tabIndex={0}>
+              <button
+                className="flex items-center gap-2 px-3 py-2 rounded hover:bg-blue-50 transition text-gray-700"
+                tabIndex={0}
+              >
                 <Bell className="w-5 h-5 text-blue-500" /> Notifications
               </button>
             </div>
           )}
         </div>
-        
+
         <IconButton
           icon={HelpCircle}
           variant="ghost"
@@ -123,7 +142,7 @@ export default function DefaultHeader({ title, onMenuClick }) {
           title="Notifications"
           className="text-gray-500 hover:text-blue-600 hidden md:inline"
         />
-        
+
         <div className="relative" ref={cardRef}>
           <IconButton
             icon={User}
@@ -150,7 +169,8 @@ export default function DefaultHeader({ title, onMenuClick }) {
                   F.Y.: 01-04-2025 to 31-03-2026
                 </div>
                 <div className="text-xs text-gray-500 mb-2 truncate w-full">
-                  CDPL. AA-299, Shaheed Udham Singh Marg, AA Block, Poorbi Shalimar, Shalimar Bagh, New Delhi, 110088
+                  CDPL. AA-299, Shaheed Udham Singh Marg, AA Block, Poorbi
+                  Shalimar, Shalimar Bagh, New Delhi, 110088
                 </div>
                 <Button className="mt-2 mb-2 px-6 py-2 bg-teal-600 text-white rounded shadow hover:bg-teal-700 transition cursor-pointer">
                   Switch

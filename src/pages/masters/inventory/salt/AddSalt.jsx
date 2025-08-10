@@ -151,7 +151,7 @@ export default function SaltForm({
         showToast("Salt created successfully!", { type: "success" });
       }
       reset();
-      setVariants([]); // Set to empty array after save
+      setVariants([]);
       navigate("/master/inventory/salts");
       console.log(payload);
     } catch (err) {
@@ -169,7 +169,7 @@ export default function SaltForm({
 
   const handleClear = () => {
     reset();
-    setVariants([]); // Set to empty array after clear
+    setVariants([]);
   };
 
   const handleBack = () => navigate("/master/inventory/salts");

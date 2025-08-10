@@ -36,7 +36,6 @@ const adminMenu = [
         children: [
           { title: "Ledger", path: "/master/account/ledger" },
           { title: "Group", path: "/master/accounts/group" },
-          // { title: "Transaction", path: "/master/account/transaction" },
           { title: "Sale", path: "/master/accounts/sale" },
           { title: "Purchase", path: "/master/accounts/purchase" },
         ],

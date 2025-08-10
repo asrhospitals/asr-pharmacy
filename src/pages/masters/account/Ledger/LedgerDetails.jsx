@@ -22,8 +22,8 @@ const LedgerDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [dateRange, setDateRange] = useState({
-    startDate: format(new Date(new Date().getFullYear(), 3, 1), 'yyyy-MM-dd'), // April 1st
-    endDate: format(new Date(new Date().getFullYear() + 1, 2, 31), 'yyyy-MM-dd') // March 31st next year
+    startDate: format(new Date(new Date().getFullYear(), 3, 1), 'yyyy-MM-dd'),
+    endDate: format(new Date(new Date().getFullYear() + 1, 2, 31), 'yyyy-MM-dd')
   });
   const [viewType, setViewType] = useState('Standard');
   const [showFilters, setShowFilters] = useState(false);

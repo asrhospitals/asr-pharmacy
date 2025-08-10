@@ -104,7 +104,7 @@ const Sidebar = ({
     (!isLargeScreen && mobileOpen) ||
     (isLargeScreen && (!isCollapsed || isHovered));
   const user = useSelector((state) => state.user.user);
-  console.log('Current user role:', user?.role); // Debug log for user role
+  console.log('Current user role:', user?.role);
   const dispatch = useDispatch();
   const logout = () => dispatch(logoutAction());
   const location = useLocation();
