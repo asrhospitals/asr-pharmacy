@@ -6,6 +6,8 @@ const variants = {
   primary: "bg-blue-600 text-white hover:bg-blue-700",
   secondary: "bg-gray-100 text-gray-800 hover:bg-gray-200",
   danger: "bg-red-600 text-white hover:bg-red-700",
+  outline: "border border-gray-300 text-gray-700 hover:bg-gray-100",
+  custom: ""
 };
 const iconButton =
   "p-2 rounded-full bg-transparent hover:bg-gray-100 focus:outline-none flex items-center justify-center";
@@ -63,7 +65,7 @@ const Button = ({
           ? `${iconButton} ${className}`.trim()
           : `${base} ${className} ${
               variants[variant] || ""
-            } flex items-center cursor-pointer`.trim()
+            } flex items-center justify-center cursor-pointer`.trim()
       }
       onClick={onClick}
       disabled={disabled || loading}

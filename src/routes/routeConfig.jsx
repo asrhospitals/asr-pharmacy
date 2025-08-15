@@ -70,16 +70,32 @@ const CreateManufacturerPage = React.lazy(() =>
 const Patient = React.lazy(() =>
   import("../pages/masters/other/patient/Patient")
 );
-const AddPatient = React.lazy(() => import("../pages/masters/other/patient/AddPatient"));
-const PatientForm = React.lazy(() => import("../pages/masters/other/patient/AddPatient"));
-const PrescriptionList = React.lazy(() => import("../pages/masters/other/prescription/Prescription"));
-const CreatePrescriptionPage = React.lazy(() => import("../pages/masters/other/prescription/CreatePrescriptionPage"));
+const AddPatient = React.lazy(() =>
+  import("../pages/masters/other/patient/AddPatient")
+);
+const PatientForm = React.lazy(() =>
+  import("../pages/masters/other/patient/AddPatient")
+);
+const PrescriptionList = React.lazy(() =>
+  import("../pages/masters/other/prescription/Prescription")
+);
+const CreatePrescriptionPage = React.lazy(() =>
+  import("../pages/masters/other/prescription/CreatePrescriptionPage")
+);
 const BillList = React.lazy(() => import("../pages/sales/Bill/BillList"));
 const BillForm = React.lazy(() => import("../pages/sales/Bill/BillForm"));
-const SaleMaster = React.lazy(() => import("../pages/masters/account/SaleMaster/SaleMaster"));
-const CreateSaleMaster = React.lazy(() => import("../pages/masters/account/SaleMaster/CreateSaleMaster"));
-const PurchaseMaster = React.lazy(() => import("../pages/masters/account/PurchaseMaster/PurchaseMaster"));
-const CreatePurchaseMaster = React.lazy(() => import("../pages/masters/account/PurchaseMaster/CreatePurchaseMaster"));
+const SaleMaster = React.lazy(() =>
+  import("../pages/masters/account/SaleMaster/SaleMaster")
+);
+const CreateSaleMaster = React.lazy(() =>
+  import("../pages/masters/account/SaleMaster/CreateSaleMaster")
+);
+const PurchaseMaster = React.lazy(() =>
+  import("../pages/masters/account/PurchaseMaster/PurchaseMaster")
+);
+const CreatePurchaseMaster = React.lazy(() =>
+  import("../pages/masters/account/PurchaseMaster/CreatePurchaseMaster")
+);
 
 export const routeConfig = [
   {

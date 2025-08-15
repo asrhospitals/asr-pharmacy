@@ -56,6 +56,61 @@ export const authApi = createApi({
         body: userData,
       }),
     }),
+    sendPhoneOTP: builder.mutation({
+      query: (phoneData) => ({
+        url: "/send-otp",
+        method: "POST",
+        body: phoneData,
+      }),
+    }),
+    verifyPhoneOTP: builder.mutation({
+      query: (otpData) => ({
+        url: "/verify-otp",
+        method: "POST",
+        body: otpData,
+      }),
+    }),
+    verifyEmail: builder.mutation({
+      query: (emailData) => ({
+        url: "/verify-email",
+        method: "POST",
+        body: emailData,
+      }),
+    }),
+    resendEmailVerification: builder.mutation({
+      query: (emailData) => ({
+        url: "/resend-verification",
+        method: "POST",
+        body: emailData,
+      }),
+    }),
+    switchCompany: builder.mutation({
+      query: (companyData) => ({
+        url: "/switch-company",
+        method: "POST",
+        body: companyData,
+      }),
+    }),
+    getProfile: builder.query({
+      query: () => ({
+        url: "/profile",
+        method: "GET",
+      }),
+    }),
+    updateProfile: builder.mutation({
+      query: (profileData) => ({
+        url: "/profile",
+        method: "PUT",
+        body: profileData,
+      }),
+    }),
+    changePassword: builder.mutation({
+      query: (passwordData) => ({
+        url: "/change-password",
+        method: "POST",
+        body: passwordData,
+      }),
+    }),
     refreshToken: builder.mutation({
       query: (refreshToken) => ({
         url: "/refresh",
@@ -75,6 +130,14 @@ export const authApi = createApi({
 export const {
   useLoginMutation,
   useRegisterMutation,
+  useSendPhoneOTPMutation,
+  useVerifyPhoneOTPMutation,
+  useVerifyEmailMutation,
+  useResendEmailVerificationMutation,
+  useSwitchCompanyMutation,
+  useGetProfileQuery,
+  useUpdateProfileMutation,
+  useChangePasswordMutation,
   useRefreshTokenMutation,
   useLogoutMutation,
 } = authApi;

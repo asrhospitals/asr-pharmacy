@@ -1,5 +1,5 @@
 export const permissions = {
-  admin: {
+  user: {
     user_management: "VCED",
     dashboard: "VCED",
     prescription_entry: "VCED",

@@ -48,6 +48,8 @@ export default function DefaultHeader({ title, onMenuClick }) {
         window.location.reload();
       }
     } catch (error) {
+      dispatch(logoutAction());
+      window.location.reload();
       console.error("Logout failed:", error);
     } finally {
       setCardOpen(false);

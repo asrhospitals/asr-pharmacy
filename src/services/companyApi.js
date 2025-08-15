@@ -28,6 +28,20 @@ export const companyApi = createApi({
       }),
       providesTags: ['Company'],
     }),
+    getUserCompanies: builder.query({
+      query: ({ page = 1, limit, search = '', filters = {} } = {}) => ({
+        url: `/company/v1/get-user-companies?${buildQueryParams({ page, limit, search, filters })}`,
+        method: 'GET',
+      }),
+      providesTags: ['Company'],
+    }),
+    getCompanyById: builder.query({
+      query: (id) => ({
+        url: `/company/v1/get-company/${id}`,
+        method: 'GET',
+      }),
+      providesTags: (result, error, id) => [{ type: 'Company', id }],
+    }),
     addCompany: builder.mutation({
       query: (companyData) => ({
         url: "/company/v1/add-company",
@@ -36,6 +50,14 @@ export const companyApi = createApi({
       }),
       invalidatesTags: ["Company"],
     }),
+    updateCompany: builder.mutation({
+      query: ({ id, ...companyData }) => ({
+        url: `/company/v1/update-company/${id}`,
+        method: "PUT",
+        body: companyData,
+      }),
+      invalidatesTags: (result, error, { id }) => [{ type: 'Company', id }, 'Company'],
+    }),
     deleteCompany: builder.mutation({
       query: (id) => ({
         url: `/company/v1/delete-company/${id}`,
@@ -43,11 +65,18 @@ export const companyApi = createApi({
       }),
       invalidatesTags: ["Company"],
     }),
-    editCompany: builder.mutation({
-      query: ({ id, ...companyData }) => ({
-        url: `/company/v1/update-company/${id}`,
-        method: "PUT",
-        body: companyData,
+    addUserToCompany: builder.mutation({
+      query: ({ companyId, userData }) => ({
+        url: `/company/v1/${companyId}/add-user`,
+        method: "POST",
+        body: userData,
+      }),
+      invalidatesTags: ["Company"],
+    }),
+    removeUserFromCompany: builder.mutation({
+      query: ({ companyId, userId }) => ({
+        url: `/company/v1/${companyId}/remove-user/${userId}`,
+        method: "DELETE",
       }),
       invalidatesTags: ["Company"],
     }),
@@ -57,7 +86,11 @@ export const companyApi = createApi({
 
 export const {
   useGetCompaniesQuery,
+  useGetUserCompaniesQuery,
+  useGetCompanyByIdQuery,
   useAddCompanyMutation,
+  useUpdateCompanyMutation,
   useDeleteCompanyMutation,
-  useEditCompanyMutation,
+  useAddUserToCompanyMutation,
+  useRemoveUserFromCompanyMutation,
 } = companyApi;

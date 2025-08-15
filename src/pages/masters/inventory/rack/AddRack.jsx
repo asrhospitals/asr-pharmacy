@@ -85,7 +85,7 @@ export default function AddRack({
           if (shouldReopenRack) {
             setTimeout(() => {
               setShouldReopenRack(false);
-              onClose(false); // Do not close parent if reopening
+              onClose(false); 
             }, 0);
           }
         }}
