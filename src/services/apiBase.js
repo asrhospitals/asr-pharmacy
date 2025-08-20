@@ -8,9 +8,15 @@ const createBaseQueryWithAuth = (baseUrl) => {
     baseUrl,
     prepareHeaders: (headers, { getState }) => {
       const token = getState()?.user?.token || localStorage.getItem("token");
+      const companyId = getState()?.user?.currentCompany?.id || localStorage.getItem("companyId");
+
       if (token) {
         headers.set("Authorization", `Bearer ${token}`);
       }
+      if (companyId) {
+        headers.set("x-company-id", companyId || "");
+      }
+
       return headers;
     },
   });

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useCreatePurchaseMasterMutation, useUpdatePurchaseMasterMutation, useGetPurchaseMasterByIdQuery } from "../../../../services/purchaseMasterApi";
 import { useGetLedgersQuery } from "../../../../services/ledgerApi";
-import Toast from "../../../../componets/common/Toast";
+import {showToast} from "../../../../componets/common/Toast";
 import { ArrowLeft, Save, RefreshCw, X } from "lucide-react";
 import Button from "../../../../componets/common/Button";
 import Input from "../../../../componets/common/Input";
@@ -99,10 +99,10 @@ const CreatePurchaseMaster = () => {
 
       if (isEditMode) {
         await updatePurchaseMaster({ id, ...submitData }).unwrap();
-        Toast.success("Purchase master updated successfully");
+        showToast("Purchase master updated successfully");
       } else {
         await createPurchaseMaster(submitData).unwrap();
-        Toast.success("Purchase master created successfully");
+        showToast("Purchase master created successfully");
       }
       
       navigate("/master/accounts/purchase");

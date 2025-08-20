@@ -18,7 +18,7 @@ import Modal from '../../../../componets/common/Modal';
 import Input from '../../../../componets/common/Input';
 import Select from '../../../../componets/common/Select';
 import Loader from '../../../../componets/common/Loader';
-import Toast, { showToast } from '../../../../componets/common/Toast';
+import { Toast, showToast } from '../../../../componets/common/Toast';
 import {
   useGetGroupHierarchyQuery,
   useGetAvailableParentsQuery,
@@ -84,7 +84,7 @@ const HierarchicalGroupManager = () => {
   const handleCreateGroup = async () => {
     try {
       await createGroup(formData).unwrap();
-      Toast.success('Group created successfully');
+      showToast('Group created successfully');
       setShowCreateModal(false);
       resetForm();
     } catch (error) {
@@ -96,7 +96,7 @@ const HierarchicalGroupManager = () => {
   const handleEditGroup = async () => {
     try {
       await updateGroup({ id: selectedGroup.id, ...formData }).unwrap();
-      Toast.success('Group updated successfully');
+      showToast('Group updated successfully');
       setShowEditModal(false);
       resetForm();
     } catch (error) {

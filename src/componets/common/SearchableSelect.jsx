@@ -8,7 +8,8 @@ export default function SearchableSelect({
   getOptionLabel,
   allowCreate = false,
   noPadding,
-  startIcon
+  startIcon,
+  disabled = false,
 }) {
   const [inputValue, setInputValue] = useState("");
   const [isOpen, setIsOpen] = useState(false);
@@ -82,6 +83,7 @@ export default function SearchableSelect({
     <div className="relative w-full">
       <input
         ref={inputRef}
+        disabled={disabled}
         type="text"
         className={`w-full border border-gray-500 rounded-lg ${
             noPadding ? "p-0" : startIcon ? "pl-10 pr-2 py-2" : "p-2"

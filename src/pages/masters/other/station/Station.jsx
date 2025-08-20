@@ -11,7 +11,7 @@ import {
 } from "../../../../services/stationApi";
 import Modal from "../../../../componets/common/Modal";
 import AddStationModal from "./AddStationModal";
-import Toast, { showToast } from "../../../../componets/common/Toast";
+import { Toast, showToast } from "../../../../componets/common/Toast";
 
 const columns = [{ key: "name", title: "Name" }];
 

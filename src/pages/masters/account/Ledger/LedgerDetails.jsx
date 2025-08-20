@@ -16,7 +16,7 @@ import Button from '../../../../componets/common/Button';
 import Input from '../../../../componets/common/Input';
 import Select from '../../../../componets/common/Select';
 import Loader from '../../../../componets/common/Loader';
-import Toast from '../../../../componets/common/Toast';
+import {showToast} from '../../../../componets/common/Toast';
 
 const LedgerDetails = () => {
   const { id } = useParams();

@@ -174,7 +174,7 @@ export default function DefaultHeader({ title, onMenuClick }) {
                   CDPL. AA-299, Shaheed Udham Singh Marg, AA Block, Poorbi
                   Shalimar, Shalimar Bagh, New Delhi, 110088
                 </div>
-                <Button className="mt-2 mb-2 px-6 py-2 bg-teal-600 text-white rounded shadow hover:bg-teal-700 transition cursor-pointer">
+                <Button onClick={() => navigate("/company-list")} className="mt-2 mb-2 px-6 py-2 bg-teal-600 text-white rounded shadow hover:bg-teal-700 transition cursor-pointer">
                   Switch
                 </Button>
               </div>

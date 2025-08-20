@@ -5,6 +5,7 @@ import Station from "../pages/masters/other/station/Station";
 
 const Dashboard = React.lazy(() => import("../pages/Dashboard"));
 const GenericPage = React.lazy(() => import("../pages/GenericPage"));
+const CompanyList = React.lazy(() => import("../pages/other/CompanyList")); 
 const ItemsPage = React.lazy(() =>
   import("../pages/masters/inventory/Item/Item")
 );

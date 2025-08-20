@@ -1,10 +1,36 @@
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import toast, { Toaster } from "react-hot-toast";
 
-export const showToast = (message, options = {}) => {
-  toast(message, { position: 'top-right', autoClose: 3000, ...options });
+let toastId = null; // keep track of active toast
+
+export const showToast = (message, type = "success") => {
+  if (toastId) {
+    toast.dismiss(toastId); // remove current toast
+  }
+
+  if (type === "success") {
+    toastId = toast.success(message, {
+      id: "single-toast",
+      position: "top-center",
+      duration: 3000,
+    });
+  } else if (type === "error") {
+    toastId = toast.error(message, {
+      id: "single-toast",
+      position: "top-center",
+      duration: 3000,
+    });
+  } else {
+    toastId = toast(message, {
+      id: "single-toast",
+      position: "top-center",
+      duration: 3000,
+    });
+  }
 };
 
-const Toast = () => <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />;
-
-export default Toast; 
+export const Toast = () => (
+  <Toaster
+    position="top-center"
+    reverseOrder={false}
+  />
+);

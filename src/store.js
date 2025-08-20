@@ -1,7 +1,9 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
+
+import userReducer from './services/userSlice';
+
 import { authApi } from './services/authApi';
 import { userApi } from './services/userApi';
-
 import { billApi } from './services/billApi';
 import { companyApi } from './services/companyApi';
 import { storeApi } from './services/storeApi';
@@ -17,15 +19,24 @@ import { doctorApi } from './services/doctorApi';
 import { groupApi } from './services/groupApi';
 import { ledgerApi } from './services/ledgerApi';
 import { transactionApi } from './services/transactionApi';
-import userReducer from './services/userSlice';
 import { salesBillApi } from './services/salesBillApi';
 import { ledgerEntryApi } from './services/ledgerEntryApi';
 import { saleMasterApi } from './services/saleMasterApi';
 import { purchaseMasterApi } from './services/purchaseMasterApi';
 import { stationApi } from './services/stationApi';
+import { userCompanyApi } from './services/userCompanyApi';
 
-export const store = configureStore({
-  reducer: {
+import storage from 'redux-persist/lib/storage';
+import { persistReducer, persistStore } from 'redux-persist';
+
+
+const persistConfig = {
+  key: 'root',
+  storage,
+  whitelist: ['user'],
+};
+
+const rootReducer = combineReducers({
     [authApi.reducerPath]: authApi.reducer,
     [userApi.reducerPath]: userApi.reducer,
 
@@ -49,10 +60,16 @@ export const store = configureStore({
     [saleMasterApi.reducerPath]: saleMasterApi.reducer,
     [purchaseMasterApi.reducerPath]: purchaseMasterApi.reducer,
     [stationApi.reducerPath]: stationApi.reducer,
-     user: userReducer,
-  },
+    [userCompanyApi.reducerPath]: userCompanyApi.reducer,
+    user: userReducer,
+  })
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
+export const store = configureStore({
+  devTools: true,
+  reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(
+    getDefaultMiddleware({ serializableCheck: false }).concat(
       authApi.middleware,
       userApi.middleware,
 
@@ -76,5 +93,8 @@ export const store = configureStore({
       saleMasterApi.middleware,
       purchaseMasterApi.middleware,
       stationApi.middleware,
+      userCompanyApi.middleware,
     ),
 }); 
+
+export const persistor = persistStore(store);

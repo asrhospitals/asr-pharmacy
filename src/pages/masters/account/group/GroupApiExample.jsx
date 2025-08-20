@@ -24,7 +24,7 @@ import {
   useDeleteGroupLedgerMutation,
 } from '../../../../services/groupApi';
 import Button from '../../../../componets/common/Button';
-import Toast, { showToast } from '../../../../componets/common/Toast';
+import { Toast, showToast } from '../../../../componets/common/Toast';
 
 const GroupApiExample = () => {
   const [selectedGroupId, setSelectedGroupId] = useState(null);
@@ -122,7 +122,7 @@ const GroupApiExample = () => {
       };
       
       const result = await createGroup(newGroup).unwrap();
-      Toast.success('Group created successfully');
+      showToast('Group created successfully');
       console.log('Created group:', result);
     } catch (error) {
       Toast.error('Failed to create group');
@@ -140,7 +140,7 @@ const GroupApiExample = () => {
       };
       
       const result = await updateGroup({ id: selectedGroupId, ...updatedData }).unwrap();
-      Toast.success('Group updated successfully');
+      showToast('Group updated successfully');
       console.log('Updated group:', result);
     } catch (error) {
       Toast.error('Failed to update group');
@@ -170,7 +170,7 @@ const GroupApiExample = () => {
       ];
       
       const result = await bulkCreateGroups(groupsToCreate).unwrap();
-      Toast.success('Groups created successfully');
+      showToast('Groups created successfully');
       console.log('Bulk created groups:', result);
     } catch (error) {
       Toast.error('Failed to create groups');
@@ -181,7 +181,7 @@ const GroupApiExample = () => {
   const handleExportGroups = async () => {
     try {
       const result = await exportGroups({ format: 'json' }).unwrap();
-      Toast.success('Groups exported successfully');
+      showToast('Groups exported successfully');
       
 
       const blob = new Blob([JSON.stringify(result.data)], { type: 'application/json' });
@@ -203,7 +203,7 @@ const GroupApiExample = () => {
     try {
       const newParentId = availableParents[0]?.id || null;
       const result = await moveGroup({ groupId: selectedGroupId, newParentId }).unwrap();
-      Toast.success('Group moved successfully');
+      showToast('Group moved successfully');
       console.log('Moved group:', result);
     } catch (error) {
       Toast.error('Failed to move group');
@@ -220,7 +220,7 @@ const GroupApiExample = () => {
         newName: 'Duplicated Group',
         newParentId: null
       }).unwrap();
-      Toast.success('Group duplicated successfully');
+      showToast('Group duplicated successfully');
       console.log('Duplicated group:', result);
     } catch (error) {
       Toast.error('Failed to duplicate group');
@@ -256,7 +256,7 @@ const GroupApiExample = () => {
         userId: 1,
         permissions
       }).unwrap();
-      Toast.success('Permissions set successfully');
+      showToast('Permissions set successfully');
       console.log('Set permissions:', result);
     } catch (error) {
       Toast.error('Failed to set permissions');
@@ -279,7 +279,7 @@ const GroupApiExample = () => {
         groupId: selectedGroupId,
         ledgerData
       }).unwrap();
-      Toast.success('Ledger created successfully');
+      showToast('Ledger created successfully');
       console.log('Created ledger:', result);
     } catch (error) {
       Toast.error('Failed to create ledger');

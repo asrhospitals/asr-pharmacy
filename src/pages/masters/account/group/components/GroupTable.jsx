@@ -2,7 +2,7 @@ import React from 'react';
 import { ChevronDown, ChevronRight, Edit, Trash2 } from 'lucide-react';
 import Button from '../../../../../componets/common/Button';
 import IconButton from '../../../../../componets/common/IconButton';
-import Toast from '../../../../../componets/common/Toast';
+import {showToast} from '../../../../../componets/common/Toast';
 
 const GroupTable = ({ 
   groups, 

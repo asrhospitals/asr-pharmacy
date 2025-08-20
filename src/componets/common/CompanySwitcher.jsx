@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Building, ChevronDown, Check, Plus } from 'lucide-react';
-import { setActiveCompany } from '../../services/userSlice';
+import { setuserCompanies } from '../../services/userSlice';
 import { useSwitchCompanyMutation } from '../../services/userApi';
 
 const CompanySwitcher = () => {
@@ -72,7 +72,7 @@ const CompanySwitcher = () => {
                 key={company.id}
                 onClick={() => handleCompanySwitch(company.id)}
                 className={`w-full flex items-center justify-between px-3 py-2 text-left hover:bg-gray-50 transition-colors ${
-                  company.id === activeCompany?.id ? 'bg-blue-50 text-blue-700' : ''
+                  company.id === userCompanies?.id ? 'bg-blue-50 text-blue-700' : ''
                 }`}
                 disabled={switchLoading}
               >
@@ -92,7 +92,7 @@ const CompanySwitcher = () => {
                   </div>
                 </div>
                 
-                {company.id === activeCompany?.id && (
+                {company.id === userCompanies?.id && (
                   <Check className="w-4 h-4 text-blue-600" />
                 )}
               </button>

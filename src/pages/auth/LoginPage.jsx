@@ -4,16 +4,18 @@ import { useDispatch } from "react-redux";
 import { setUser } from "../../services/userSlice";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Mail, Phone, User } from "lucide-react";
-import Input from "../common/Input";
-import Select from "../common/Select";
-import Button from "../common/Button";
-import { validateEmail } from "../../utils/inputValidation";
+import Input from "../../componets/common/Input";
+import Select from "../../componets/common/Select";
+import Button from "../../componets/common/Button";
+import { validateEmail, validatePhone } from "../../utils/inputValidation";
+import { showToast } from "../../componets/common/Toast";
 
 const LoginPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [selectedRole, setSelectedRole] = useState("admin");
   const [loginType, setLoginType] = useState("username");
+  console.log(loginType);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -34,7 +36,7 @@ const LoginPage = () => {
       console.log(isValid, message);
 
       if (!isValid) {
-        alert(message);
+        showToast(message);
         return false;
       }
     }
@@ -78,11 +80,29 @@ const LoginPage = () => {
 
     try {
       if (loginType === "email") {
-      const { isValid, message } = validateEmail(email);
-      if (!isValid) {
-          alert(message);
+        const { isValid, message } = validateEmail(email);
+        if (!isValid) {
+          showToast(message, "error");
           return;
         }
+      }
+
+      if (loginType === "phone") {
+        const { isValid, message } = validatePhone(phone);
+        if (!isValid) {
+          showToast(message, "error");
+          return;
+        }
+      }
+
+      if (loginType === "username" && username.trim() === "") {
+        showToast("Please enter your username", "error");
+        return;
+      }
+
+      if (password.trim() === "") {
+        showToast("Please enter your password", "error");
+        return;
       }
 
       const credentials = {
@@ -103,15 +123,27 @@ const LoginPage = () => {
         username: userData.username,
         email: userData.email,
         phone: userData.phone,
+        userCompanies: userData.companies || [],
+        currentCompany: userData.currentCompany || null,
       };
-      if (isSuccess) {
-        dispatch(setUser({ user, token: response.data.accessToken }));
-        localStorage.setItem("token", response.data.accessToken);
-        localStorage.setItem("user", JSON.stringify(user));
+
+      dispatch(setUser({ user, token: response.data.accessToken }));
+      localStorage.setItem("token", response.data.accessToken);
+      localStorage.setItem("user", JSON.stringify(user));
+      const primaryCompany = user.userCompanies.find(
+        (company) => company.isPrimary === true
+      );
+      if (user.userCompanies.length === 0) {
+        showToast("User has no active company", "error");
+        navigate("/company-list", { replace: true });
+      } else if (!primaryCompany && user.userCompanies.length > 0) {
+        showToast("Select company", "warning");
+        navigate("/company-list", { replace: true });
+      } else {
         navigate("/dashboard", { replace: true });
       }
     } catch (err) {
-      setError(err?.data?.message || "Login failed");
+      showToast(err?.data?.message || "Login failed", "error");
     }
   };
 
@@ -125,9 +157,7 @@ const LoginPage = () => {
           <IconComponent size={20} />
         </div>
         <Input
-          type={
-            "text"
-          }
+          type={"text"}
           value={
             loginType === "email"
               ? email
@@ -243,7 +273,6 @@ const LoginPage = () => {
           </div>
         </div> */}
 
-        
         <div className="mt-4 text-center">
           <p className="text-sm text-gray-600">
             Don't have an account?{" "}

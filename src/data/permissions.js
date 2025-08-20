@@ -24,6 +24,7 @@ export const permissions = {
     accounting_transactions: "VCED",
     accounting_reports: "VCED",
     opening_balance: "VCED",
+    company_management: "VCED"
   },
   pharmacist: {
     dashboard: "V",

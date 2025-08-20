@@ -18,30 +18,17 @@ export const validateEmail = (email) => {
 
 
 export const validatePhone = (phone) => {
-  
   const cleanPhone = phone.replace(/[\s\-\(\)\.]/g, '');
-  
   if (!phone) {
     return { isValid: false, message: "Phone number is required" };
   }
-  
-  
-  const phoneRegex = /^[\+]?[1-9][\d]{6,14}$/;
-  
+
+  const phoneRegex = /^[+]?[0-9]{10}$/;
+
   if (!phoneRegex.test(cleanPhone)) {
     return { isValid: false, message: "Please enter a valid phone number" };
   }
-  
-  
-  if (cleanPhone.replace('+', '').length < 7) {
-    return { isValid: false, message: "Phone number is too short" };
-  }
-  
-  
-  if (cleanPhone.replace('+', '').length > 15) {
-    return { isValid: false, message: "Phone number is too long" };
-  }
-  
+
   return { isValid: true, message: "" };
 };
 
@@ -302,7 +289,7 @@ export const validateCreditCard = (cardNumber) => {
 };
 
 
-export const validateZipCode = (zipCode, country = 'US') => {
+export const validateZipCode = (zipCode, country = 'IN') => {
   if (!zipCode) {
     return { isValid: false, message: "ZIP/Postal code is required" };
   }
@@ -311,6 +298,10 @@ export const validateZipCode = (zipCode, country = 'US') => {
   let errorMessage = "Please enter a valid ZIP/Postal code";
   
   switch (country.toUpperCase()) {
+    case 'IN':
+      regex = /^\d{6}$/;
+      errorMessage = "Please enter a valid Indian PIN code (6 digits)";
+      break;
     case 'US':
       regex = /^\d{5}(-\d{4})?$/;
       errorMessage = "Please enter a valid US ZIP code (12345 or 12345-6789)";

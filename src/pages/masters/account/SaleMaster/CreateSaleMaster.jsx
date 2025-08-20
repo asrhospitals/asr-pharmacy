@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useCreateSaleMasterMutation, useUpdateSaleMasterMutation, useGetSaleMasterByIdQuery } from "../../../../services/saleMasterApi";
 import { useGetLedgersQuery } from "../../../../services/ledgerApi";
-import Toast from "../../../../componets/common/Toast";
+import {showToast} from "../../../../componets/common/Toast";
 import { ArrowLeft, Save, RefreshCw, X } from "lucide-react";
 import Button from "../../../../componets/common/Button";
 import Input from "../../../../componets/common/Input";
@@ -99,10 +99,10 @@ const CreateSaleMaster = () => {
 
       if (isEditMode) {
         await updateSaleMaster({ id, ...submitData }).unwrap();
-        Toast.success("Sale master updated successfully");
+        showToast("Sale master updated successfully");
       } else {
         await createSaleMaster(submitData).unwrap();
-        Toast.success("Sale master created successfully");
+        showToast("Sale master created successfully");
       }
       
       navigate("/master/accounts/sale");

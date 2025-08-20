@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import CommonPageLayout from "../../../../componets/layout/CommonPageLayout";
 import { useGetPurchaseMastersQuery, useDeletePurchaseMasterMutation } from "../../../../services/purchaseMasterApi";
 import { useGetLedgersQuery } from "../../../../services/ledgerApi";
-import Toast from "../../../../componets/common/Toast";
+import {showToast} from "../../../../componets/common/Toast";
 import { Edit, Trash2, Plus } from "lucide-react";
 import Button from "../../../../componets/common/Button";
 import ConfirmationModal from "../../../../componets/common/ConfirmationModal";
@@ -41,7 +41,7 @@ const PurchaseMaster = () => {
   const handleDelete = async (row) => {
     try {
       await deletePurchaseMaster(row.id).unwrap();
-      Toast.success("Purchase master deleted successfully");
+      showToast("Purchase master deleted successfully");
       refetch();
     } catch (error) {
       Toast.error(error?.data?.message || "Failed to delete purchase master");

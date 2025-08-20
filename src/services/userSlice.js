@@ -1,10 +1,11 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, current } from '@reduxjs/toolkit';
 
 const initialState = {
   user: null,
   token: null,
   isAuthenticated: false,
-  activeCompany: null,
+  userCompanies: [],
+  currentCompany: null,
   loading: false,
   error: null
 };
@@ -17,15 +18,15 @@ const userSlice = createSlice({
       state.user = action.payload.user;
       state.token = action.payload.token;
       state.isAuthenticated = true;
-      state.activeCompany = action.payload.user?.activeCompany || null;
+      state.userCompanies = action.payload.user?.userCompanies || [];
       state.loading = false;
       state.error = null;
     },
     setActiveCompany: (state, action) => {
-      state.activeCompany = action.payload;
+      state.userCompanies = action.payload;
       
       if (state.user) {
-        state.user.activeCompany = action.payload;
+        state.user.userCompanies = action.payload;
       }
     },
     setLoading: (state, action) => {
@@ -39,15 +40,17 @@ const userSlice = createSlice({
       state.user = { ...state.user, ...action.payload };
     },
     updateUserCompanies: (state, action) => {
-      if (state.user) {
-        state.user.companies = action.payload;
-      }
+      state.user.userCompanies = action.payload;
+    },
+    setCurrentCompany: (state, action) => {
+      console.log(action.payload);
+      state.currentCompany = action.payload;
     },
     logout: (state) => {
       state.user = null;
       state.token = null;
       state.isAuthenticated = false;
-      state.activeCompany = null;
+      state.userCompanies = null;
       state.loading = false;
       state.error = null;
       localStorage.removeItem('token');
@@ -66,6 +69,7 @@ export const {
   setError,
   updateUser,
   updateUserCompanies,
+  setCurrentCompany,
   logout,
   clearError
 } = userSlice.actions;

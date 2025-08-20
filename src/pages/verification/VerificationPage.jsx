@@ -11,15 +11,24 @@ const VerificationPage = () => {
     useVerifyEmailMutation();
 
   useEffect(() => {
-    if (verificationCode) {
+    if (verificationCode && !isError) {
       verifyEmail({ code: verificationCode });
     }
   }, [verificationCode, verifyEmail]);
 
+  useEffect(() => {
+    if (isError) {
+      navigate("/login", { replace: true });
+      console.error("Email verification failed:", error);
+    }
+  }, [isError, navigate, error]);
+
   return (
     <div className="h-screen flex items-center justify-center bg-gray-50">
       <div className="max-w-md w-full bg-white px-6 py-10 rounded-xl shadow text-center">
-        {isLoading && <p className="text-lg font-medium">Verifying your email...</p>}
+        {isLoading && (
+          <p className="text-lg font-medium">Verifying your email...</p>
+        )}
 
         {isSuccess && (
           <>

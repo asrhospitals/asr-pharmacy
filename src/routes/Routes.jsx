@@ -1,4 +1,10 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  Navigate,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
 import React, { Suspense } from "react";
 import ProtectedRoute from "./ProtectedRoute";
 const Unauthorized = React.lazy(() => import("../pages/Unauthorized"));
@@ -21,7 +27,7 @@ const AppRoutes = () => {
           />
         ))}
         <Route path="/unauthorized" element={<Unauthorized />} />
-        <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </Suspense>
   );

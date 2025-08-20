@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import CommonPageLayout from "../../../../componets/layout/CommonPageLayout";
 import { useGetSaleMastersQuery, useDeleteSaleMasterMutation } from "../../../../services/saleMasterApi";
 import { useGetLedgersQuery } from "../../../../services/ledgerApi";
-import Toast from "../../../../componets/common/Toast";
+import {showToast} from "../../../../componets/common/Toast";
 import { Edit, Trash2, Plus } from "lucide-react";
 import Button from "../../../../componets/common/Button";
 import ConfirmationModal from "../../../../componets/common/ConfirmationModal";
@@ -41,7 +41,7 @@ const SaleMaster = () => {
   const handleDelete = async (row) => {
     try {
       await deleteSaleMaster(row.id).unwrap();
-      Toast.success("Sale master deleted successfully");
+      showToast("Sale master deleted successfully");
       refetch();
     } catch (error) {
       Toast.error(error?.data?.message || "Failed to delete sale master");

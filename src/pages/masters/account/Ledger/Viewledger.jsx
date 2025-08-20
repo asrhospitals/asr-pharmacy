@@ -10,8 +10,10 @@ import { showToast } from "../../../../componets/common/Toast";
 import {
   useGetLedgersQuery,
   useDeleteLedgerMutation,
+  useGetLedgersByCompanyIdQuery,
 } from "../../../../services/ledgerApi";
 import CommonPageLayout from "../../../../componets/layout/CommonPageLayout";
+import { useSelector } from "react-redux";
 
 const Viewledger = () => {
   const [search, setSearch] = useState("");
@@ -20,6 +22,8 @@ const Viewledger = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const navigate = useNavigate();
+  const { currentCompany } = useSelector((state) => state.user);
+  console.log(currentCompany);
 
   const [data, setData] = useState([]);
 
@@ -92,11 +96,15 @@ const Viewledger = () => {
     isFetching,
     error,
     refetch,
-  } = useGetLedgersQuery({
-    search,
-    page,
-    limit: limit,
-  });
+  } = useGetLedgersByCompanyIdQuery(
+    {
+      companyId: currentCompany?.id,
+      search,
+      page,
+      limit: limit,
+    },
+    { skip: !currentCompany?.id }
+  );
 
   useEffect(() => {
     if (ledgerData?.data) {
