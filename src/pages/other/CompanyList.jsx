@@ -2,15 +2,18 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useGetUserCompaniesQuery } from "../../services/userCompanyApi";
 import CommonPageLayout from "../../componets/layout/CommonPageLayout";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Button from "../../componets/common/Button";
 import { Plus } from "lucide-react";
 import { setCurrentCompany } from "../../services/userSlice";
 
 const CompanyList = () => {
+  const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
+  const { currentCompany } = useSelector((state) => state.user);
+
   const userId = user?.id;
   const { data: userCompanies } = useGetUserCompaniesQuery(userId);
 
@@ -21,6 +24,12 @@ const CompanyList = () => {
       );
       if (primaryCompany) {
         dispatch(setCurrentCompany(primaryCompany));
+        if (
+          location.pathname === "/create-company" ||
+          location.pathname === "/company-list"
+        ) {
+          return navigate("/dashboard", { replace: true });
+        }
       }
     }
   }, [userCompanies, dispatch]);
@@ -48,7 +57,8 @@ const CompanyList = () => {
 
   const handleCompanySelect = (row) => {
     dispatch(setCurrentCompany(row));
-    navigate(`/`);
+    // window.location.reload();
+    navigate(`/dashboard`);
   };
 
   return (
@@ -61,7 +71,7 @@ const CompanyList = () => {
         columns={columns}
         actions={[
           <Button key="add" onClick={() => navigate("/create-company")}>
-            <Plus className="w-4 h-4 mr-2" /> Create Ledger
+            <Plus className="w-4 h-4 mr-2" /> Create Company
           </Button>,
         ]}
         onEdit={(company) => navigate(`/edit-company/${company.id}`)}

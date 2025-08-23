@@ -7,6 +7,7 @@ import {
   useGetAvailableParentsQuery,
 } from "../../../../../services/groupApi";
 import { showToast } from "../../../../../componets/common/Toast";
+import { useSelector } from "react-redux";
 
 export const useGroupManagement = () => {
   const [expandedGroups, setExpandedGroups] = useState(new Set());
@@ -23,10 +24,16 @@ export const useGroupManagement = () => {
     groupType: "",
   });
 
-  const { data: groups = [], isLoading, error } = useGetGroupHierarchyQuery();
+  const { currentCompany } = useSelector((state) => state.user);
+
+  const { data: groups = [], isLoading, error } = useGetGroupHierarchyQuery(currentCompany?.id, {
+    skip: !currentCompany?.id,
+  });
 
   const { data: availableParents = [], isLoading: parentsLoading } =
-    useGetAvailableParentsQuery();
+    useGetAvailableParentsQuery(currentCompany?.id, {
+      skip: !currentCompany?.id,
+    });
 
   const [deleteGroup, { isLoading: deletingGroup }] = useDeleteGroupMutation();
   const [updateGroup, { isLoading: updatingGroup }] = useUpdateGroupMutation();

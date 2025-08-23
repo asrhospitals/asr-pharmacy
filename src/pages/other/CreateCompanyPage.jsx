@@ -85,7 +85,7 @@ const CreateCompanyPage = () => {
 
     try {
       const result = await createCompany({ userId, companyData : { ...formData } }).unwrap();
-      if (isSuccess || result.data.success) {
+      if (isSuccess || result.data.success || result.success) {
         navigate("/company-list");
       }
     } catch (error) {

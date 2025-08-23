@@ -9,10 +9,8 @@ const RegistrationSuccessPage = () => {
   const [resendLoading, setResendLoading] = useState(false);
   const [resendSuccess, setResendSuccess] = useState(false);
   
-  // Get user data from navigation state
   const { userInfo, registrationId, verificationEmailSent } = location.state || {};
   
-  // Redirect to signup if no user data
   useEffect(() => {
     if (!userInfo) {
       navigate('/signup', { replace: true });
@@ -22,10 +20,7 @@ const RegistrationSuccessPage = () => {
   const handleResendVerification = async () => {
     setResendLoading(true);
     try {
-      // Call your resend verification API
-      // await resendVerificationEmail(userInfo.email);
       
-      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       setResendSuccess(true);

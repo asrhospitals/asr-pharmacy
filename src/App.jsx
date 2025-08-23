@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import { setUser } from "./services/userSlice";
+import { setCurrentCompany, setUser } from "./services/userSlice";
 import Loader from "./componets/common/Loader";
 import { Toast } from "./componets/common/Toast";
 
@@ -38,7 +38,23 @@ function App() {
       if (location.pathname !== "/create-company") {
         return navigate("/create-company", { replace: true });
       }
-    }
+    } 
+    // else if (user?.userCompanies && user?.userCompanies?.length > 0) {
+    //   const primaryCompany = user.userCompanies.find(
+    //     (company) => company.isActive && company.isPrimary
+    //   );
+    //   if (!primaryCompany) {
+    //     return navigate("/create-company", { replace: true });
+    //   } else {
+    //     dispatch(setCurrentCompany(primaryCompany));
+    //     if (
+    //       location.pathname === "/create-company" ||
+    //       location.pathname === "/company-list"
+    //     ) {
+    //       return navigate("/dashboard", { replace: true });
+    //     }
+    //   }
+    // }
     // if (!user?.id) {
     //   return navigate("/login", { replace: true });
     // }

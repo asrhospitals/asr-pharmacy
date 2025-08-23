@@ -134,7 +134,7 @@ const LoginPage = () => {
         (company) => company.isPrimary === true
       );
       if (user.userCompanies.length === 0) {
-        showToast("User has no active company", "error");
+        showToast("Please add a company", "info");
         navigate("/company-list", { replace: true });
       } else if (!primaryCompany && user.userCompanies.length > 0) {
         showToast("Select company", "warning");

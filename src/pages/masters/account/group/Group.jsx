@@ -41,7 +41,6 @@ const Group = () => {
     handleCreateGroup,
     handleUpdateGroup,
     confirmDelete,
-    resetCreateForm,
     closeCreateModal,
     closeEditModal,
     closeDeleteModal,
@@ -49,7 +48,7 @@ const Group = () => {
     setEditFormData,
     setCreateFormData,
   } = useGroupManagement();
-
+  
   const renderGroupCard = (group, level = 0) => {
     const hasChildren = group.children && group.children.length > 0;
     const isExpanded = expandedGroups.has(group.id);

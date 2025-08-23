@@ -23,7 +23,7 @@ const LeftSection = ({
           <h3 className="text-sm font-medium">Basic Info</h3>
         </div>
         <div className="p-4 space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4">
             <div>
               <label className="block text-xs text-gray-600 mb-1">
                 Company Name <span className="text-red-500">*</span>
@@ -33,7 +33,7 @@ const LeftSection = ({
                 name="companyName"
                 value={formData.companyName}
                 onChange={handleChange}
-                className="text-xs"
+                className="text-xs w-full"
               />
             </div>
           </div>

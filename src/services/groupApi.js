@@ -12,7 +12,7 @@ export const groupApi = createApi({
   tagTypes: ['Group', 'GroupHierarchy', 'GroupPermissions', 'AvailableParents'],
   endpoints: (builder) => ({
     getGroupHierarchy: builder.query({
-      query: () => ({
+      query: (companyId) => ({
         url: '/groups/hierarchy',
         method: 'GET',
       }),

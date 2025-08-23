@@ -17,22 +17,18 @@ import {
 import Button from "../../componets/common/Button";
 
 const ThankyouPage = ({
-  // Core props
   title,
   subtitle,
   message,
 
-  // Visual customization
   icon: CustomIcon,
   iconColor = "text-green-500",
   bgGradient = "from-green-50 to-blue-50",
 
-  // Actions
   primaryAction,
   secondaryAction,
   additionalActions = [],
 
-  // Content sections
   showOrderDetails = false,
   orderDetails = {},
   showNextSteps = false,
@@ -40,15 +36,12 @@ const ThankyouPage = ({
   showContactInfo = false,
   contactInfo = {},
 
-  // Auto redirect
   autoRedirect = false,
   redirectTo = "/",
   redirectDelay = 10000,
 
-  // Custom content
   children,
 
-  // Footer content
   showFooter = true,
   footerText,
   footerLinks = [],
@@ -59,20 +52,16 @@ const ThankyouPage = ({
     Math.ceil(redirectDelay / 1000)
   );
 
-  // Get data from location state if available
   const locationState = location.state || {};
   const mergedOrderDetails = { ...orderDetails, ...locationState.orderDetails };
   const mergedContactInfo = { ...contactInfo, ...locationState.contactInfo };
 
-  // Auto redirect effect
   React.useEffect(() => {
     if (autoRedirect && redirectTo) {
-      // Start countdown timer
       const interval = setInterval(() => {
         setCountdown((prev) => (prev > 1 ? prev - 1 : 1));
       }, 1000);
 
-      // Redirect after delay
       const timer = setTimeout(() => {
         navigate(redirectTo, { replace: true });
       }, redirectDelay);
@@ -84,7 +73,6 @@ const ThankyouPage = ({
     }
   }, [autoRedirect, redirectTo, redirectDelay, navigate]);
 
-  // Default icon based on context
   const getDefaultIcon = () => {
     if (CustomIcon) return CustomIcon;
 
@@ -102,7 +90,6 @@ const ThankyouPage = ({
 
   const IconComponent = getDefaultIcon();
 
-  // Format order details
   const formatOrderDetails = () => {
     if (!showOrderDetails || !Object.keys(mergedOrderDetails).length)
       return null;
@@ -161,7 +148,6 @@ const ThankyouPage = ({
     );
   };
 
-  // Format next steps
   const formatNextSteps = () => {
     if (!showNextSteps || !nextSteps.length) return null;
 
@@ -190,7 +176,6 @@ const ThankyouPage = ({
     );
   };
 
-  // Format contact info
   const formatContactInfo = () => {
     if (!showContactInfo) return null;
 
@@ -328,7 +313,6 @@ const ThankyouPage = ({
                   onClick={
                     action.onClick || (() => navigate(action.href || "/"))
                   }
-                  //   className="px-4 py-2 text-sm  border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200 flex items-center space-x-1"
                 >
                   {action.icon && <action.icon size={16} />}
                   <span>{action.text}</span>
