@@ -8,11 +8,13 @@ const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL
 
 export const userCompanyApi = createApi({
   reducerPath: "userCompanyApi",
+  tagTypes: ["UserCompanies"],
   baseQuery: createBaseQueryWithAuth(baseUrl),
   endpoints: (builder) => ({
     getUserCompanies: builder.query({
       query: (userId) =>
         `/inventory/userCompany/v1/get-UserCompanies/${userId}`,
+      providesTags: ["UserCompanies"],
     }),
     createUserCompany: builder.mutation({
       query: ({ userId, companyData }) => ({
@@ -20,21 +22,39 @@ export const userCompanyApi = createApi({
         method: "POST",
         body: companyData,
       }),
+      invalidatesTags: ["UserCompanies"],
+    }),
+    getCompanyById: builder.query({
+      query: (companyId) =>
+        `/inventory/userCompany/v1/get-UserCompany/${companyId}`,
+      providesTags: ["UserCompanies"],
+    }),
+    updateCompany: builder.mutation({
+      query: ({ companyId, userId, companyData }) => ({
+        url: `/inventory/userCompany/v1/update-UserCompany/${companyId}/${userId}`,
+        method: "PUT",
+        body: companyData,
+      }),
+      invalidatesTags: ["UserCompanies"],
     }),
     deleteCompany: builder.mutation({
       query: ({ companyId, userId }) => ({
         url: `/inventory/userCompany/v1/${companyId}/delete-UserCompany/${userId}`,
         method: "DELETE",
       }),
+      invalidatesTags: ["UserCompanies"],
     }),
     getAllCompanies: builder.query({
       query: () => `/inventory/userCompany/v1/get-all-user-companies`,
+      providesTags: ["UserCompanies"],
     }),
   }),
 });
 
 export const {
   useGetUserCompaniesQuery,
+  useGetCompanyByIdQuery,
+  useUpdateCompanyMutation,
   useCreateUserCompanyMutation,
   useDeleteCompanyMutation,
   useGetAllCompaniesQuery,

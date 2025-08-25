@@ -1,5 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { createBaseQueryWithAuth } from "./apiBase";
+import { buildQueryParams } from "../utils/queryParams";
 
 const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL
   ? `${import.meta.env.VITE_BACKEND_BASE_URL}/pharmacy/admin/master`
@@ -10,49 +11,59 @@ export const purchaseMasterApi = createApi({
   tagTypes: ["PurchaseMaster", "PurchaseMasterById"],
   endpoints: (builder) => ({
     getPurchaseMasters: builder.query({
-      query: (params) => ({
-        url: `/purchase-master/v1/get-purchase-master`,
-        method: 'GET',
-        params,
+      query: ({
+        page = 1,
+        limit,
+        search = "",
+        filters = {},
+        companyId,
+      } = {}) => ({
+        url: `/purchase-master/v1/get-purchase-master?${buildQueryParams({
+          page,
+          limit,
+          search,
+          filters,
+        })}`,
+        method: "GET",
       }),
-      providesTags: ['PurchaseMaster', 'PurchaseMasterById'],
+      providesTags: ["PurchaseMaster", "PurchaseMasterById"],
     }),
 
     getPurchaseMasterById: builder.query({
       query: (id) => ({
         url: `/purchase-master/v1/get-purchase-master/${id}`,
-        method: 'GET',
+        method: "GET",
       }),
-      providesTags: (result, error, id) => [{ type: 'PurchaseMasterById', id }],
+      providesTags: (result, error, id) => [{ type: "PurchaseMasterById", id }],
     }),
 
     createPurchaseMaster: builder.mutation({
       query: (data) => ({
         url: `/purchase-master/v1/add-purchase-master`,
-        method: 'POST',
+        method: "POST",
         body: data,
       }),
-      invalidatesTags: ['PurchaseMaster', 'PurchaseMasterById'],
+      invalidatesTags: ["PurchaseMaster", "PurchaseMasterById"],
     }),
 
     updatePurchaseMaster: builder.mutation({
       query: ({ id, ...data }) => ({
         url: `/purchase-master/v1/update-purchase-master/${id}`,
-        method: 'PUT',
+        method: "PUT",
         body: data,
       }),
       invalidatesTags: (result, error, { id }) => [
-        'PurchaseMaster',
-        { type: 'PurchaseMasterById', id },
+        "PurchaseMaster",
+        { type: "PurchaseMasterById", id },
       ],
     }),
 
     deletePurchaseMaster: builder.mutation({
       query: (id) => ({
         url: `/purchase-master/v1/delete-purchase-master/${id}`,
-        method: 'DELETE',
+        method: "DELETE",
       }),
-      invalidatesTags: ['PurchaseMaster', 'PurchaseMasterById'],
+      invalidatesTags: ["PurchaseMaster", "PurchaseMasterById"],
     }),
   }),
 });
@@ -63,4 +74,4 @@ export const {
   useCreatePurchaseMasterMutation,
   useUpdatePurchaseMasterMutation,
   useDeletePurchaseMasterMutation,
-} = purchaseMasterApi; 
+} = purchaseMasterApi;

@@ -4,8 +4,8 @@ import { useGetUserCompaniesQuery } from "../../services/userCompanyApi";
 import CommonPageLayout from "../../componets/layout/CommonPageLayout";
 import { useLocation, useNavigate } from "react-router-dom";
 import Button from "../../componets/common/Button";
-import { Plus } from "lucide-react";
-import { setCurrentCompany } from "../../services/userSlice";
+import { LogOut, Plus } from "lucide-react";
+import { logout, setCurrentCompany } from "../../services/userSlice";
 
 const CompanyList = () => {
   const location = useLocation();
@@ -18,21 +18,19 @@ const CompanyList = () => {
   const { data: userCompanies } = useGetUserCompaniesQuery(userId);
 
   useEffect(() => {
-    if (userCompanies) {
-      const primaryCompany = userCompanies?.data?.find(
-        (company) => company.isActive && company.isPrimary
+    if (userCompanies?.data?.length !== 0) {
+      const primaryCompany = userCompanies?.data.find(
+        (company) => company.isPrimary
       );
       if (primaryCompany) {
         dispatch(setCurrentCompany(primaryCompany));
-        if (
-          location.pathname === "/create-company" ||
-          location.pathname === "/company-list"
-        ) {
-          return navigate("/dashboard", { replace: true });
-        }
+        navigate("/dashboard");
+        return;
       }
+    } else {
+      navigate("/create-company");
     }
-  }, [userCompanies, dispatch]);
+  }, [userCompanies, navigate]);
 
   const columns = [
     { key: "companyName", title: "Company Name" },
@@ -57,8 +55,12 @@ const CompanyList = () => {
 
   const handleCompanySelect = (row) => {
     dispatch(setCurrentCompany(row));
-    // window.location.reload();
-    navigate(`/dashboard`);
+    navigate(`/dashboard`, { replace: true });
+  };
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/login", { replace: true });
   };
 
   return (
@@ -72,6 +74,10 @@ const CompanyList = () => {
         actions={[
           <Button key="add" onClick={() => navigate("/create-company")}>
             <Plus className="w-4 h-4 mr-2" /> Create Company
+          </Button>,
+          // logout button can be added here
+          <Button key="logout" onClick={handleLogout}>
+            <LogOut className="w-4 h-4 mr-2" /> Logout
           </Button>,
         ]}
         onEdit={(company) => navigate(`/edit-company/${company.id}`)}

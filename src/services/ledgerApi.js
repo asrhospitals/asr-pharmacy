@@ -26,6 +26,7 @@ export const ledgerApi = createApi({
         balanceType,
         status,
         isActive,
+        companyId
       } = {}) => ({
         url: `/ledger/v1/get-ledger?${buildQueryParams({
           page,
@@ -50,6 +51,7 @@ export const ledgerApi = createApi({
         balanceType,
         status,
         isActive,
+        userCompanyId
       } = {}) => ({
         url: `/ledger/v1/get-ledger/by-companyId/${companyId}?${buildQueryParams(
           { page, limit, search, groupId, balanceType, status, isActive }
@@ -97,7 +99,7 @@ export const ledgerApi = createApi({
     }),
 
     getLedgerBalance: builder.query({
-      query: ({ id, asOfDate } = {}) => ({
+      query: ({ id, asOfDate, companyId } = {}) => ({
         url: `/ledger/v1/${id}/balance${
           asOfDate ? `?asOfDate=${asOfDate}` : ""
         }`,
@@ -108,7 +110,7 @@ export const ledgerApi = createApi({
     }),
 
     getLedgerTransactions: builder.query({
-      query: ({ id, page = 1, limit, startDate, endDate } = {}) => ({
+      query: ({ id, page = 1, limit, startDate, endDate, companyId } = {}) => ({
         url: `/ledger/v1/${id}/transactions?${buildQueryParams({
           page,
           limit,
@@ -136,7 +138,7 @@ export const ledgerApi = createApi({
     }),
 
     getLedgerDetails: builder.query({
-      query: ({ id, startDate, endDate, page = 1, limit = 50 } = {}) => ({
+      query: ({ id, startDate, endDate, page = 1, limit = 50, companyId } = {}) => ({
         url: `/ledger/v1/${id}/details?${buildQueryParams({
           startDate,
           endDate,
@@ -150,7 +152,7 @@ export const ledgerApi = createApi({
     }),
 
     getDefaultLedgers: builder.query({
-      query: ({ groupId } = {}) => ({
+      query: ({ groupId, companyId } = {}) => ({
         url: `/ledger/v1/default-ledgers${
           groupId ? `?groupId=${groupId}` : ""
         }`,

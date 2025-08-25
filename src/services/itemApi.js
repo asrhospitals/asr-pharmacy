@@ -12,7 +12,7 @@ export const itemApi = createApi({
   baseQuery: createBaseQueryWithAuth(baseUrl),
   endpoints: (builder) => ({
     getItems: builder.query({
-      query: ({ page = 1, limit, search = '', filters = {} } = {}) => ({
+      query: ({ page = 1, limit, search = '', filters = {} } = {}, companyId) => ({
         url: `/item/v1/get-item?${buildQueryParams({ page, limit, search, filters })}`,
         method: 'GET',
       }),

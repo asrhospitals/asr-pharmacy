@@ -18,11 +18,13 @@ import CreateUnitForm from "../unit/AddUnit";
 import CreateHsnSacForm from "../hsn/AddHSN";
 import AddRack from "../rack/AddRack";
 import { useGetPurchaseMastersQuery } from "../../../../services/purchaseMasterApi";
+import { useSelector } from "react-redux";
 
 const ADVANCE_TABS = ["Discount", "Quantity", "Other Info"];
 
 export default function CreateItemPage() {
   const navigate = useNavigate();
+  const { currentCompany } = useSelector((state) => state.user);
   const [addItem, { isLoading }] = useAddItemMutation();
   const [showAdvance, setShowAdvance] = useState(false);
   const [activeTab, setActiveTab] = useState("Discount");
@@ -40,7 +42,7 @@ export default function CreateItemPage() {
 
   const { data: rackData } = useGetRacksQuery();
   const { data: companyData } = useGetCompaniesQuery();
-  const { data: saltData } = useGetSaltsQuery();
+  const { data: saltData } = useGetSaltsQuery({ companyId: currentCompany?.id }, { skip: !currentCompany?.id });
   const { data: unitData } = useGetUnitsQuery();
   const { data: hsnData } = useGetHSNsQuery();
   const {data : taxcategoryData} = useGetPurchaseMastersQuery();

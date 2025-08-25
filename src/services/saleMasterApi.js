@@ -12,7 +12,7 @@ export const saleMasterApi = createApi({
   tagTypes: ['SaleMaster'],
   endpoints: (builder) => ({
     getSaleMasters: builder.query({
-      query: ({ page = 1, limit, search = '', taxability, natureOfTransaction, status, isActive } = {}) => ({
+      query: ({ page = 1, limit, search = '', taxability, natureOfTransaction, status, isActive, companyId } = {}) => ({
         url: `/sale-master/v1/get-sale-master?${buildQueryParams({ page, limit, search, taxability, natureOfTransaction, status, isActive })}`,
         method: 'GET',
       }),

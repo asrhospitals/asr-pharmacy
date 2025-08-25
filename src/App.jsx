@@ -1,7 +1,11 @@
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import { setCurrentCompany, setUser } from "./services/userSlice";
+import {
+  setCurrentCompany,
+  setUser,
+  updateUserCompanies,
+} from "./services/userSlice";
 import Loader from "./componets/common/Loader";
 import { Toast } from "./componets/common/Toast";
 
@@ -12,6 +16,7 @@ import VerificationPage from "./pages/verification/VerificationPage";
 import RegistrationSuccessPage from "./pages/other/RegistrationSucessPage";
 import CompanyList from "./pages/other/CompanyList";
 import CreateCompanyPage from "./pages/other/CreateCompanyPage";
+import { useGetUserCompaniesQuery } from "./services/userCompanyApi";
 
 function App() {
   const navigate = useNavigate();
@@ -19,6 +24,24 @@ function App() {
   const [restoring, setRestoring] = useState(true);
   const isAuthenticated = useSelector((state) => state.user.isAuthenticated);
   const user = useSelector((state) => state.user.user);
+
+  const userId = user?.id;
+  const { data: userCompanies } = useGetUserCompaniesQuery(userId);
+
+  useEffect(() => {
+    const handlePopState = () => {
+      window.history.pushState(null, "", window.location.pathname);
+    };
+
+    window.history.pushState(null, "", window.location.pathname);
+    window.addEventListener("popstate", handlePopState);
+
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
+
+  console.log("====================================");
+  console.log(user);
+  console.log("====================================");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -30,15 +53,21 @@ function App() {
   }, [dispatch]);
 
   useEffect(() => {
-    if (
-      user?.userCompanies &&
-      user?.userCompanies?.length == 0 &&
-      localStorage.getItem("token")
-    ) {
-      if (location.pathname !== "/create-company") {
-        return navigate("/create-company", { replace: true });
-      }
-    } 
+    if (userCompanies?.data?.length > 0) {
+      dispatch(updateUserCompanies(userCompanies?.data || []));
+    }
+  }, [userCompanies, dispatch]);
+
+  useEffect(() => {
+    // if (
+    //   user?.userCompanies &&
+    //   user?.userCompanies?.length == 0 &&
+    //   localStorage.getItem("token")
+    // ) {
+    //   if (location.pathname !== "/create-company") {
+    //     return navigate("/create-company", { replace: true });
+    //   }
+    // }
     // else if (user?.userCompanies && user?.userCompanies?.length > 0) {
     //   const primaryCompany = user.userCompanies.find(
     //     (company) => company.isActive && company.isPrimary
@@ -73,6 +102,7 @@ function App() {
         <Route path="/signup-success" element={<RegistrationSuccessPage />} />
         <Route path="/company-list" element={<CompanyList />} />
         <Route path="/create-company" element={<CreateCompanyPage />} />
+        <Route path="/edit-company/:companyId" element={<CreateCompanyPage />} />
 
         {/* Protected routes (everything else) */}
         <Route

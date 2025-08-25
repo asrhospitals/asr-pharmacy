@@ -7,15 +7,20 @@ import {
 } from "../../../../services/companyApi";
 import { useNavigate } from "react-router-dom";
 import CommonPageLayout from "../../../../componets/layout/CommonPageLayout";
-import Pagination from '../../../../componets/common/Pagination';
-import { useDebounce } from '../../../../utils/useDebounce';
+import Pagination from "../../../../componets/common/Pagination";
+import { useDebounce } from "../../../../utils/useDebounce";
+import { useSelector } from "react-redux";
 
 const CompanyPage = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 300);
-  const { data, error, isLoading, refetch } = useGetCompaniesQuery({ page, limit, search: debouncedSearch });
+  const { currentCompany } = useSelector((state) => state.user);
+  const { data, error, isLoading, refetch } = useGetCompaniesQuery(
+    { page, limit, search: debouncedSearch, companyId: currentCompany?.id },
+    { skip: !currentCompany?.id }
+  );
   const [deleteCompany] = useDeleteCompanyMutation();
   const navigate = useNavigate();
   const [selectedRow, setSelectedRow] = useState(null);
@@ -80,7 +85,10 @@ const CompanyPage = () => {
         </Button>,
       ]}
       search={search}
-      onSearchChange={e => { setSearch(e.target.value); setPage(1); }}
+      onSearchChange={(e) => {
+        setSearch(e.target.value);
+        setPage(1);
+      }}
       tableData={data?.data || []}
       columns={columns}
       isLoading={isLoading}

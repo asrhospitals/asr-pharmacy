@@ -6,25 +6,12 @@ const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL
   ? `${import.meta.env.VITE_BACKEND_BASE_URL}/pharmacy/admin/master/inventory`
   : "/api/inventory";
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 export const unitApi = createApi({
   reducerPath: "unitApi",
   baseQuery: createBaseQueryWithAuth(baseUrl),
   endpoints: (builder) => ({
     getUnits: builder.query({
-      query: ({ page = 1, limit, search = '', filters = {} } = {}) => ({
+      query: ({ page = 1, limit, search = '', filters = {}, companyId } = {}) => ({
         url: `/unit/v1/get-unit?${buildQueryParams({ page, limit, search, filters })}`,
         method: 'GET',
       }),

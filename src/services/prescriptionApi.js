@@ -6,26 +6,13 @@ const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL
   ? `${import.meta.env.VITE_BACKEND_BASE_URL}/pharmacy/admin/master/other`
   : "/api/other";
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 export const prescriptionApi = createApi({
   reducerPath: "prescriptionApi",
   baseQuery: createBaseQueryWithAuth(baseUrl),
   tagTypes: ["Prescription"],
   endpoints: (builder) => ({
     getPrescriptions: builder.query({
-      query: ({ page = 1, limit, search = "", filters = {} } = {}) => ({
+      query: ({ page = 1, limit, search = "", filters = {}, companyId } = {}) => ({
         url: `/prescription/v1/get-prescription?${buildQueryParams({
           page,
           limit,

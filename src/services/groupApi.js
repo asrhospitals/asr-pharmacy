@@ -21,7 +21,7 @@ export const groupApi = createApi({
     }),
 
     getGroups: builder.query({
-      query: ({ page = 1, limit, search = '', filters = {} } = {}) => ({
+      query: ({ page = 1, limit, search = '', filters = {} } = {}, companyId) => ({
         url: `/groups?${buildQueryParams({ page, limit, search, filters })}`,
         method: 'GET',
       }),
@@ -30,7 +30,7 @@ export const groupApi = createApi({
     }),
 
     getGroupsByType: builder.query({
-      query: (groupType) => ({
+      query: (groupType, companyId) => ({
         url: `/groups/type/${groupType}`,
         method: 'GET',
       }),
@@ -39,7 +39,7 @@ export const groupApi = createApi({
     }),
 
     getGroupsByParent: builder.query({
-      query: (parentId) => ({
+      query: (parentId, companyId) => ({
         url: `/groups/parent/${parentId || 'null'}`,
         method: 'GET',
       }),
@@ -48,7 +48,7 @@ export const groupApi = createApi({
     }),
 
     getAvailableParents: builder.query({
-      query: (excludeId) => ({
+      query: (excludeId, companyId) => ({
         url: `/groups/available-parents${excludeId ? `?exclude=${excludeId}` : ''}`,
         method: 'GET',
       }),
@@ -96,7 +96,7 @@ export const groupApi = createApi({
     }),
 
     getGroupPermissions: builder.query({
-      query: (groupId) => ({
+      query: (groupId, companyId) => ({
         url: `/groups/${groupId}/permissions`,
         method: 'GET',
       }),

@@ -6,25 +6,12 @@ const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL
   ? `${import.meta.env.VITE_BACKEND_BASE_URL}/pharmacy/admin/master/inventory`
   : "/api/inventory";
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 export const mfrApi = createApi({
   reducerPath: "mfrApi",
   baseQuery: createBaseQueryWithAuth(baseUrl),
   endpoints: (builder) => ({
     getManufacturers: builder.query({
-      query: ({ page = 1, limit, search = '', filters = {} } = {}) => ({
+      query: ({ page = 1, limit, search = '', filters = {}, companyId } = {}) => ({
         url: `/manu/v1/get-manufacturer?${buildQueryParams({ page, limit, search, filters })}`,
         method: 'GET',
       }),

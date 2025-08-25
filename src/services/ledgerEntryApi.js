@@ -21,7 +21,7 @@ export const ledgerEntryApi = createApi({
     }),
 
     getLedgerEntriesByBill: builder.query({
-      query: (billId) => ({
+      query: (billId, companyId) => ({
         url: `/ledger-entries/by-bill/${billId}`,
         method: 'GET',
       }),
@@ -47,7 +47,7 @@ export const ledgerEntryApi = createApi({
     }),
 
     getTransactionSummaryForBill: builder.query({
-      query: (billId) => ({
+      query: (billId, companyId) => ({
         url: `/ledger-entries/summary/${billId}`,
         method: 'GET',
       }),
@@ -56,7 +56,7 @@ export const ledgerEntryApi = createApi({
     }),
 
     validateBillData: builder.mutation({
-      query: (billData) => ({
+      query: (billData, companyId) => ({
         url: '/ledger-entries/validate-bill',
         method: 'POST',
         body: { billData },

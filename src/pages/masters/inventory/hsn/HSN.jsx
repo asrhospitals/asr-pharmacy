@@ -2,10 +2,15 @@ import React, { useState, useEffect } from "react";
 import AddHSN from "./AddHSN";
 import Button from "../../../../componets/common/Button";
 import { Plus } from "lucide-react";
-import { useDeleteHSNMutation, useEditHSNMutation, useGetHSNsQuery } from "../../../../services/hsnApi";
+import {
+  useDeleteHSNMutation,
+  useEditHSNMutation,
+  useGetHSNsQuery,
+} from "../../../../services/hsnApi";
 import CommonPageLayout from "../../../../componets/layout/CommonPageLayout";
-import Pagination from '../../../../componets/common/Pagination';
-import { useDebounce } from '../../../../utils/useDebounce';
+import Pagination from "../../../../componets/common/Pagination";
+import { useDebounce } from "../../../../utils/useDebounce";
+import { useSelector } from "react-redux";
 
 const HSNPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -15,7 +20,11 @@ const HSNPage = () => {
   const [limit, setLimit] = useState(10);
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 300);
-  const { data, error, isLoading, refetch } = useGetHSNsQuery({ page, limit, search: debouncedSearch });
+  const { currentCompany } = useSelector((state) => state.user);
+  const { data, error, isLoading, refetch } = useGetHSNsQuery(
+    { page, limit, search: debouncedSearch, companyId: currentCompany?.id },
+    { skip: !currentCompany?.id }
+  );
   const [editHSN] = useEditHSNMutation();
   const [deleteHSN] = useDeleteHSNMutation();
   const [selectedRow, setSelectedRow] = useState(null);
@@ -42,7 +51,7 @@ const HSNPage = () => {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    refetch();
+    // refetch();
   };
 
   const handleEdit = (row) => {
@@ -58,7 +67,7 @@ const HSNPage = () => {
     await editHSN({ id: editHSNData.id, ...formData });
     setEditModalOpen(false);
     setEditHSNData(null);
-    refetch();
+    // refetch();
   };
 
   const handleRowSelect = (row) => {
@@ -86,12 +95,19 @@ const HSNPage = () => {
         title="HSN Management"
         subtitle="Manage your HSN/SAC"
         actions={[
-          <Button key="add" onClick={handleAddItem} className="w-full sm:w-auto">
+          <Button
+            key="add"
+            onClick={handleAddItem}
+            className="w-full sm:w-auto"
+          >
             <Plus className="w-4 h-4" /> Create HSN/SAC
           </Button>,
         ]}
         search={search}
-        onSearchChange={e => { setSearch(e.target.value); setPage(1); }}
+        onSearchChange={(e) => {
+          setSearch(e.target.value);
+          setPage(1);
+        }}
         tableData={data?.data || []}
         columns={columns}
         isLoading={isLoading}

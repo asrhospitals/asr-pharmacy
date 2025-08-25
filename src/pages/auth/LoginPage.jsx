@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useLoginMutation } from "../../services/authApi";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../../services/userSlice";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Mail, Phone, User } from "lucide-react";
@@ -23,6 +23,19 @@ const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [login, { isLoading, isSuccess, isError }] = useLoginMutation();
   const [error, setError] = useState("");
+
+  const { user } = useSelector((state) => state.user);
+  const { currentCompany } = useSelector((state) => state.user);
+
+  useEffect(() => {
+    if (user && user.id) {
+      if (currentCompany) {
+        navigate("/dashboard", { replace: true });
+      } else {
+        navigate("/company-list", { replace: true });
+      }
+    }
+  }, [user, currentCompany, navigate]);
 
   const loginTypeOptions = [
     { value: "username", label: "Username", icon: User },
@@ -135,7 +148,7 @@ const LoginPage = () => {
       );
       if (user.userCompanies.length === 0) {
         showToast("Please add a company", "info");
-        navigate("/company-list", { replace: true });
+        navigate("/create-company", { replace: true });
       } else if (!primaryCompany && user.userCompanies.length > 0) {
         showToast("Select company", "warning");
         navigate("/company-list", { replace: true });

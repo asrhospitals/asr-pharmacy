@@ -6,25 +6,12 @@ const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL
   ? `${import.meta.env.VITE_BACKEND_BASE_URL}/pharmacy/admin/master/other`
   : "/api/inventory";
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 export const patientApi = createApi({
   reducerPath: "patientApi",
   baseQuery: createBaseQueryWithAuth(baseUrl),
   endpoints: (builder) => ({
     getPatients: builder.query({
-      query: ({ page = 1, limit, search = "", filters = {} } = {}) => ({
+      query: ({ page = 1, limit, search = "", filters = {}, companyId } = {}) => ({
         url: `/patient/v1/get-patient?${buildQueryParams({
           page,
           limit,

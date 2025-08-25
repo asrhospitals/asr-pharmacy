@@ -1,18 +1,30 @@
 import React, { useState, useEffect } from "react";
 import Button from "../../../../componets/common/Button";
 import { Plus } from "lucide-react";
-import { useDeleteSaltMutation, useGetSaltsQuery } from "../../../../services/saltApi";
+import {
+  useDeleteSaltMutation,
+  useGetSaltsQuery,
+} from "../../../../services/saltApi";
 import { useNavigate } from "react-router-dom";
 import CommonPageLayout from "../../../../componets/layout/CommonPageLayout";
-import Pagination from '../../../../componets/common/Pagination';
-import { useDebounce } from '../../../../utils/useDebounce';
+import Pagination from "../../../../componets/common/Pagination";
+import { useDebounce } from "../../../../utils/useDebounce";
+import { useSelector } from "react-redux";
 
 const SaltPage = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 300);
-  const { data, error, isLoading, refetch } = useGetSaltsQuery({ page, limit, search: debouncedSearch });
+  const { currentCompany } = useSelector((state) => state.user);
+  const { data, error, isLoading, refetch } = useGetSaltsQuery({
+    page,
+    limit,
+    search: debouncedSearch,
+    companyId: currentCompany?.id,
+  },
+    { skip: !currentCompany?.id }
+  );
   const [deleteSalt] = useDeleteSaltMutation();
   const navigate = useNavigate();
   const [selectedRow, setSelectedRow] = useState(null);
@@ -74,7 +86,10 @@ const SaltPage = () => {
         </Button>,
       ]}
       search={search}
-      onSearchChange={e => { setSearch(e.target.value); setPage(1); }}
+      onSearchChange={(e) => {
+        setSearch(e.target.value);
+        setPage(1);
+      }}
       tableData={data?.data || []}
       columns={columns}
       isLoading={isLoading}
@@ -93,7 +108,9 @@ const SaltPage = () => {
                 <div>{selectedRow.indication || "-"}</div>
                 <div className="font-semibold mb-0.5 mt-1">Dosage</div>
                 <div>{selectedRow.dosage || "-"}</div>
-                <div className="font-semibold mb-0.5 mt-1">Special Precautions</div>
+                <div className="font-semibold mb-0.5 mt-1">
+                  Special Precautions
+                </div>
                 <div>{selectedRow.specialprecautions || "-"}</div>
               </div>
               <div className="border border-gray-300 rounded-lg p-1 bg-gray-50">
@@ -106,10 +123,18 @@ const SaltPage = () => {
               </div>
             </div>
             <div className="grid grid-cols-4 gap-1 bg-gray-100 rounded p-1 mt-1 text-xs">
-              <div><b>Narcotic :</b> {selectedRow.narcotic || "-"}</div>
-              <div><b>Sch-H :</b> {selectedRow.scheduleh || "-"}</div>
-              <div><b>Sch-H1 :</b> {selectedRow.scheduleh1 || "-"}</div>
-              <div><b>Prohibited :</b> {selectedRow.prohibited || "-"}</div>
+              <div>
+                <b>Narcotic :</b> {selectedRow.narcotic || "-"}
+              </div>
+              <div>
+                <b>Sch-H :</b> {selectedRow.scheduleh || "-"}
+              </div>
+              <div>
+                <b>Sch-H1 :</b> {selectedRow.scheduleh1 || "-"}
+              </div>
+              <div>
+                <b>Prohibited :</b> {selectedRow.prohibited || "-"}
+              </div>
             </div>
           </div>
         )

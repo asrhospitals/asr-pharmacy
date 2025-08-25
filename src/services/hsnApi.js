@@ -6,26 +6,12 @@ const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL
   ? `${import.meta.env.VITE_BACKEND_BASE_URL}/pharmacy/admin/master/inventory`
   : "/api/inventory";
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 export const hsnApi = createApi({
   reducerPath: "hsnApi",
   baseQuery: createBaseQueryWithAuth(baseUrl),
   endpoints: (builder) => ({
     getHSNs: builder.query({
-      query: ({ page = 1, limit, search = '', filters = {} } = {}) => ({
+      query: ({ page = 1, limit, search = '', filters = {}, companyId } = {}) => ({
         url: `/hsn/v1/get-hsn?${buildQueryParams({ page, limit, search, filters })}`,
         method: 'GET',
       }),

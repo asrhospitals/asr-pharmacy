@@ -12,7 +12,7 @@ export const doctorApi = createApi({
   tagTypes: ["Doctor"],
   endpoints: (builder) => ({
     getDoctors: builder.query({
-      query: ({ page = 1, limit, search = "", filters = {} } = {}) => ({
+      query: ({ page = 1, limit, search = "", filters = {} } = {}, companyId) => ({
         url: `/doctor/v1/get-doctor?${buildQueryParams({
           page,
           limit,

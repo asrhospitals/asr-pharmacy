@@ -2,7 +2,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { logout as logoutAction } from "../../services/userSlice";
 import { useNavigate } from "react-router-dom";
 import { User, LogOut, HelpCircle, Menu, Bell, Settings } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, use } from "react";
 import Button from "./Button";
 import Card from "./Card";
 import IconButton from "./IconButton";
@@ -10,6 +10,10 @@ import { useLogoutMutation } from "../../services/authApi";
 
 export default function DefaultHeader({ title, onMenuClick }) {
   const user = useSelector((state) => state.user.user);
+  const { currentCompany } = useSelector((state) => state.user);
+  console.log("====================================");
+  console.log(currentCompany);
+  console.log("====================================");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [cardOpen, setCardOpen] = useState(false);
@@ -165,16 +169,20 @@ export default function DefaultHeader({ title, onMenuClick }) {
                 </div>
                 <div className="text-xs text-gray-500 mb-2">Demo Licence</div>
                 <div className="text-center font-bold text-lg text-gray-800 mb-1 truncate w-full">
-                  Chemist Demo Pvt Ltd
+                  {currentCompany?.companyname || "-"}
                 </div>
                 <div className="text-xs text-gray-500 mb-1">
-                  F.Y.: 01-04-2025 to 31-03-2026
+                  F.Y.: {currentCompany?.financialYearFrom} to{" "}
+                  {currentCompany?.financialYearTo}
                 </div>
-                <div className="text-xs text-gray-500 mb-2 truncate w-full">
-                  CDPL. AA-299, Shaheed Udham Singh Marg, AA Block, Poorbi
-                  Shalimar, Shalimar Bagh, New Delhi, 110088
+                <div className="text-xs text-center  text-gray-500 mb-2 w-full">
+                  {currentCompany?.address} {currentCompany?.state}{" "}
+                  {currentCompany?.country} {currentCompany?.pinCode}
                 </div>
-                <Button onClick={() => navigate("/company-list")} className="mt-2 mb-2 px-6 py-2 bg-teal-600 text-white rounded shadow hover:bg-teal-700 transition cursor-pointer">
+                <Button
+                  onClick={() => navigate("/company-list")}
+                  className="mt-2 mb-2 px-6 py-2 bg-teal-600 text-white rounded shadow hover:bg-teal-700 transition cursor-pointer"
+                >
                   Switch
                 </Button>
               </div>

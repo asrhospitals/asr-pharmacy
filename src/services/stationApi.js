@@ -11,7 +11,7 @@ export const stationApi = createApi({
   baseQuery: createBaseQueryWithAuth(baseUrl),
   endpoints: (builder) => ({
     getStations: builder.query({
-      query: ({ page = 1, limit, search = "", filters = {} } = {}) => ({
+      query: ({ page = 1, limit, search = "", filters = {}, companyId } = {}) => ({
         url: `/station/v1/get-station?${buildQueryParams({
           page,
           limit,

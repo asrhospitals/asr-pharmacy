@@ -6,35 +6,24 @@ const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL
   ? `${import.meta.env.VITE_BACKEND_BASE_URL}/pharmacy/admin/master/inventory`
   : "/api/inventory";
 
-const baseQueryWithAuth = fetchBaseQuery({
-  baseUrl,
-  prepareHeaders: (headers, { getState }) => {
-    const token = getState()?.user?.token || localStorage.getItem("token");
-    if (token) {
-      headers.set("Authorization", `Bearer ${token}`);
-    }
-    return headers;
-  },
-});
-
 export const companyApi = createApi({
   reducerPath: "companyApi",
   baseQuery: createBaseQueryWithAuth(baseUrl),
   endpoints: (builder) => ({
     getCompanies: builder.query({
-      query: ({ page = 1, limit, search = '', filters = {} } = {}) => ({
+      query: ({ page = 1, limit, search = '', filters = {}, companyId } = {}) => ({
         url: `/company/v1/get-companies?${buildQueryParams({ page, limit, search, filters })}`,
         method: 'GET',
       }),
       providesTags: ['Company'],
     }),
-    getUserCompanies: builder.query({
-      query: ({ page = 1, limit, search = '', filters = {} } = {}) => ({
-        url: `/company/v1/get-user-companies?${buildQueryParams({ page, limit, search, filters })}`,
-        method: 'GET',
-      }),
-      providesTags: ['Company'],
-    }),
+    // getUserCompanies: builder.query({
+    //   query: ({ page = 1, limit, search = '', filters = {}, companyId } = {}) => ({
+    //     url: `/company/v1/get-user-companies?${buildQueryParams({ page, limit, search, filters })}`,
+    //     method: 'GET',
+    //   }),
+    //   providesTags: ['Company'],
+    // }),
     getCompanyById: builder.query({
       query: (id) => ({
         url: `/company/v1/get-company/${id}`,
@@ -86,7 +75,7 @@ export const companyApi = createApi({
 
 export const {
   useGetCompaniesQuery,
-  useGetUserCompaniesQuery,
+  // useGetUserCompaniesQuery,
   useGetCompanyByIdQuery,
   useAddCompanyMutation,
   useUpdateCompanyMutation,
