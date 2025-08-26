@@ -16,6 +16,7 @@ import VerificationPage from "./pages/verification/VerificationPage";
 import RegistrationSuccessPage from "./pages/other/RegistrationSucessPage";
 import CompanyList from "./pages/other/CompanyList";
 import CreateCompanyPage from "./pages/other/CreateCompanyPage";
+import UpdateComapanyPage from "./pages/other/UpdateCompanyPage";
 import { useGetUserCompaniesQuery } from "./services/userCompanyApi";
 
 function App() {
@@ -102,7 +103,7 @@ function App() {
         <Route path="/signup-success" element={<RegistrationSuccessPage />} />
         <Route path="/company-list" element={<CompanyList />} />
         <Route path="/create-company" element={<CreateCompanyPage />} />
-        <Route path="/edit-company/:companyId" element={<CreateCompanyPage />} />
+        <Route path="/edit-company/:companyId" element={<UpdateComapanyPage />} />
 
         {/* Protected routes (everything else) */}
         <Route

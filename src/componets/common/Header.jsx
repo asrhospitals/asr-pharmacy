@@ -11,9 +11,9 @@ import { useLogoutMutation } from "../../services/authApi";
 export default function DefaultHeader({ title, onMenuClick }) {
   const user = useSelector((state) => state.user.user);
   const { currentCompany } = useSelector((state) => state.user);
-  console.log("====================================");
+  console.log('====================================');
   console.log(currentCompany);
-  console.log("====================================");
+  console.log('====================================');
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [cardOpen, setCardOpen] = useState(false);
@@ -74,14 +74,14 @@ export default function DefaultHeader({ title, onMenuClick }) {
           <span className="text-white font-bold text-sm">ASR</span>
         </div>
         <div className="font-bold text-base md:text-lg text-blue-700 truncate max-w-[120px] sm:max-w-[200px] md:max-w-[300px] lg:max-w-none">
-          <span className="truncate block">Chemist Demo Pvt Ltd (CDPL)</span>
+          <span className="truncate block">{currentCompany?.companyName}</span>
         </div>
-        <div className="ml-2 text-xs text-gray-500 hidden lg:block truncate max-w-[180px]">
+        {/* <div className="ml-2 text-xs text-gray-500 hidden lg:block truncate max-w-[180px]">
           Books From 01.04.2024 to 31.03.2026
         </div>
         <div className="ml-2 text-xs text-gray-400 hidden xl:block">
           v 4.1.80.b
-        </div>
+        </div> */}
       </div>
 
       <div className="flex-1 flex justify-center items-center min-w-0"></div>
@@ -90,7 +90,7 @@ export default function DefaultHeader({ title, onMenuClick }) {
         <div className="flex items-center gap-1 md:gap-2 text-xs md:text-sm text-gray-700 bg-blue-50 px-2 py-1 rounded truncate max-w-[120px] md:max-w-none">
           <span className="hidden sm:inline">Financial Year:</span>
           <span className="font-semibold text-blue-700 truncate">
-            01-04-2025 - 31-03-2026
+             {currentCompany?.financialYearFrom} - {currentCompany?.financialYearTo}
           </span>
         </div>
 

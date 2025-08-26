@@ -24,7 +24,7 @@ const PrescriptionList = () => {
 
 
 
-const data = [];
+  const data = [];
 
   const [selectedPrescription, setSelectedPrescription] = useState(null);
 
