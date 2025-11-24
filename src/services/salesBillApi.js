@@ -1,6 +1,5 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi } from '@reduxjs/toolkit/query/react';
 import { buildQueryParams } from '../utils/queryParams';
-
 import { createBaseQueryWithAuth } from './apiBase';
 
 const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL
@@ -13,14 +12,17 @@ export const salesBillApi = createApi({
   tagTypes: ['SalesBill'],
   endpoints: (builder) => ({
     getBills: builder.query({
-      query: ({ page = 1, limit, search = '', filters = {}, companyId } = {}) => ({
-        url: `/get-bills?${buildQueryParams({ page, limit, search, filters })}`,
+      query: ({ page = 1, limit = 10, search = '', filters = {} } = {}) => ({
+        url: `/?${buildQueryParams({ page, limit, search, filters })}`,
         method: 'GET',
       }),
       providesTags: ['SalesBill'],
     }),
     getBill: builder.query({
-      query: (id) => `/${id}`,
+      query: (id) => ({
+        url: `/${id}`,
+        method: 'GET',
+      }),
       providesTags: (result, error, id) => [{ type: 'SalesBill', id }],
     }),
     createBill: builder.mutation({
@@ -46,6 +48,22 @@ export const salesBillApi = createApi({
       }),
       invalidatesTags: ['SalesBill'],
     }),
+    recordPayment: builder.mutation({
+      query: ({ id, ...payment }) => ({
+        url: `/${id}/payment`,
+        method: 'POST',
+        body: payment,
+      }),
+      invalidatesTags: ['SalesBill'],
+    }),
+    changeBillStatus: builder.mutation({
+      query: ({ id, status }) => ({
+        url: `/${id}/status`,
+        method: 'PATCH',
+        body: { status },
+      }),
+      invalidatesTags: ['SalesBill'],
+    }),
   }),
 });
 
@@ -55,4 +73,6 @@ export const {
   useCreateBillMutation,
   useUpdateBillMutation,
   useDeleteBillMutation,
+  useRecordPaymentMutation,
+  useChangeBillStatusMutation,
 } = salesBillApi; 

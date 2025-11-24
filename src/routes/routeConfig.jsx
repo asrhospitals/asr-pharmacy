@@ -321,6 +321,12 @@ export const routeConfig = [
     element: <BillForm />,
   },
   {
+    path: "/sales/bill/edit/:id",
+    module: "gst_billing",
+    action: "E",
+    element: <BillForm />,
+  },
+  {
     path: "/purchase/:type",
     module: "purchase_orders",
     action: "V",
