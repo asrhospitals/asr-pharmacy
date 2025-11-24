@@ -1,6 +1,7 @@
 import Input from "../../../../../componets/common/Input";
 import Select from "../../../../../componets/common/Select";
 import SearchableSelect from "../../../../../componets/common/SearchableSelect";
+import { useGetStationsQuery } from "../../../../../services/stationApi";
 
 const GeneralInfoForm = ({
   register,
@@ -12,6 +13,13 @@ const GeneralInfoForm = ({
   groupOptions,
   parentLedgersData,
 }) => {
+  const { data: stationsResponse = [], isLoading: stationsLoading } = useGetStationsQuery({ limit: 100 });
+  const stationsData = stationsResponse.data || [];
+  
+  const stationOptions = stationsData.map((station) => ({
+    label: station.name,
+    value: station.id,
+  }));
   return (
     <div className="space-y-6">
       <div>
@@ -122,11 +130,17 @@ const GeneralInfoForm = ({
           Station <span className="text-red-500">*</span>
         </label>
         <SearchableSelect
-          options={[]} 
+          options={stationOptions} 
           value={watch("station")}
           onChange={(opt) => setValue("station", opt?.value || "")}
           placeholder="Search here.."
+          isLoading={stationsLoading}
         />
+        {errors.station && (
+          <p className="text-red-500 text-sm mt-1">
+            {errors.station.message}
+          </p>
+        )}
       </div>
 
       <div>

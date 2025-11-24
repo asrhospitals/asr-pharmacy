@@ -11,9 +11,6 @@ import { useLogoutMutation } from "../../services/authApi";
 export default function DefaultHeader({ title, onMenuClick }) {
   const user = useSelector((state) => state.user.user);
   const { currentCompany } = useSelector((state) => state.user);
-  console.log('====================================');
-  console.log(currentCompany);
-  console.log('====================================');
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [cardOpen, setCardOpen] = useState(false);

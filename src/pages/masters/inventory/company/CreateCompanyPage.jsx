@@ -17,8 +17,6 @@ export default function CompanyForm({
   initialData = null,
 }) {
   const { id } = useParams();
-  console.log("id", id);
-  const [showMoreOptions, setShowMoreOptions] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [formData, setFormData] = useState({
@@ -33,6 +31,7 @@ export default function CompanyForm({
     dumpdays: 60,
     minimummargin: 0.0,
     storeroom: 1,
+    isMoreOptions: false,
   });
   const [addCompany, { isLoading: isCreating }] = useAddCompanyMutation();
   const [editCompany, { isLoading: isEditing }] = useUpdateCompanyMutation();
@@ -48,8 +47,6 @@ export default function CompanyForm({
     url: "",
   });
 
-  console.log(isEditMode);
-
   useEffect(() => {
     if (isEditMode && id && companies) {
       const company = companies?.data?.find(
@@ -63,6 +60,21 @@ export default function CompanyForm({
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+    if (name === "isMoreOptions") {
+      setFormData((prevData) => ({
+        ...prevData,
+        printremark: "",
+        status: "",
+        prohibited: "",
+        invoiceprintindex: null,
+        recorderformula: null,
+        recorderprefrence: null,
+        expiredays: null,
+        dumpdays: null,
+        minimummargin: null,
+        storeroom: null,
+      }));
+    }
     setFormData({
       ...formData,
       [name]: type === "checkbox" ? checked : value,
@@ -155,9 +167,9 @@ export default function CompanyForm({
               <Input
                 width="w-4"
                 type="checkbox"
-                name="showMoreOptions"
-                checked={showMoreOptions}
-                onChange={(e) => setShowMoreOptions(e.target.checked)}
+                name="isMoreOptions"
+                checked={formData.isMoreOptions}
+                onChange={handleChange}
                 className="h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
               />
               <span className="font-semibold text-sm min-w-fit">
@@ -167,12 +179,12 @@ export default function CompanyForm({
           </div>
           <div
             className={`transition-all duration-500 overflow-hidden ${
-              showMoreOptions
+              formData.isMoreOptions
                 ? "max-h-[1000px] opacity-100"
                 : "max-h-0 opacity-0"
             }`}
           >
-            {showMoreOptions && (
+            {formData.isMoreOptions && (
               <>
                 <hr className="my-4" />
                 <div className="mb-4">

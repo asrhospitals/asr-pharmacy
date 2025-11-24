@@ -1,14 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Plus, RefreshCw } from "lucide-react";
-import DataTable from "../../../../componets/common/DataTable";
-import Input from "../../../../componets/common/Input";
-import Select from "../../../../componets/common/Select";
+import { Plus } from "lucide-react";
 import Button from "../../../../componets/common/Button";
-import Loader from "../../../../componets/common/Loader";
 import { showToast } from "../../../../componets/common/Toast";
 import {
-  useGetLedgersQuery,
   useDeleteLedgerMutation,
   useGetLedgersByCompanyIdQuery,
 } from "../../../../services/ledgerApi";
@@ -20,12 +15,11 @@ const Viewledger = () => {
   const [selectedSearchField, setSelectedSearchField] = useState("ledgerName");
   const [selectedRow, setSelectedRow] = useState(null);
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
+  const limit = 10;
   const navigate = useNavigate();
   const { currentCompany } = useSelector((state) => state.user);
-  console.log(currentCompany);
-
   const [data, setData] = useState([]);
+  const prevDataRef = useRef([]);
 
   const searchOptions = [
     { value: "ledgerName", label: "Ledger Name" },
@@ -44,7 +38,7 @@ const Viewledger = () => {
     {
       key: "groupName",
       title: "Group",
-      render: (value, row) => row.Group?.groupName || "-",
+      render: (value, row) => row.accountGroup?.groupName || "-",
     },
     {
       key: "balanceType",
@@ -107,18 +101,44 @@ const Viewledger = () => {
   );
 
   useEffect(() => {
-    if (ledgerData?.data) {
-      setData(ledgerData?.data);
+    setPage(1);
+    setData([]);
+    prevDataRef.current = [];
+  }, [search]);
+
+  useEffect(() => {
+    if (ledgerData?.data && ledgerData.data.length > 0) {
+      const uniqueIncomingData = Array.from(
+        new Map(ledgerData.data.map(item => [item.id, item])).values()
+      );
+
+      if (page === 1) {
+        setData(uniqueIncomingData);
+        prevDataRef.current = uniqueIncomingData;
+      } else {
+        const existingIds = new Set(prevDataRef.current.map(item => item.id));
+        
+        const uniqueNewData = uniqueIncomingData.filter(
+          item => !existingIds.has(item.id)
+        );
+        
+        if (uniqueNewData.length > 0) {
+          const updatedData = [...prevDataRef.current, ...uniqueNewData];
+          setData(updatedData);
+          prevDataRef.current = updatedData;
+        }
+      }
     }
-  }, [ledgerData]);
+  }, [ledgerData, page]);
 
   const pagination = ledgerData?.pagination;
+  const hasMore = pagination ? page < pagination.totalPages : false;
 
   const [deleteLedger] = useDeleteLedgerMutation();
 
   useEffect(() => {
-    if (data?.data && data.data.length > 0 && !selectedRow) {
-      setSelectedRow(data.data[0]);
+    if (data && data.length > 0 && !selectedRow) {
+      setSelectedRow(data[0]);
     }
   }, [data, selectedRow]);
 
@@ -154,23 +174,23 @@ const Viewledger = () => {
   };
 
   const handleKeyDown = (e) => {
-    if (!data?.data || data.data.length === 0) return;
+    if (!data || data.length === 0) return;
     if (!selectedRow) return;
-    const idx = data.data.findIndex((l) => l.id === selectedRow.id);
+    const idx = data.findIndex((l) => l.id === selectedRow.id);
     if (e.key === "ArrowDown") {
-      const nextIdx = idx < data.data.length - 1 ? idx + 1 : 0;
-      setSelectedRow(data.data[nextIdx]);
+      const nextIdx = idx < data.length - 1 ? idx + 1 : 0;
+      setSelectedRow(data[nextIdx]);
       e.preventDefault();
     } else if (e.key === "ArrowUp") {
-      const prevIdx = idx > 0 ? idx - 1 : data.data.length - 1;
-      setSelectedRow(data.data[prevIdx]);
+      const prevIdx = idx > 0 ? idx - 1 : data.length - 1;
+      setSelectedRow(data[prevIdx]);
       e.preventDefault();
     }
   };
 
-  const handleLoadMore = () => {
-    if (pagination?.totalItems > limit) {
-      setLimit(limit + 10);
+  const loadMore = () => {
+    if (pagination && page < pagination.totalPages && !isFetching) {
+      setPage(prev => prev + 1);
     }
   };
 
@@ -186,62 +206,19 @@ const Viewledger = () => {
       search={search}
       onSearchChange={(e) => {
         setSearch(e.target.value);
-        setPage(1);
       }}
+      hasMore={hasMore}
+      onLoadMore={loadMore}
       tableData={data || []}
       columns={columns}
       isLoading={isLoading}
+      isFetching={isFetching}
       selectedRow={selectedRow}
       onRowSelect={handleRowSelect}
       onAdd={handleAddLedger}
       onEdit={handleEdit}
       onDelete={(row) => handleDelete(row)}
-      onView={handleViewDetails}
       onArrowNavigation={handleKeyDown}
-      // rowInfoPanel={
-      //   // selectedRow && (
-      //     <div className="flex flex-col gap-1 text-xs">
-      //       <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
-      //         <div className="border border-gray-300 rounded-lg p-1 bg-gray-50">
-      //           <div className="font-semibold mb-0.5">Ledger Name</div>
-      //           <div>{selectedRow?.ledgerName || "-"}</div>
-      //           <div className="font-semibold mb-0.5 mt-1">Group</div>
-      //           <div>{selectedRow?.Group?.groupName || "-"}</div>
-      //           <div className="font-semibold mb-0.5 mt-1">Balance Type</div>
-      //           <div>{selectedRow?.balanceType || "-"}</div>
-      //         </div>
-      //         <div className="border border-gray-300 rounded-lg p-1 bg-gray-50">
-      //           <div className="font-semibold mb-0.5">Opening Balance</div>
-      //           <div>
-      //             ₹
-      //             {new Intl.NumberFormat("en-IN").format(
-      //               selectedRow?.openingBalance || 0
-      //             )}
-      //           </div>
-      //           <div className="font-semibold mb-0.5 mt-1">Status</div>
-      //           <div>{selectedRow?.isActive ? "Active" : "Inactive"}</div>
-      //           <div className="font-semibold mb-0.5 mt-1">Description</div>
-      //           <div>{selectedRow?.description || "-"}</div>
-      //         </div>
-      //       </div>
-      //       <div className="grid grid-cols-2 gap-1 bg-gray-100 rounded p-1 mt-1 text-xs">
-      //         <div>
-      //           <b>Parent Ledger:</b> {selectedRow?.parentLedger || "-"}
-      //         </div>
-      //         <div>
-      //           <b>Created:</b>{" "}
-      //           {selectedRow?.createdAt
-      //             ? new Date(selectedRow?.createdAt).toLocaleDateString("en-IN")
-      //             : "-"}
-      //         </div>
-      //       </div>
-      //     </div>
-      //   // )
-      // }
-      loadMore={true}
-      handleLoadMore={handleLoadMore}
-      isMoreLoading={isFetching}
-      maxDataLoaded={pagination?.totalItems <= limit}
     />
   );
 };

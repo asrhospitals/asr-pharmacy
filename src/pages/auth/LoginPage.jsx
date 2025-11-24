@@ -5,7 +5,6 @@ import { setUser } from "../../services/userSlice";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Mail, Phone, User } from "lucide-react";
 import Input from "../../componets/common/Input";
-import Select from "../../componets/common/Select";
 import Button from "../../componets/common/Button";
 import { validateEmail, validatePhone } from "../../utils/inputValidation";
 import { showToast } from "../../componets/common/Toast";
@@ -13,15 +12,10 @@ import { showToast } from "../../componets/common/Toast";
 const LoginPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [selectedRole, setSelectedRole] = useState("admin");
-  const [loginType, setLoginType] = useState("username");
-  console.log(loginType);
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
+  const [loginInput, setLoginInput] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [login, { isLoading, isSuccess, isError }] = useLoginMutation();
+  const [login, { isLoading }] = useLoginMutation();
   const [error, setError] = useState("");
 
   const { user } = useSelector((state) => state.user);
@@ -37,54 +31,13 @@ const LoginPage = () => {
     }
   }, [user, currentCompany, navigate]);
 
-  const loginTypeOptions = [
-    { value: "username", label: "Username", icon: User },
-    { value: "email", label: "Email", icon: Mail },
-    { value: "phone", label: "Phone", icon: Phone },
-  ];
+  const determineLoginType = (input) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
 
-  const validateInput = () => {
-    if (loginType === "email" && email.trim() !== "") {
-      const { isValid, message } = validateEmail(email);
-      console.log(isValid, message);
-
-      if (!isValid) {
-        showToast(message);
-        return false;
-      }
-    }
-
-    if (loginType === "phone" && phone) {
-      const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
-      if (!phoneRegex.test(phone.replace(/\s+/g, ""))) {
-        setError("Please enter a valid phone number");
-        return false;
-      }
-    }
-
-    return true;
-  };
-
-  const getCurrentInputValue = () => {
-    switch (loginType) {
-      case "email":
-        return email;
-      case "phone":
-        return phone;
-      default:
-        return username;
-    }
-  };
-
-  const getInputPlaceholder = () => {
-    switch (loginType) {
-      case "email":
-        return "Email address (or use role@example.com for demo)";
-      case "phone":
-        return "Phone number (or use +1234567890 for demo)";
-      default:
-        return "Username (or use role for demo)";
-    }
+    if (emailRegex.test(input)) return "email";
+    if (phoneRegex.test(input.replace(/\s+/g, ""))) return "phone";
+    return "username";
   };
 
   const handleLogin = async (e) => {
@@ -92,24 +45,8 @@ const LoginPage = () => {
     setError("");
 
     try {
-      if (loginType === "email") {
-        const { isValid, message } = validateEmail(email);
-        if (!isValid) {
-          showToast(message, "error");
-          return;
-        }
-      }
-
-      if (loginType === "phone") {
-        const { isValid, message } = validatePhone(phone);
-        if (!isValid) {
-          showToast(message, "error");
-          return;
-        }
-      }
-
-      if (loginType === "username" && username.trim() === "") {
-        showToast("Please enter your username", "error");
+      if (loginInput.trim() === "") {
+        showToast("Please enter your username, email, or phone", "error");
         return;
       }
 
@@ -118,9 +55,26 @@ const LoginPage = () => {
         return;
       }
 
+      const loginType = determineLoginType(loginInput);
+
+      if (loginType === "email") {
+        const { isValid, message } = validateEmail(loginInput);
+        if (!isValid) {
+          showToast(message, "error");
+          return;
+        }
+      }
+
+      if (loginType === "phone") {
+        const { isValid, message } = validatePhone(loginInput);
+        if (!isValid) {
+          showToast(message, "error");
+          return;
+        }
+      }
+
       const credentials = {
-        [loginType === "username" ? "uname" : loginType]:
-          getCurrentInputValue(),
+        [loginType === "username" ? "uname" : loginType]: loginInput,
         pwd: password,
         loginType: loginType,
       };
@@ -143,9 +97,11 @@ const LoginPage = () => {
       dispatch(setUser({ user, token: response.data.accessToken }));
       localStorage.setItem("token", response.data.accessToken);
       localStorage.setItem("user", JSON.stringify(user));
+
       const primaryCompany = user.userCompanies.find(
         (company) => company.isPrimary === true
       );
+
       if (user.userCompanies.length === 0) {
         showToast("Please add a company", "info");
         navigate("/create-company", { replace: true });
@@ -161,8 +117,11 @@ const LoginPage = () => {
   };
 
   const renderLoginInput = () => {
-    const IconComponent =
-      loginTypeOptions.find((opt) => opt.value === loginType)?.icon || User;
+    const loginType = determineLoginType(loginInput);
+    let IconComponent = User;
+    
+    if (loginType === "email") IconComponent = Mail;
+    else if (loginType === "phone") IconComponent = Phone;
 
     return (
       <div className="relative">
@@ -170,21 +129,10 @@ const LoginPage = () => {
           <IconComponent size={20} />
         </div>
         <Input
-          type={"text"}
-          value={
-            loginType === "email"
-              ? email
-              : loginType === "phone"
-              ? phone
-              : username
-          }
-          onChange={(e) => {
-            const value = e.target.value;
-            if (loginType === "email") setEmail(value);
-            else if (loginType === "phone") setPhone(value);
-            else setUsername(value);
-          }}
-          placeholder={getInputPlaceholder()}
+          type="text"
+          value={loginInput}
+          onChange={(e) => setLoginInput(e.target.value)}
+          placeholder="Username, email, or phone number"
           className="pl-10"
         />
       </div>
@@ -205,34 +153,7 @@ const LoginPage = () => {
         <form className="space-y-4" onSubmit={handleLogin}>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Login Method
-            </label>
-            <div className="flex space-x-2">
-              {loginTypeOptions.map(({ value, label, icon: Icon }) => (
-                <Button
-                  key={value}
-                  type="button"
-                  variant="custom"
-                  onClick={() => {
-                    setLoginType(value);
-                    setError("");
-                  }}
-                  className={`flex-1 cursor-pointer flex items-center justify-center space-x-2 py-2 px-3 rounded-lg border transition-all duration-200 ${
-                    loginType === value
-                      ? "bg-blue-50 border-blue-500 text-blue-700"
-                      : "bg-gray-50 border-gray-200 text-gray-600 hover:bg-gray-100"
-                  }`}
-                >
-                  <Icon size={16} />
-                  <span className="text-sm font-medium">{label}</span>
-                </Button>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              {loginTypeOptions.find((opt) => opt.value === loginType)?.label}
+              Login
             </label>
             {renderLoginInput()}
           </div>

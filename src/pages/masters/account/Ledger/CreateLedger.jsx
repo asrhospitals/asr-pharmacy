@@ -63,6 +63,7 @@ const CreateLedger = () => {
       state: "Delhi",
       city: "",
       currency: "",
+      station: "",
 
       ledgerType: "Unregistered",
       panNo: "",
@@ -176,6 +177,7 @@ const CreateLedger = () => {
         state: ledgerData.state || "Delhi",
         city: ledgerData.city || "",
         currency: ledgerData.currency || "",
+        station: ledgerData.station || "",
 
         ledgerType: ledgerData.ledgerType || "Unregistered",
         panNo: ledgerData.panNo || "",
@@ -241,6 +243,17 @@ const CreateLedger = () => {
 
   const onSubmit = async (data) => {
     try {
+      // Validate required fields
+      if (!data.partyName || data.partyName.trim().length < 2) {
+        showToast("Party name is required and must be at least 2 characters", "error");
+        return;
+      }
+      
+      if (!selectedGroup?.value) {
+        showToast("Account group is required", "error");
+        return;
+      }
+
       if (isEditMode) {
         await updateLedger({ id, ...data }).unwrap();
         showToast("Ledger updated successfully", "success");
@@ -282,6 +295,7 @@ const CreateLedger = () => {
       state: "Delhi",
       city: "",
       currency: "",
+      station: "",
 
       ledgerType: "Unregistered",
       panNo: "",
@@ -423,6 +437,11 @@ const CreateLedger = () => {
                       }}
                       placeholder="Search here.."
                     />
+                    {!selectedGroup?.value && (
+                      <p className="text-red-500 text-sm mt-1">
+                        Account group is required
+                      </p>
+                    )}
                   </div>
 
                   <div>

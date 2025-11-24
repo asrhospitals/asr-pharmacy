@@ -40,9 +40,6 @@ function App() {
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
-  console.log("====================================");
-  console.log(user);
-  console.log("====================================");
 
   useEffect(() => {
     const token = localStorage.getItem("token");

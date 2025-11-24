@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import CommonPageLayout from "../../../../componets/layout/CommonPageLayout";
 import { useGetPurchaseMastersQuery, useDeletePurchaseMasterMutation } from "../../../../services/purchaseMasterApi";
 import { useGetLedgersQuery } from "../../../../services/ledgerApi";
-import {showToast} from "../../../../componets/common/Toast";
+import { showToast } from "../../../../componets/common/Toast";
 import { Edit, Trash2, Plus } from "lucide-react";
 import Button from "../../../../componets/common/Button";
 import ConfirmationModal from "../../../../componets/common/ConfirmationModal";
@@ -14,21 +14,78 @@ const PurchaseMaster = () => {
   const [search, setSearch] = useState("");
   const [selectedRow, setSelectedRow] = useState(null);
   const [page, setPage] = useState(1);
-  const [limit] = useState(10);
+  const limit = 10;
+  const [data, setData] = useState([]);
+  const prevDataRef = useRef([]);
 
-  const { data: purchaseMastersData, isLoading, refetch } = useGetPurchaseMastersQuery({
+  const { 
+    data: purchaseMastersData, 
+    isLoading, 
+    isFetching,
+    refetch 
+  } = useGetPurchaseMastersQuery({
     page,
     limit,
     search,
   });
 
-  console.log(purchaseMastersData?.data);
-  
-
   const { data: ledgersData } = useGetLedgersQuery({ limit: 100 });
   const [deletePurchaseMaster] = useDeletePurchaseMasterMutation();
 
-  const { confirmationState, showConfirmation, hideConfirmation, setDeleting, handleConfirm, handleCancel } = useConfirmation();
+  const { 
+    confirmationState, 
+    showConfirmation, 
+    hideConfirmation, 
+    setDeleting, 
+    handleConfirm, 
+    handleCancel 
+  } = useConfirmation();
+
+  // Reset to page 1 when search changes
+  useEffect(() => {
+    setPage(1);
+    setData([]);
+    prevDataRef.current = [];
+  }, [search]);
+
+  // Append new data when page changes - with duplicate prevention
+  useEffect(() => {
+    if (purchaseMastersData?.data && purchaseMastersData.data.length > 0) {
+      // First, remove duplicates within the incoming data itself
+      const uniqueIncomingData = Array.from(
+        new Map(purchaseMastersData.data.map(item => [item.id, item])).values()
+      );
+
+      if (page === 1) {
+        setData(uniqueIncomingData);
+        prevDataRef.current = uniqueIncomingData;
+      } else {
+        // Get existing IDs as a Set for faster lookup
+        const existingIds = new Set(prevDataRef.current.map(item => item.id));
+        
+        // Filter out items that already exist
+        const uniqueNewData = uniqueIncomingData.filter(
+          item => !existingIds.has(item.id)
+        );
+        
+        // Only update if we have new data
+        if (uniqueNewData.length > 0) {
+          const updatedData = [...prevDataRef.current, ...uniqueNewData];
+          setData(updatedData);
+          prevDataRef.current = updatedData;
+        }
+      }
+    }
+  }, [purchaseMastersData, page]);
+
+  const pagination = purchaseMastersData?.pagination;
+  const hasMore = pagination ? page < pagination.totalPages : false;
+
+  useEffect(() => {
+    if (data && data.length > 0 && !selectedRow) {
+      setSelectedRow(data[0]);
+    }
+  }, [data, selectedRow]);
 
   const handleAdd = () => {
     navigate("/master/accounts/purchase/create");
@@ -41,15 +98,25 @@ const PurchaseMaster = () => {
   const handleDelete = async (row) => {
     try {
       await deletePurchaseMaster(row.id).unwrap();
-      showToast("Purchase master deleted successfully");
+      showToast("Purchase master deleted successfully", "success");
+      // Reset pagination after delete
+      setPage(1);
+      setData([]);
+      prevDataRef.current = [];
       refetch();
     } catch (error) {
-      Toast.error(error?.data?.message || "Failed to delete purchase master");
+      showToast(error?.data?.message || "Failed to delete purchase master", "error");
     }
   };
 
   const handleRowSelect = (row) => {
     setSelectedRow(row);
+  };
+
+  const loadMore = () => {
+    if (pagination && page < pagination.totalPages && !isFetching) {
+      setPage(prev => prev + 1);
+    }
   };
 
   const columns = [
@@ -178,19 +245,19 @@ const PurchaseMaster = () => {
         title="Purchase Master (Purchase Only)"
         actions={actions}
         search={search}
-        onSearchChange={setSearch}
-        tableData={purchaseMastersData?.data || []}
+        onSearchChange={(e) => setSearch(e.target.value)}
+        tableData={data || []}
         columns={columns}
         isLoading={isLoading}
+        isFetching={isFetching}
         selectedRow={selectedRow}
         onRowSelect={handleRowSelect}
         onAdd={handleAdd}
         onEdit={handleEdit}
         onDelete={(row) => showConfirmation(() => handleDelete(row))}
         rowInfoPanel={rowInfoPanel}
-        pagination={purchaseMastersData?.pagination}
-        page={page}
-        setPage={setPage}
+        hasMore={hasMore}
+        onLoadMore={loadMore}
       />
 
       <ConfirmationModal
@@ -207,4 +274,4 @@ const PurchaseMaster = () => {
   );
 };
 
-export default PurchaseMaster; 
+export default PurchaseMaster;

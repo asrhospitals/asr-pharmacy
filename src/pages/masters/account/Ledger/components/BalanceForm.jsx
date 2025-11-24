@@ -38,8 +38,8 @@ const BalanceForm = ({ register, errors, selectedGroup, ledgerData }) => {
             className="w-20 rounded-l-none"
             {...register("balanceType")}
           >
-            <option value="Dr">Dr</option>
-            <option value="Cr">Cr</option>
+            <option value="Debit">Dr</option>
+            <option value="Credit">Cr</option>
           </Select>
         </div>
         {errors.openingBalance && (
