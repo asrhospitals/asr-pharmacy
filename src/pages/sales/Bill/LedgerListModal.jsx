@@ -1,30 +1,35 @@
 import React, { useState } from "react";
-import Modal from "../../../../componets/common/Modal.jsx";
-import DataTable from "../../../../componets/common/DataTable.jsx";
-import StatusBadge from "../../../../componets/common/StatusBadge.jsx";
-import { useGetPatientsQuery } from "../../../../services/patientApi.js";
-import { useDebounce } from "../../../../utils/useDebounce.js";
-import Pagination from "../../../../componets/common/Pagination.jsx";
-import Input from "../../../../componets/common/Input.jsx";
-import Select from "../../../../componets/common/Select.jsx";
+import Modal from "../../../componets/common/Modal.jsx";
+import DataTable from "../../../componets/common/DataTable.jsx";
+import StatusBadge from "../../../componets/common/StatusBadge.jsx";
+import { useGetLedgersQuery } from "../../../services/ledgerApi.js";
+import { useDebounce } from "../../../utils/useDebounce.js";
+import Pagination from "../../../componets/common/Pagination.jsx";
+import Input from "../../../componets/common/Input.jsx";
+import Select from "../../../componets/common/Select.jsx";
 
-const PatientListModal = ({ open, onClose, onSelectPatient }) => {
+const LedgerListModal = ({ open, onClose, onSelectLedger }) => {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const debouncedSearch = useDebounce(search, 300);
 
-  const { data, isLoading } = useGetPatientsQuery({
+  // Sales Accounts group ID - this should match the backend group ID for "Sales Accounts"
+  const SALES_GROUP_ID = "42"; // Based on defaultGroups.js
+
+  const { data, isLoading } = useGetLedgersQuery({
     page,
     limit: 10,
     search: debouncedSearch,
+    groupId: SALES_GROUP_ID,
+    isActive: true,
   });
 
   const columns = [
-    { key: "phone", title: "Mobile No" },
+    { key: "ledgerName", title: "Ledger Name" },
     // { key: "id", title: "ID" },
-    { key: "name", title: "Name" },
-    { key: "gender", title: "Gender" },
-    { key: "age", title: "Age" },
+    // { key: "address", title: "Address" },
+    {key : "station", title: "Station"},
+    { key: "balance", title: "Balance" },
     {
       key: "status",
       title: "Status",
@@ -37,13 +42,13 @@ const PatientListModal = ({ open, onClose, onSelectPatient }) => {
       open={open}
       onClose={onClose}
       className="max-w-full md:max-w-[50vw]"
-      title="Patient List"
+      title="Select Party (Ledger)"
     >
       <div className="mb-2 flex gap-2 items-center justify-between">
         <div className="flex gap-2 items-center flex-1">
           <Input
             fullWidth={true}
-            placeholder="Search here.."
+            placeholder="Search ledger..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -51,11 +56,11 @@ const PatientListModal = ({ open, onClose, onSelectPatient }) => {
         </div>
       </div>
       <DataTable
-        title="Patient"
+        title="Ledger"
         columns={columns}
         data={data?.data || []}
         onRowSelect={(row) => {
-          onSelectPatient(row);
+          onSelectLedger(row);
           onClose();
         }}
         isLoading={isLoading}
@@ -71,4 +76,4 @@ const PatientListModal = ({ open, onClose, onSelectPatient }) => {
   );
 };
 
-export default PatientListModal;
+export default LedgerListModal;

@@ -8,6 +8,7 @@ import {
 } from "../../../services/salesBillApi";
 import PatientListModal from "../../masters/other/prescription/PatientListModal";
 import DoctorListModal from "../../masters/other/doctor/DoctorListModal";
+import LedgerListModal from "./LedgerListModal";
 import SelectItemDialog from "../../../componets/common/SelectItemDialog";
 import { calculateBillTotals, formatCurrency } from "../../../utils/billCalculations";
 import toast from "react-hot-toast";
@@ -49,6 +50,7 @@ const BillForm = () => {
 
   const [showPatientDialog, setShowPatientDialog] = useState(false);
   const [showDoctorDialog, setShowDoctorDialog] = useState(false);
+  const [showLedgerDialog, setShowLedgerDialog] = useState(false);
   const [showItemDialog, setShowItemDialog] = useState(false);
   const [selectedItemRowIndex, setSelectedItemRowIndex] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -184,6 +186,19 @@ const BillForm = () => {
           setShowDoctorDialog(false);
         }}
       />
+      <LedgerListModal
+        open={showLedgerDialog}
+        onClose={() => setShowLedgerDialog(false)}
+        onSelectLedger={(ledger) => {
+          setForm((prev) => ({
+            ...prev,
+            partyId: ledger.id,
+            partyName: ledger.ledgerName,
+            address: ledger.address || "",
+          }));
+          setShowLedgerDialog(false);
+        }}
+      />
       <SelectItemDialog
         open={showItemDialog}
         onClose={() => setShowItemDialog(false)}
@@ -241,7 +256,7 @@ const BillForm = () => {
               <input
                 type="text"
                 value={form.partyName}
-                onFocus={() => setShowPatientDialog(true)}
+                onClick={() => setShowLedgerDialog(true)}
                 readOnly
                 placeholder="Click to select party"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -258,9 +273,10 @@ const BillForm = () => {
               <input
                 type="text"
                 value={form.patientId}
-                placeholder="Patient ID"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                onChange={(e) => setForm({ ...form, patientId: e.target.value })}
+                onClick={() => setShowPatientDialog(true)}
+                readOnly
+                placeholder="Click to select patient"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
             <div>
@@ -270,9 +286,10 @@ const BillForm = () => {
               <input
                 type="text"
                 value={form.patientName}
-                placeholder="Patient Name"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                onChange={(e) => setForm({ ...form, patientName: e.target.value })}
+                onClick={() => setShowPatientDialog(true)}
+                readOnly
+                placeholder="Click to select patient"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
             <div>
