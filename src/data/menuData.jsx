@@ -115,6 +115,7 @@ const adminMenu = [
       { title: "Order", path: "/purchase/order" },
       { title: "Return", path: "/purchase/return" },
       { title: "Brk/Exp Issue", path: "/purchase/brkexp" },
+      { title: "Challan", path: "/purchase/challan" },
     ],
   },
   {

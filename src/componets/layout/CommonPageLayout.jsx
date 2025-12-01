@@ -1,9 +1,10 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
 import PageHeader from "../common/PageHeader";
 import Input from "../common/Input";
 import Select from "../common/Select";
 import DataTable from "../common/DataTable";
 import Loader from "../common/Loader";
+import Pagination from "../common/Pagination";
 
 const CommonPageLayout = ({
   title,
@@ -29,6 +30,10 @@ const CommonPageLayout = ({
   justifyBetween = false,
   onLoadMore,
   hasMore,
+  page,
+  totalPages,
+  onPageChange,
+  enableInfiniteScroll = false,
 }) => {
   const tableRef = useRef();
 
@@ -68,20 +73,30 @@ const CommonPageLayout = ({
         {isLoading ? (
           <Loader />
         ) : (
-          <DataTable
-            title={title}
-            columns={columns}
-            data={tableData}
-            handleAddItem={onAdd}
-            onEdit={onEdit}
-            onDelete={onDelete}
-            selectedRow={selectedRow}
-            onRowSelect={onRowSelect}
-            fullHeight={fullTableHeight}
-            onLoadMore={onLoadMore}
-            hasMore={hasMore}
-            loading={false}
-          />
+          <>
+            <DataTable
+              title={title}
+              columns={columns}
+              data={tableData}
+              handleAddItem={onAdd}
+              onEdit={onEdit}
+              onDelete={onDelete}
+              selectedRow={selectedRow}
+              onRowSelect={onRowSelect}
+              fullHeight={fullTableHeight}
+              onLoadMore={onLoadMore}
+              hasMore={hasMore}
+              loading={false}
+              enableInfiniteScroll={enableInfiniteScroll}
+            />
+            {!enableInfiniteScroll && totalPages && (
+              <Pagination
+                page={page}
+                totalPages={totalPages}
+                onPageChange={onPageChange}
+              />
+            )}
+          </>
         )}
 
         {rowInfoPanel && (

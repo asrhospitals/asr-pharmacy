@@ -18,6 +18,7 @@ const DataTable = ({
   onLoadMore,
   hasMore = false,
   loading = false,
+  enableInfiniteScroll = true,
 }) => {
   const rowRefs = useRef([]);
   const tableContainerRef = useRef(null);
@@ -38,7 +39,7 @@ const DataTable = ({
   }, [selectedRow, data]);
   
   useEffect(() => {
-    if (!onLoadMore || !hasMore || !loadMoreRef.current) return;
+    if (!enableInfiniteScroll || !onLoadMore || !hasMore || !loadMoreRef.current) return;
 
     const container = tableContainerRef.current;
     if (!container) return;
@@ -74,7 +75,7 @@ const DataTable = ({
       observer.disconnect();
       clearTimeout(timeoutId);
     };
-  }, [onLoadMore, hasMore, isLoadingMore, data.length]);
+  }, [enableInfiniteScroll, onLoadMore, hasMore, isLoadingMore, data.length]);
 
   // Reset loading state when data length changes (new data loaded)
   useEffect(() => {

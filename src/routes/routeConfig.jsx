@@ -98,6 +98,40 @@ const CreatePurchaseMaster = React.lazy(() =>
   import("../pages/masters/account/PurchaseMaster/CreatePurchaseMaster")
 );
 
+const OpeningBalanceLedger = React.lazy(() =>
+  import("../pages/masters/openingBalance/ledger/Ledger")
+);
+const OpeningBalanceStock = React.lazy(() =>
+  import("../pages/masters/openingBalance/stock/Stock")
+);
+const StockManagement = React.lazy(() =>
+  import("../pages/stock/StockManagement")
+);
+const Bill = React.lazy(() =>
+  import("../pages/sales/Bill/BillList")
+);
+const PurchaseBill = React.lazy(() =>
+  import("../pages/purchase/Bill/Bill")
+);
+const PurchaseBillList = React.lazy(() =>
+  import("../pages/purchase/Bill/Bill")
+);
+const PurchaseBillForm = React.lazy(() =>
+  import("../pages/purchase/Bill/PurchaseBillForm")
+);
+const LedgerReport = React.lazy(() =>
+  import("../pages/masters/openingBalance/LedgerReport")
+);
+const TrialBalanceReport = React.lazy(() =>
+  import("../pages/masters/openingBalance/TrialBalanceReport")
+);
+const ProfitLossReport = React.lazy(() =>
+  import("../pages/masters/openingBalance/ProfitLossReport")
+);
+const StockReport = React.lazy(() =>
+  import("../pages/masters/openingBalance/StockReport")
+);
+
 export const routeConfig = [
   {
     path: "/dashboard",
@@ -327,6 +361,24 @@ export const routeConfig = [
     element: <BillForm />,
   },
   {
+    path: "/purchase/bill",
+    module: "purchase_orders",
+    action: "V",
+    element: <PurchaseBillList />,
+  },
+  {
+    path: "/purchase/bill/create",
+    module: "purchase_orders",
+    action: "C",
+    element: <PurchaseBillForm />,
+  },
+  {
+    path: "/purchase/bill/edit/:id",
+    module: "purchase_orders",
+    action: "E",
+    element: <PurchaseBillForm />,
+  },
+  {
     path: "/purchase/:type",
     module: "purchase_orders",
     action: "V",
@@ -367,6 +419,60 @@ export const routeConfig = [
     module: "other",
     action: "V",
     element: <Station />,
+  },
+  {
+    path: "/master/opening-balance/ledger",
+    module: "accounting_ledgers",
+    action: "V",
+    element: <OpeningBalanceLedger />,
+  },
+  {
+    path: "/master/opening-balance/stock",
+    module: "inventory",
+    action: "V",
+    element: <OpeningBalanceStock />,
+  },
+  {
+    path: "/stock/management",
+    module: "inventory",
+    action: "V",
+    element: <StockManagement />,
+  },
+  {
+    path: "/sales/bill/enhanced",
+    module: "gst_billing",
+    action: "V",
+    element: <Bill />,
+  },
+  {
+    path: "/purchase/bill/enhanced",
+    module: "purchase_masters",
+    action: "V",
+    element: <PurchaseBill />,
+  },
+  {
+    path: "/opening/ledger",
+    module: "financial_reports",
+    action: "V",
+    element: <LedgerReport />,
+  },
+  {
+    path: "/opening/trial-balance",
+    module: "financial_reports",
+    action: "V",
+    element: <TrialBalanceReport />,
+  },
+  {
+    path: "/opening/profit-loss",
+    module: "financial_reports",
+    action: "V",
+    element: <ProfitLossReport />,
+  },
+  {
+    path: "/opening/stock",
+    module: "inventory",
+    action: "V",
+    element: <StockReport />,
   },
   {
     path: "/opening/:type",

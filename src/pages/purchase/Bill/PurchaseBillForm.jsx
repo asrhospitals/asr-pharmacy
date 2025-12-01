@@ -1,0 +1,602 @@
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { Trash2, Plus, Save, X } from "lucide-react";
+import {
+  useCreateBillMutation,
+  useUpdateBillMutation,
+  useGetBillByIdQuery,
+} from "../../../services/purchaseBillApi";
+import { useGetLedgersQuery } from "../../../services/ledgerApi";
+import { useGetPurchaseMastersQuery } from "../../../services/purchaseMasterApi";
+import { useGetItemsQuery } from "../../../services/itemApi";
+import SelectItemDialog from "../../../componets/common/SelectItemDialog";
+import LedgerListModal from "../../sales/Bill/LedgerListModal";
+import PurchaseMasterListModal from "./PurchaseMasterListModal";
+import { useSelector } from "react-redux";
+import toast from "react-hot-toast";
+
+const calculateItemAmount = (quantity, rate) => {
+  return parseFloat((quantity * rate).toFixed(2));
+};
+
+const calculateDiscountAmount = (amount, discountPercent) => {
+  return parseFloat((amount * (discountPercent / 100)).toFixed(2));
+};
+
+const calculateTaxAmount = (amount, taxPercent) => {
+  return parseFloat((amount * (taxPercent / 100)).toFixed(2));
+};
+
+const processBillItem = (item, taxRates) => {
+  const quantity = parseFloat(item.quantity) || 1;
+  const rate = parseFloat(item.rate) || 0;
+  const mrp = parseFloat(item.mrp) || rate;
+  const discountPercent = parseFloat(item.discountPercent) || 0;
+
+  const baseAmount = calculateItemAmount(quantity, rate);
+  const discountAmount = calculateDiscountAmount(baseAmount, discountPercent);
+  const amountAfterDiscount = baseAmount - discountAmount;
+
+  const igstAmount = calculateTaxAmount(amountAfterDiscount, taxRates.igstPercent);
+  const cgstAmount = calculateTaxAmount(amountAfterDiscount, taxRates.cgstPercent);
+  const sgstAmount = calculateTaxAmount(amountAfterDiscount, taxRates.sgstPercent);
+  const cessAmount = calculateTaxAmount(amountAfterDiscount, taxRates.cessPercent);
+
+  const finalAmount = amountAfterDiscount + igstAmount + cgstAmount + sgstAmount + cessAmount;
+
+  return {
+    ...item,
+    quantity,
+    rate,
+    mrp,
+    discountPercent,
+    discountAmount,
+    igstPercent: taxRates.igstPercent,
+    igstAmount,
+    cgstPercent: taxRates.cgstPercent,
+    cgstAmount,
+    sgstPercent: taxRates.sgstPercent,
+    sgstAmount,
+    cessPercent: taxRates.cessPercent,
+    cessAmount,
+    amount: parseFloat(finalAmount.toFixed(2)),
+  };
+};
+
+const calculateBillTotals = (items, billDiscountPercent, taxRates) => {
+  const processedItems = items.map(item => processBillItem(item, taxRates));
+
+  const subtotal = processedItems.reduce((sum, item) => sum + (item.amount || 0), 0);
+  const itemDiscount = processedItems.reduce((sum, item) => sum + (item.discountAmount || 0), 0);
+  const billDiscountAmount = calculateDiscountAmount(subtotal, billDiscountPercent);
+  const amountAfterDiscount = subtotal - billDiscountAmount;
+
+  const billIgstAmount = calculateTaxAmount(amountAfterDiscount, taxRates.igstPercent);
+  const billCgstAmount = calculateTaxAmount(amountAfterDiscount, taxRates.cgstPercent);
+  const billSgstAmount = calculateTaxAmount(amountAfterDiscount, taxRates.sgstPercent);
+  const billCessAmount = calculateTaxAmount(amountAfterDiscount, taxRates.cessPercent);
+
+  const totalTaxAmount = billIgstAmount + billCgstAmount + billSgstAmount + billCessAmount;
+  const totalAmount = amountAfterDiscount + totalTaxAmount;
+
+  return {
+    items: processedItems,
+    subtotal: parseFloat(subtotal.toFixed(2)),
+    itemDiscount: parseFloat(itemDiscount.toFixed(2)),
+    billDiscountPercent,
+    billDiscountAmount: parseFloat(billDiscountAmount.toFixed(2)),
+    igstPercent: taxRates.igstPercent,
+    igstAmount: parseFloat(billIgstAmount.toFixed(2)),
+    cgstPercent: taxRates.cgstPercent,
+    cgstAmount: parseFloat(billCgstAmount.toFixed(2)),
+    sgstPercent: taxRates.sgstPercent,
+    sgstAmount: parseFloat(billSgstAmount.toFixed(2)),
+    cessPercent: taxRates.cessPercent,
+    cessAmount: parseFloat(billCessAmount.toFixed(2)),
+    totalTaxAmount: parseFloat(totalTaxAmount.toFixed(2)),
+    totalAmount: parseFloat(totalAmount.toFixed(2)),
+    dueAmount: parseFloat(totalAmount.toFixed(2)),
+  };
+};
+
+const PurchaseBillForm = () => {
+  const navigate = useNavigate();
+  const { id: billId } = useParams();
+  const isEdit = !!billId;
+
+  const { data: billData } = useGetBillByIdQuery(billId, { skip: !isEdit });
+  const { data: itemsData } = useGetItemsQuery();
+
+  const [createBill] = useCreateBillMutation();
+  const [updateBill] = useUpdateBillMutation();
+
+  const [form, setForm] = useState({
+    billNo: "",
+    billDate: new Date().toISOString().split("T")[0],
+    supplierLedgerId: "",
+    supplierName: "",
+    supplierInvoiceNo: "",
+    supplierInvoiceDate: "",
+    purchaseMasterId: "",
+    purchaseMasterName: "",
+    billDiscountPercent: 0,
+    notes: "",
+    referenceNumber: "",
+    items: [],
+  });
+
+  const [calculations, setCalculations] = useState({
+    subtotal: 0,
+    itemDiscount: 0,
+    billDiscountAmount: 0,
+    igstAmount: 0,
+    cgstAmount: 0,
+    sgstAmount: 0,
+    cessAmount: 0,
+    totalTaxAmount: 0,
+    totalAmount: 0,
+    dueAmount: 0,
+  });
+
+  const [showItemDialog, setShowItemDialog] = useState(false);
+  const [showLedgerDialog, setShowLedgerDialog] = useState(false);
+  const [showPurchaseMasterDialog, setShowPurchaseMasterDialog] = useState(false);
+  const [selectedItemRowIndex, setSelectedItemRowIndex] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (billData?.data) {
+      setForm({
+        ...billData.data,
+        items: billData.data.billItems || [],
+      });
+    }
+  }, [billData]);
+
+  // Store purchase master data in form for calculations
+  const [purchaseMasterData, setPurchaseMasterData] = useState(null);
+
+  useEffect(() => {
+    if (form.purchaseMasterId && purchaseMasterData) {
+      const taxRates = {
+        igstPercent: purchaseMasterData.igstPercentage || 0,
+        cgstPercent: purchaseMasterData.cgstPercentage || 0,
+        sgstPercent: purchaseMasterData.sgstPercentage || 0,
+        cessPercent: purchaseMasterData.cessPercentage || 0,
+      };
+      const calcs = calculateBillTotals(
+        form.items,
+        form.billDiscountPercent,
+        taxRates
+      );
+      setCalculations(calcs);
+    }
+  }, [form.items, form.billDiscountPercent, form.purchaseMasterId, purchaseMasterData]);
+
+  const handleItemSelect = (item) => {
+    if (selectedItemRowIndex !== null) {
+      const newItems = [...form.items];
+      newItems[selectedItemRowIndex] = {
+        ...newItems[selectedItemRowIndex],
+        itemId: item.id,
+        product: item.itemName,
+        mrp: item.mrp || 0,
+        rate: item.purchaseRate || item.mrp || 0,
+        packing: item.packing || "",
+      };
+      setForm((prev) => ({ ...prev, items: newItems }));
+      setSelectedItemRowIndex(null);
+    }
+  };
+
+  const handleItemChange = (index, field, value) => {
+    const newItems = [...form.items];
+    newItems[index] = { ...newItems[index], [field]: value };
+    setForm((prev) => ({ ...prev, items: newItems }));
+  };
+
+  const addItem = () => {
+    setForm((prev) => ({
+      ...prev,
+      items: [
+        ...prev.items,
+        {
+          product: "",
+          packing: "",
+          batch: "",
+          expDate: "",
+          unit1: "",
+          unit2: "",
+          mrp: 0,
+          rate: 0,
+          quantity: 1,
+          discountPercent: 0,
+        },
+      ],
+    }));
+  };
+
+  const removeItem = (index) => {
+    setForm((prev) => ({
+      ...prev,
+      items: prev.items.filter((_, i) => i !== index),
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!form.supplierLedgerId) {
+      toast.error("Please select a supplier");
+      return;
+    }
+
+    if (!form.purchaseMasterId) {
+      toast.error("Please select a purchase master (tax category)");
+      return;
+    }
+
+    if (form.items.length === 0) {
+      toast.error("Please add at least one item");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const payload = {
+        ...form,
+        items: calculations.items,
+        ...calculations,
+      };
+
+      if (isEdit) {
+        await updateBill({ id: billId, ...payload }).unwrap();
+        toast.success("Purchase bill updated successfully");
+      } else {
+        await createBill(payload).unwrap();
+        toast.success("Purchase bill created successfully");
+      }
+
+      navigate("/purchase/bill");
+    } catch (error) {
+      toast.error(error?.data?.message || "Error saving bill");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const formatCurrency = (value) => {
+    return parseFloat(value || 0).toFixed(2);
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-25 p-4">
+      <SelectItemDialog
+        open={showItemDialog}
+        onClose={() => setShowItemDialog(false)}
+        onSelectItem={handleItemSelect}
+      />
+      <LedgerListModal
+        open={showLedgerDialog}
+        onClose={() => setShowLedgerDialog(false)}
+        onSelectLedger={(ledger) => {
+          setForm((prev) => ({
+            ...prev,
+            supplierLedgerId: ledger.id,
+            supplierName: ledger.ledgerName,
+          }));
+          setShowLedgerDialog(false);
+        }}
+      />
+      <PurchaseMasterListModal
+        open={showPurchaseMasterDialog}
+        onClose={() => setShowPurchaseMasterDialog(false)}
+        onSelectPurchaseMaster={(master) => {
+          setForm((prev) => ({
+            ...prev,
+            purchaseMasterId: master.id,
+            purchaseMasterName: master.purchaseType,
+          }));
+          setPurchaseMasterData(master);
+          setShowPurchaseMasterDialog(false);
+        }}
+      />
+
+      <div className="max-w-full mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-green-600 to-green-700 text-white p-6 flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold">Purchase Bill</h1>
+            <p className="text-green-100 text-sm mt-1">
+              {isEdit ? "Edit Purchase Bill" : "Create New Purchase Bill"}
+            </p>
+          </div>
+          <div className="text-right">
+            <div className="text-sm text-green-100">Total Due</div>
+            <div className="text-4xl font-bold">
+              ₹{formatCurrency(calculations.totalAmount)}
+            </div>
+          </div>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+          {/* Bill Header Section */}
+          <div className="grid grid-cols-4 gap-4 pb-6 border-b border-gray-200">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Bill No.
+              </label>
+              <input
+                type="text"
+                value={form.billNo}
+                onChange={(e) => setForm({ ...form, billNo: e.target.value })}
+                placeholder="Auto-generated"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Bill Date
+              </label>
+              <input
+                type="date"
+                value={form.billDate}
+                onChange={(e) => setForm({ ...form, billDate: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Supplier Invoice No.
+              </label>
+              <input
+                type="text"
+                value={form.supplierInvoiceNo}
+                onChange={(e) => setForm({ ...form, supplierInvoiceNo: e.target.value })}
+                placeholder="Supplier invoice number"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Supplier Invoice Date
+              </label>
+              <input
+                type="date"
+                value={form.supplierInvoiceDate}
+                onChange={(e) => setForm({ ...form, supplierInvoiceDate: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              />
+            </div>
+          </div>
+
+          {/* Supplier & Tax Section */}
+          <div className="grid grid-cols-2 gap-4 pb-6 border-b border-gray-200">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Supplier Ledger *
+              </label>
+              <input
+                type="text"
+                value={form.supplierName}
+                onClick={() => setShowLedgerDialog(true)}
+                readOnly
+                placeholder="Click to select supplier"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 cursor-pointer focus:outline-none focus:ring-2 focus:ring-green-500"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Purchase Master (Tax Category) *
+              </label>
+              <input
+                type="text"
+                value={form.purchaseMasterName}
+                onClick={() => setShowPurchaseMasterDialog(true)}
+                readOnly
+                placeholder="Click to select tax category"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 cursor-pointer focus:outline-none focus:ring-2 focus:ring-green-500"
+                required
+              />
+            </div>
+          </div>
+
+          {/* Items Table */}
+          <div>
+            <h2 className="text-lg font-bold text-gray-800 mb-4">Products</h2>
+            <div className="overflow-x-auto border border-gray-200 rounded-lg">
+              <table className="w-full text-sm">
+                <thead className="bg-green-50 border-b border-gray-200">
+                  <tr>
+                    <th className="px-3 py-3 text-left font-semibold text-gray-700">Product</th>
+                    <th className="px-3 py-3 text-left font-semibold text-gray-700">Packing</th>
+                    <th className="px-3 py-3 text-left font-semibold text-gray-700">Batch</th>
+                    <th className="px-3 py-3 text-left font-semibold text-gray-700">Exp. Date</th>
+                    <th className="px-3 py-3 text-right font-semibold text-gray-700">Rate</th>
+                    <th className="px-3 py-3 text-center font-semibold text-gray-700">Qty</th>
+                    <th className="px-3 py-3 text-center font-semibold text-gray-700">Disc %</th>
+                    <th className="px-3 py-3 text-right font-semibold text-gray-700">Amount</th>
+                    <th className="px-3 py-3 text-center font-semibold text-gray-700">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {form.items.map((item, idx) => (
+                    <tr key={idx} className="border-b border-gray-200 hover:bg-green-50">
+                      <td className="px-3 py-2">
+                        <input
+                          type="text"
+                          value={item.product}
+                          onFocus={() => {
+                            setSelectedItemRowIndex(idx);
+                            setShowItemDialog(true);
+                          }}
+                          readOnly
+                          placeholder="Click to select"
+                          className="w-full px-2 py-1 border border-gray-300 rounded bg-gray-50 cursor-pointer text-xs focus:outline-none focus:ring-2 focus:ring-green-500"
+                        />
+                      </td>
+                      <td className="px-3 py-2">
+                        <input
+                          type="text"
+                          value={item.packing}
+                          onChange={(e) => handleItemChange(idx, "packing", e.target.value)}
+                          className="w-full px-2 py-1 border border-gray-300 rounded text-xs focus:outline-none focus:ring-2 focus:ring-green-500"
+                        />
+                      </td>
+                      <td className="px-3 py-2">
+                        <input
+                          type="text"
+                          value={item.batch}
+                          onChange={(e) => handleItemChange(idx, "batch", e.target.value)}
+                          className="w-full px-2 py-1 border border-gray-300 rounded text-xs focus:outline-none focus:ring-2 focus:ring-green-500"
+                        />
+                      </td>
+                      <td className="px-3 py-2">
+                        <input
+                          type="date"
+                          value={item.expDate}
+                          onChange={(e) => handleItemChange(idx, "expDate", e.target.value)}
+                          className="w-full px-2 py-1 border border-gray-300 rounded text-xs focus:outline-none focus:ring-2 focus:ring-green-500"
+                        />
+                      </td>
+                      <td className="px-3 py-2">
+                        <input
+                          type="number"
+                          value={item.rate}
+                          onChange={(e) => handleItemChange(idx, "rate", parseFloat(e.target.value) || 0)}
+                          className="w-full px-2 py-1 border border-gray-300 rounded text-xs text-right focus:outline-none focus:ring-2 focus:ring-green-500"
+                          step="0.01"
+                        />
+                      </td>
+                      <td className="px-3 py-2">
+                        <input
+                          type="number"
+                          value={item.quantity}
+                          onChange={(e) => handleItemChange(idx, "quantity", parseFloat(e.target.value) || 1)}
+                          className="w-full px-2 py-1 border border-gray-300 rounded text-xs text-center focus:outline-none focus:ring-2 focus:ring-green-500"
+                          step="0.01"
+                        />
+                      </td>
+                      <td className="px-3 py-2">
+                        <input
+                          type="number"
+                          value={item.discountPercent}
+                          onChange={(e) => handleItemChange(idx, "discountPercent", parseFloat(e.target.value) || 0)}
+                          className="w-full px-2 py-1 border border-gray-300 rounded text-xs text-center focus:outline-none focus:ring-2 focus:ring-green-500"
+                          step="0.01"
+                        />
+                      </td>
+                      <td className="px-3 py-2 text-right font-semibold text-xs text-gray-900">
+                        ₹{formatCurrency(item.amount || 0)}
+                      </td>
+                      <td className="px-3 py-2 text-center">
+                        <button
+                          type="button"
+                          onClick={() => removeItem(idx)}
+                          className="text-red-600 hover:text-red-800"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <button
+              type="button"
+              onClick={addItem}
+              className="mt-3 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2 text-sm font-semibold"
+            >
+              <Plus size={16} /> Add Product
+            </button>
+          </div>
+
+          {/* Calculations Section */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="p-4 bg-gray-25 rounded-lg border border-gray-200">
+              <label className="text-xs text-gray-600 font-semibold mb-2 block">Bill Discount %</label>
+              <input
+                type="number"
+                value={form.billDiscountPercent}
+                onChange={(e) => setForm({ ...form, billDiscountPercent: parseFloat(e.target.value) || 0 })}
+                className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                step="0.01"
+              />
+            </div>
+            <div className="p-4 bg-gray-25 rounded-lg border border-gray-200">
+              <div className="text-xs text-gray-600 font-semibold mb-2">Tax Breakdown</div>
+              <div className="text-xs space-y-1 text-gray-700">
+                <div>IGST: {calculations.igstPercent}% = ₹{formatCurrency(calculations.igstAmount)}</div>
+                <div>CGST: {calculations.cgstPercent}% = ₹{formatCurrency(calculations.cgstAmount)}</div>
+                <div>SGST: {calculations.sgstPercent}% = ₹{formatCurrency(calculations.sgstAmount)}</div>
+                <div>CESS: {calculations.cessPercent}% = ₹{formatCurrency(calculations.cessAmount)}</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Total Section */}
+          <div className="flex justify-end">
+            <div className="p-6 w-96 bg-gradient-to-br from-green-50 to-green-100 rounded-lg border-2 border-green-200">
+              <div className="space-y-3 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-gray-700">Subtotal:</span>
+                  <span className="font-semibold">₹{formatCurrency(calculations.subtotal)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-700">Total Discount:</span>
+                  <span className="font-semibold">-₹{formatCurrency(calculations.itemDiscount + calculations.billDiscountAmount)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-700">Total Tax:</span>
+                  <span className="font-semibold">₹{formatCurrency(calculations.totalTaxAmount)}</span>
+                </div>
+                <div className="border-t border-green-300 pt-3 flex justify-between text-lg font-bold text-green-700">
+                  <span>Total Amount:</span>
+                  <span>₹{formatCurrency(calculations.totalAmount)}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Notes Section */}
+          <div className="pb-6 border-b border-gray-200">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Notes
+            </label>
+            <textarea
+              value={form.notes}
+              onChange={(e) => setForm({ ...form, notes: e.target.value })}
+              placeholder="Additional notes..."
+              rows="3"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex gap-3 justify-end">
+            <button
+              type="button"
+              onClick={() => navigate("/purchase/bill")}
+              className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 font-semibold text-gray-700 flex items-center gap-2"
+            >
+              <X size={18} /> Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-semibold flex items-center gap-2 disabled:opacity-50"
+            >
+              <Save size={18} /> {isLoading ? "Saving..." : isEdit ? "Update Bill" : "Create Bill"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default PurchaseBillForm;

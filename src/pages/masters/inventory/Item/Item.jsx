@@ -4,11 +4,8 @@ import { useGetStoresQuery } from "../../../../services/storeApi";
 import { useState } from "react";
 import Button from "../../../../componets/common/Button";
 import { Plus } from "lucide-react";
-import Input from "../../../../componets/common/Input";
 import Select from "../../../../componets/common/Select";
-import Loader from "../../../../componets/common/Loader";
 import CommonPageLayout from "../../../../componets/layout/CommonPageLayout";
-import Pagination from '../../../../componets/common/Pagination';
 import { useDebounce } from '../../../../utils/useDebounce';
 
 const ItemsPage = () => {
@@ -18,13 +15,17 @@ const ItemsPage = () => {
   const [searchField, setSearchField] = useState("Description");
   const [selectedStore, setSelectedStore] = useState("");
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
+  const [limit] = useState(10);
 
   const navigate = useNavigate();
 
-  const { data, isLoading } = useGetItemsQuery({ page, limit, search: debouncedSearch, filters: selectedStore ? { storeid: selectedStore } : {} });
-  const { data: stores = [] } = useGetStoresQuery();  
-
+  const { data, isLoading } = useGetItemsQuery({
+    page,
+    limit,
+    search: debouncedSearch,
+    filters: selectedStore ? { storeid: selectedStore } : {},
+  });
+  const { data: stores = [] } = useGetStoresQuery();
 
   const handleAddItem = () => navigate("/master/inventory/items/create");
 
@@ -46,7 +47,10 @@ const ItemsPage = () => {
         </Button>,
       ]}
       search={search}
-      onSearchChange={(e) => { setSearch(e.target.value); setPage(1); }}
+      onSearchChange={(e) => {
+        setSearch(e.target.value);
+        setPage(1);
+      }}
       searchOptions={[{ value: "description", label: "Description" }]}
       selectedSearchField={searchField}
       onSearchFieldChange={(e) => setSearchField(e.target.value)}
@@ -54,7 +58,10 @@ const ItemsPage = () => {
         <Select
           className="w-full sm:w-40"
           value={selectedStore}
-          onChange={(e) => { setSelectedStore(e.target.value); setPage(1); }}
+          onChange={(e) => {
+            setSelectedStore(e.target.value);
+            setPage(1);
+          }}
         >
           <option value="">All Stores</option>
           {stores?.data?.map((store) => (
@@ -72,6 +79,9 @@ const ItemsPage = () => {
       onAdd={handleAddItem}
       onEdit={(row) => console.log("Edit:", row)}
       onDelete={(row) => console.log("Delete:", row)}
+      page={page}
+      totalPages={data?.totalPages || 1}
+      onPageChange={setPage}
       rowInfoPanel={
         selectedRow && (
           <div className="w-full grid grid-cols-1 md:grid-cols-4 gap-2 text-xs sm:text-sm">
@@ -108,13 +118,7 @@ const ItemsPage = () => {
           </div>
         )
       }
-    >
-      <Pagination
-        page={page}
-        totalPages={data?.totalPages || 1}
-        onPageChange={setPage}
-      />
-    </CommonPageLayout>
+    />
   );
 };
 

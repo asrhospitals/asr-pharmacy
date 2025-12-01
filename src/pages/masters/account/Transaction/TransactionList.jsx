@@ -209,7 +209,36 @@ const TransactionList = () => {
         </Button>,
       ]}
       search={search}
-      onSearchChange={e => { setSearch(e.target.value); setPage(1); }}
+      onSearchChange={e => {
+        setSearch(e.target.value);
+        setPage(1);
+      }}
+      extraFilters={
+        <div className="flex flex-wrap gap-2">
+          <select
+            className="px-3 py-2 border border-gray-300 rounded-md text-sm"
+            value={filters.voucherType}
+            onChange={(e) => handleFilterChange('voucherType', e.target.value)}
+          >
+            {voucherTypeOptions.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+          <select
+            className="px-3 py-2 border border-gray-300 rounded-md text-sm"
+            value={filters.status}
+            onChange={(e) => handleFilterChange('status', e.target.value)}
+          >
+            {statusOptions.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </div>
+      }
       tableData={data?.data || []}
       columns={columns}
       isLoading={isLoading}
@@ -220,6 +249,9 @@ const TransactionList = () => {
       onEdit={handleEdit}
       onDelete={(row) => handleDelete(row)}
       onArrowNavigation={handleKeyDown}
+      page={page}
+      totalPages={data?.totalPages || 1}
+      onPageChange={setPage}
       rowInfoPanel={
         selectedRow && (
           <div className="flex flex-col gap-1 text-xs">
@@ -258,58 +290,7 @@ const TransactionList = () => {
           </div>
         )
       }
-    >
-      
-      <div className="flex flex-wrap gap-2 mb-4">
-        <select
-          className="px-3 py-2 border border-gray-300 rounded-md text-sm"
-          value={filters.voucherType}
-          onChange={(e) => handleFilterChange('voucherType', e.target.value)}
-        >
-          {voucherTypeOptions.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
-        <select
-          className="px-3 py-2 border border-gray-300 rounded-md text-sm"
-          value={filters.status}
-          onChange={(e) => handleFilterChange('status', e.target.value)}
-        >
-          {statusOptions.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      
-      {data?.totalPages > 1 && (
-        <div className="flex justify-center mt-4">
-          <div className="flex gap-2">
-            <Button
-              variant="secondary"
-              onClick={() => setPage(Math.max(1, page - 1))}
-              disabled={page === 1}
-            >
-              Previous
-            </Button>
-            <span className="px-3 py-2 text-sm">
-              Page {page} of {data.totalPages}
-            </span>
-            <Button
-              variant="secondary"
-              onClick={() => setPage(Math.min(data.totalPages, page + 1))}
-              disabled={page === data.totalPages}
-            >
-              Next
-            </Button>
-          </div>
-        </div>
-      )}
-    </CommonPageLayout>
+    />
   );
 };
 
