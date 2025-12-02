@@ -82,6 +82,7 @@ export default function CreateItemPage() {
     reset,
     formState: { errors },
     setValue,
+    watch,
   } = useForm({
     defaultValues: {
       productname: "",
@@ -227,7 +228,7 @@ export default function CreateItemPage() {
                   onCreateCompany={() => navigate("/master/inventory/company/create")}
                   onCreateSalt={() => navigate("/master/inventory/salt/create")}
                 />
-                <RightColumn register={register} errors={errors} />
+                <RightColumn register={register} errors={errors} watch={watch} />
               </div>
             </div>
 

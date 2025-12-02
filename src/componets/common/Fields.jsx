@@ -11,22 +11,36 @@ const TextField = ({
   errors,
   noHeight,
   className,
-  noStyle
-}) => (
-  <div>
-    <label className="block font-medium mb-1">
-      {label} {required && <span className="text-red-500">*</span>}
-    </label>
-    <Input
-      className={`${noHeight ? "" : "h-8"} ${noStyle ? "" : "w-full text-xs"} ${className}`}
-      type={type}
-      {...register(name, required ? { required: message } : {})}
-    />
-    {errors[name] && (
-      <span className="text-xs text-red-500">{errors[name]?.message}</span>
-    )}
-  </div>
-);
+  noStyle,
+  validation = {},
+  step,
+  min,
+  max
+}) => {
+  const registerOptions = {
+    ...validation,
+    ...(required && { required: message })
+  };
+
+  return (
+    <div>
+      <label className="block font-medium mb-1">
+        {label} {required && <span className="text-red-500">*</span>}
+      </label>
+      <Input
+        className={`${noHeight ? "" : "h-8"} ${noStyle ? "" : "w-full text-xs"} ${className}`}
+        type={type}
+        step={step}
+        min={min}
+        max={max}
+        {...register(name, registerOptions)}
+      />
+      {errors[name] && (
+        <span className="text-xs text-red-500">{errors[name]?.message}</span>
+      )}
+    </div>
+  );
+};
 
 const SelectField = ({ label, name, options, register, noHeight }) => (
   <div>

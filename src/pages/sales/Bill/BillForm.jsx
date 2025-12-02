@@ -68,8 +68,12 @@ const BillForm = () => {
     const calcs = calculateBillTotals(
       form.items,
       form.billDiscountPercent,
-      form.cgstPercent,
-      form.sgstPercent
+      {
+        igstPercent: 0,
+        cgstPercent: form.cgstPercent,
+        sgstPercent: form.sgstPercent,
+        cessPercent: 0,
+      }
     );
     setCalculations(calcs);
   }, [form.items, form.billDiscountPercent, form.cgstPercent, form.sgstPercent]);
