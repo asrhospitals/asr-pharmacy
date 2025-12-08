@@ -1,8 +1,13 @@
-import React, { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState } from "react";
 import { Edit, Trash2, Eye, Plus } from "lucide-react";
 import Button from "./Button";
 import IconButton from "./IconButton";
 import Loader from "./Loader";
+
+// Helper function to access nested properties
+const getNestedValue = (obj, path) => {
+  return path.split('.').reduce((current, prop) => current?.[prop], obj) ?? "-";
+};
 
 const DataTable = ({
   title,
@@ -153,8 +158,8 @@ const DataTable = ({
                     }`}
                   >
                     {column.render
-                      ? column.render(row[column.key], row)
-                      : row[column.key] ?? "-"}
+                      ? column.render(getNestedValue(row, column.key), row)
+                      : getNestedValue(row, column.key)}
                   </td>
                 ))}
 
