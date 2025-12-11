@@ -19,6 +19,7 @@ import CreateHsnSacForm from "../hsn/AddHSN";
 import AddRack from "../rack/AddRack";
 import { useGetPurchaseMastersQuery } from "../../../../services/purchaseMasterApi";
 import { useSelector } from "react-redux";
+import ConfirmPopUp from "./ConfirmPopUp"; //added import for popup
 
 const ADVANCE_TABS = ["Discount", "Quantity", "Other Info"];
 
@@ -38,7 +39,7 @@ export default function CreateItemPage() {
   const [isUnitModalOpen, setIsUnitModalOpen] = useState(false);
   const [isHSNModalOpen, setIsHSNModalOpen] = useState(false);
   const [isRackModalOpen, setIsRackModalOpen] = useState(false);
-
+  const [isPopupOpen,setIsPopupOpen] = useState(false); // added state for Pop Up Notification
 
   const { data: rackData } = useGetRacksQuery();
   const { data: companyData } = useGetCompaniesQuery();
@@ -122,11 +123,24 @@ export default function CreateItemPage() {
     try {
       await addItem(data).unwrap();
       showToast("Data saved successfully", { type: "success" });
-      reset();
+      //reset();
+      setIsPopupOpen(true); // added line here
     } catch (error) {
       showToast(error?.data?.message || "Failed to save item", { type: "error" });
     }
   };
+  //adding functionality for Opening stock YES/NO
+  const handleOpeningStock=()=>{
+    setIsPopupOpen(false);
+    navigate('/master/inventory/items/opening-stock');
+
+  }
+
+  const gotoItems=()=>{
+    setIsPopupOpen(false);
+    navigate("/master/inventory/items");
+  }
+  // pop-up functionality ends here
 
   const handleClear = () => {
     showToast("All Fields Cleared", { type: "success" });
@@ -138,23 +152,29 @@ export default function CreateItemPage() {
 
   return (
     <div className="flex flex-col overflow-hidden no-scrollbar">
-      
-      <AddRack isOpen={isRackModalOpen} onClose={() => setIsRackModalOpen(false)} />
-      <CreateUnitForm isOpen={isUnitModalOpen} onClose={() => setIsUnitModalOpen(false)} />
-      <CreateHsnSacForm isOpen={isHSNModalOpen} onClose={() => setIsHSNModalOpen(false)} />
+      <AddRack
+        isOpen={isRackModalOpen}
+        onClose={() => setIsRackModalOpen(false)}
+      />
+      <CreateUnitForm
+        isOpen={isUnitModalOpen}
+        onClose={() => setIsUnitModalOpen(false)}
+      />
+      <CreateHsnSacForm
+        isOpen={isHSNModalOpen}
+        onClose={() => setIsHSNModalOpen(false)}
+      />
       <form
         onSubmit={handleSubmit(handleSave)}
         className="flex-1 flex flex-col relative"
       >
         <div className="flex flex-col lg:flex-row gap-4 p-1">
-          
           <div
             className={`
           bg-white rounded shadow p-4 transition-all duration-500
           ${showAdvance ? "lg:w-3/5" : "lg:w-full"} w-full
         `}
           >
-            
             <div className="flex items-center justify-between sticky top-0 z-10 bg-white">
               <h1 className="text-xl font-bold">Create Item</h1>
               <Button type="button" variant="secondary" onClick={handleBack}>
@@ -162,7 +182,6 @@ export default function CreateItemPage() {
               </Button>
             </div>
 
-            
             <div className="flex mb-2 pb-2 border-b justify-between items-center">
               <div className="flex items-center gap-4">
                 <span className="font-semibold text-base border-b-2 border-black pb-1">
@@ -182,9 +201,7 @@ export default function CreateItemPage() {
               </div>
             </div>
 
-            
             <div className="space-y-4 text-m">
-              
               <div className="flex flex-col sm:flex-row gap-4">
                 <div className="flex-1">
                   <label className="block font-medium mb-1">Product *</label>
@@ -213,7 +230,6 @@ export default function CreateItemPage() {
                 </div>
               </div>
 
-              
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <LeftColumn
                   allData={allData}
@@ -225,14 +241,19 @@ export default function CreateItemPage() {
                   onCreateRack={() => setIsRackModalOpen(true)}
                   onCreateUnit={() => setIsUnitModalOpen(true)}
                   onCreateHSN={() => setIsHSNModalOpen(true)}
-                  onCreateCompany={() => navigate("/master/inventory/company/create")}
+                  onCreateCompany={() =>
+                    navigate("/master/inventory/company/create")
+                  }
                   onCreateSalt={() => navigate("/master/inventory/salt/create")}
                 />
-                <RightColumn register={register} errors={errors} watch={watch} />
+                <RightColumn
+                  register={register}
+                  errors={errors}
+                  watch={watch}
+                />
               </div>
             </div>
 
-            
             <div className="bg-white h-10 py-2 flex items-center gap-2 justify-end z-10 sticky bottom-0 text-m">
               <Button type="button" variant="secondary" onClick={handleBack}>
                 F4 Switch Tab
@@ -264,7 +285,6 @@ export default function CreateItemPage() {
             </div>
           </div>
 
-          
           <div
             className={`
           transition-all duration-500
@@ -291,7 +311,6 @@ export default function CreateItemPage() {
                   ))}
                 </div>
 
-                
                 {activeTab === "Discount" && (
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-m">
                     <div>
@@ -338,6 +357,11 @@ export default function CreateItemPage() {
           </div>
         </div>
       </form>
+      <ConfirmPopUp
+        open={isPopupOpen}
+        onYes={handleOpeningStock}
+        onNo={gotoItems}
+      />
     </div>
   );
 }
