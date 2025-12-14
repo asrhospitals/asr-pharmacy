@@ -8,10 +8,10 @@ function ConfirmPopUp({ open, onYes, onNo }) {
     <div className="fixed inset-0 backdrop-blur-2xl flex items-start justify-center z-50">
       <div className="bg-white w-[380px] rounded-2xl shadow-lg p-6 m-10 text-center">
         <div
-          className="mx-auto w-12 h-12 rounded-full border border-purple-500 
+          className="mx-auto w-12 h-12 rounded-full border border-blue-500 
         flex items-center justify-center mb-3"
         >
-          <span className="text-purple-600">
+          <span className="text-blue-600">
             <TriangleAlert />
           </span>
         </div>
@@ -23,14 +23,14 @@ function ConfirmPopUp({ open, onYes, onNo }) {
         <div className="flex justify-center gap-4 mt-6">
           <button
             onClick={onYes}
-            className="bg-purple-600 text-white px-6 py-2 rounded-full hover:bg-purple-800"
+            className="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700"
           >
             Yes
           </button>
 
           <button
             onClick={onNo}
-            className="border border-purple-500 text-purple-700 px-6 py-2 rounded-full 
+            className="border border-blue-500 text-blue-700 px-6 py-2 rounded-full 
             hover:bg-red-100 hover:text-red-600 transition-colors"
           >
             No
