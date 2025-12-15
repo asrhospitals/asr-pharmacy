@@ -24,6 +24,7 @@ import { ledgerEntryApi } from './services/ledgerEntryApi';
 import { saleMasterApi } from './services/saleMasterApi';
 import { purchaseMasterApi } from './services/purchaseMasterApi';
 import { purchaseBillApi } from './services/purchaseBillApi';
+import { batchApi } from './services/batchApi';
 import { stationApi } from './services/stationApi';
 import { userCompanyApi } from './services/userCompanyApi';
 
@@ -61,6 +62,7 @@ const rootReducer = combineReducers({
     [saleMasterApi.reducerPath]: saleMasterApi.reducer,
     [purchaseMasterApi.reducerPath]: purchaseMasterApi.reducer,
     [purchaseBillApi.reducerPath]: purchaseBillApi.reducer,
+    [batchApi.reducerPath]: batchApi.reducer,
     [stationApi.reducerPath]: stationApi.reducer,
     [userCompanyApi.reducerPath]: userCompanyApi.reducer,
     user: userReducer,
@@ -95,6 +97,7 @@ export const store = configureStore({
       saleMasterApi.middleware,
       purchaseMasterApi.middleware,
       purchaseBillApi.middleware,
+      batchApi.middleware,
       stationApi.middleware,
       userCompanyApi.middleware,
     ),
