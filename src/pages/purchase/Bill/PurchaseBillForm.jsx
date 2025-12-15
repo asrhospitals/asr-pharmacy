@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Trash2, Plus, Save, X } from "lucide-react";
 import {
@@ -6,13 +6,11 @@ import {
   useUpdateBillMutation,
   useGetBillByIdQuery,
 } from "../../../services/purchaseBillApi";
-import { useGetLedgersQuery } from "../../../services/ledgerApi";
-import { useGetPurchaseMastersQuery } from "../../../services/purchaseMasterApi";
 import { useGetItemsQuery } from "../../../services/itemApi";
 import SelectItemDialog from "../../../componets/common/SelectItemDialog";
 import LedgerListModal from "../../sales/Bill/LedgerListModal";
 import PurchaseMasterListModal from "./PurchaseMasterListModal";
-import { useSelector } from "react-redux";
+import BatchSelectionDialog from "./BatchSelectionDialog";
 import toast from "react-hot-toast";
 
 import { calculateBillTotals } from "../../../utils/billCalculations";
@@ -59,7 +57,10 @@ const PurchaseBillForm = () => {
   const [showItemDialog, setShowItemDialog] = useState(false);
   const [showLedgerDialog, setShowLedgerDialog] = useState(false);
   const [showPurchaseMasterDialog, setShowPurchaseMasterDialog] = useState(false);
+  const [showBatchDialog, setShowBatchDialog] = useState(false);
   const [selectedItemRowIndex, setSelectedItemRowIndex] = useState(null);
+  const [selectedBatchRowIndex, setSelectedBatchRowIndex] = useState(null);
+  const [selectedItemIdForBatch, setSelectedItemIdForBatch] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -101,10 +102,30 @@ const PurchaseBillForm = () => {
         mrp: item.mrp || 0,
         rate: item.purchaseRate || item.mrp || 0,
         packing: item.packing || "",
+        batchId: "", // Reset batch when item changes
+        batch: "",
       };
       setForm((prev) => ({ ...prev, items: newItems }));
       setSelectedItemRowIndex(null);
     }
+  };
+
+  const handleBatchSelect = (batch) => {
+    if (selectedBatchRowIndex !== null) {
+      const newItems = [...form.items];
+      newItems[selectedBatchRowIndex] = {
+        ...newItems[selectedBatchRowIndex],
+        batchId: batch.id,
+        batch: batch.batchNumber,
+        expiryDate: batch.expiryDate || "",
+        mrp: batch.mrp || newItems[selectedBatchRowIndex].mrp,
+        rate: batch.purchaseRate || newItems[selectedBatchRowIndex].rate,
+      };
+      setForm((prev) => ({ ...prev, items: newItems }));
+      setSelectedBatchRowIndex(null);
+      setSelectedItemIdForBatch(null);
+    }
+    setShowBatchDialog(false);
   };
 
   const handleItemChange = (index, field, value) => {
@@ -219,6 +240,16 @@ const PurchaseBillForm = () => {
           setPurchaseMasterData(master);
           setShowPurchaseMasterDialog(false);
         }}
+      />
+      <BatchSelectionDialog
+        open={showBatchDialog}
+        onClose={() => {
+          setShowBatchDialog(false);
+          setSelectedBatchRowIndex(null);
+          setSelectedItemIdForBatch(null);
+        }}
+        onSelectBatch={handleBatchSelect}
+        itemId={selectedItemIdForBatch}
       />
 
       <div className="max-w-full mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
@@ -368,8 +399,18 @@ const PurchaseBillForm = () => {
                         <input
                           type="text"
                           value={item.batch}
-                          onChange={(e) => handleItemChange(idx, "batch", e.target.value)}
-                          className="w-full px-2 py-1 border border-gray-300 rounded text-xs focus:outline-none focus:ring-2 focus:ring-green-500"
+                          onFocus={() => {
+                            if (item.itemId) {
+                              setSelectedBatchRowIndex(idx);
+                              setSelectedItemIdForBatch(item.itemId);
+                              setShowBatchDialog(true);
+                            } else {
+                              toast.error("Please select an item first");
+                            }
+                          }}
+                          readOnly
+                          placeholder="Click to select batch"
+                          className="w-full px-2 py-1 border border-gray-300 rounded bg-gray-50 cursor-pointer text-xs focus:outline-none focus:ring-2 focus:ring-green-500"
                         />
                       </td>
                       <td className="px-3 py-2">
