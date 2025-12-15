@@ -6,7 +6,7 @@ import Button from "../../../../componets/common/Button";
 import { Plus } from "lucide-react";
 import Select from "../../../../componets/common/Select";
 import CommonPageLayout from "../../../../componets/layout/CommonPageLayout";
-import { useDebounce } from '../../../../utils/useDebounce';
+import { useDebounce } from "../../../../utils/useDebounce";
 
 const ItemsPage = () => {
   const [selectedRow, setSelectedRow] = useState(null);
@@ -32,9 +32,8 @@ const ItemsPage = () => {
   const columns = [
     { key: "productname", title: "Item Name" },
     { key: "packing", title: "Packing" },
-    { key: "company", title: "Company" },
-    { key: "stock", title: "Stock" },
-    { key: "unit1", title: "Unit" },
+    { key: "CompanyDetails.companyname", title: "Company" },
+    { key: "Unit1.unitName", title: "Unit" },
     { key: "price", title: "M.R.P" },
   ];
 
@@ -82,42 +81,6 @@ const ItemsPage = () => {
       page={page}
       totalPages={data?.totalPages || 1}
       onPageChange={setPage}
-      rowInfoPanel={
-        selectedRow && (
-          <div className="w-full grid grid-cols-1 md:grid-cols-4 gap-2 text-xs sm:text-sm">
-            <div className="border rounded bg-white p-2">
-              <div className="font-semibold border-b mb-1">Purchase Info</div>
-              <div>M.R.P : <b>₹ {selectedRow.price}</b></div>
-              <div>Pur. Rate : <b>₹ {selectedRow.purchasePrice || "-"}</b></div>
-              <div>Cost : <b>₹ {selectedRow.cost || "-"}</b></div>
-              <div>Cost+Tax : <b>₹ {selectedRow.costWithTax || "-"}</b></div>
-              <div>Pur. Disc : <b>{selectedRow.purchaseDiscount || "-"}</b></div>
-            </div>
-            <div className="border rounded bg-white p-2">
-              <div className="font-semibold border-b mb-1">Sale Info</div>
-              <div>Rate : <b>₹ {selectedRow.salerate || selectedRow.price || "-"}</b></div>
-              <div>Margin % : <b>{selectedRow.margin || "-"}</b></div>
-              <div>Deal Free : <b>{selectedRow.dealFree || "-"}</b></div>
-              <div>W/o Deal : <b>{selectedRow.withoutDeal || "-"}</b></div>
-            </div>
-            <div className="border rounded bg-white p-2">
-              <div className="font-semibold border-b mb-1">Tax Info</div>
-              <div>HSN/SAC : <b>{selectedRow.hsnsac || "-"}</b></div>
-              <div>IGST % : <b>{selectedRow.igst || "-"}</b></div>
-              <div>CGST % : <b>{selectedRow.cgst || "-"}</b></div>
-              <div>SGST % : <b>{selectedRow.sgst || "-"}</b></div>
-            </div>
-            <div className="border rounded bg-white p-2">
-              <div className="font-semibold border-b mb-1">Other Info</div>
-              <div>Company : <b>{selectedRow.company || "-"}</b></div>
-              <div>Mfr. : <b>{selectedRow.mfr || "-"}</b></div>
-              <div>Conv. : <b>{selectedRow.conversion || "-"}</b></div>
-              <div>Salt : <b>{selectedRow.salt || "-"}</b></div>
-              <div>Rack No. : <b>{selectedRow.rack || "-"}</b></div>
-            </div>
-          </div>
-        )
-      }
     />
   );
 };

@@ -121,6 +121,26 @@ export default function CreateItemPage() {
 
   const handleSave = async (data) => {
     try {
+      const requiredFields = {
+        productname: "Product Name",
+        unit1: "Unit",
+        hsnsac: "HSN/SAC",
+        taxcategory: "Tax Category",
+        company: "Company"
+      };
+
+      const missingFields = [];
+      for (const [field, label] of Object.entries(requiredFields)) {
+        if (!data[field] || data[field].trim?.() === "" || data[field] === "") {
+          missingFields.push(label);
+        }
+      }
+
+      if (missingFields.length > 0) {
+        showToast(`Please fill required fields: ${missingFields.join(", ")}`, { type: "error" });
+        return;
+      }
+
       await addItem(data).unwrap();
       showToast("Data saved successfully", { type: "success" });
       //reset();
