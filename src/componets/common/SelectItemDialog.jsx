@@ -119,7 +119,8 @@ const SelectItemDialog = ({ open, onClose, onSelectItem }) => {
                               id: item.id,
                               name: item.productname,
                               packing: item.packing,
-                              mrp: item.salerate || item.price,
+                              mrp: item.price,
+                              purchasePrice: item.purchasePrice,
                               unit: item.Unit1?.unitName,
                               stock: item.stock || 0,
                             });

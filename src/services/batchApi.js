@@ -2,8 +2,8 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 import { createBaseQueryWithAuth } from "./apiBase";
 
 const baseUrl = import.meta.env.VITE_BACKEND_BASE_URL
-  ? `${import.meta.env.VITE_BACKEND_BASE_URL}/pharmacy/admin/masters/batch`
-  : "/pharmacy/admin/masters/batch";
+  ? `${import.meta.env.VITE_BACKEND_BASE_URL}/pharmacy/admin/master/batch`
+  : "/pharmacy/admin/master/batch";
 
 export const batchApi = createApi({
   reducerPath: "batchApi",
@@ -11,10 +11,7 @@ export const batchApi = createApi({
   tagTypes: ["Batch"],
   endpoints: (builder) => ({
     getBatchesByItem: builder.query({
-      query: (itemId) => ({
-        url: `/v1/get-by-item/${itemId}`,
-        method: "GET",
-      }),
+      query: (itemId) => `/v1/get-by-item/${itemId}`,
       providesTags: ["Batch"],
     }),
 
@@ -23,20 +20,23 @@ export const batchApi = createApi({
         const params = new URLSearchParams();
         if (itemId) params.append("itemId", itemId);
         if (status) params.append("status", status);
-        return {
-          url: `/v1/get-all?${params.toString()}`,
-          method: "GET",
-        };
+        return `/v1/get-all?${params.toString()}`;
       },
       providesTags: ["Batch"],
     }),
 
     getBatchById: builder.query({
-      query: (id) => ({
-        url: `/v1/get/${id}`,
-        method: "GET",
-      }),
+      query: (id) => `/v1/get/${id}`,
       providesTags: (result, error, id) => [{ type: "Batch", id }],
+    }),
+
+    createBatch: builder.mutation({
+      query: (batchData) => ({
+        url: "/v1/create",
+        method: "POST",
+        body: batchData,
+      }),
+      invalidatesTags: ["Batch"],
     }),
   }),
 });
@@ -45,4 +45,5 @@ export const {
   useGetBatchesByItemQuery,
   useGetAllBatchesQuery,
   useGetBatchByIdQuery,
+  useCreateBatchMutation,
 } = batchApi;

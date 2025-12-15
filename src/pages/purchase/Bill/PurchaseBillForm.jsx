@@ -62,6 +62,19 @@ const PurchaseBillForm = () => {
   const [selectedBatchRowIndex, setSelectedBatchRowIndex] = useState(null);
   const [selectedItemIdForBatch, setSelectedItemIdForBatch] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [paymentMode, setPaymentMode] = useState("cash");
+  const [cashDenominations, setCashDenominations] = useState({
+    "2000": 0,
+    "500": 0,
+    "200": 0,
+    "100": 0,
+    "50": 0,
+    "20": 0,
+    "10": 0,
+    "5": 0,
+    "2": 0,
+    "1": 0,
+  });
 
   useEffect(() => {
     if (billData?.data) {
@@ -93,20 +106,26 @@ const PurchaseBillForm = () => {
   }, [form.items, form.billDiscountPercent, form.purchaseMasterId, purchaseMasterData]);
 
   const handleItemSelect = (item) => {
+    console.log("Item selected:", item);
+    console.log("Selected row index:", selectedItemRowIndex);
+    
     if (selectedItemRowIndex !== null) {
       const newItems = [...form.items];
-      newItems[selectedItemRowIndex] = {
+      const updatedItem = {
         ...newItems[selectedItemRowIndex],
         itemId: item.id,
-        product: item.itemName,
-        mrp: item.mrp || 0,
-        rate: item.purchaseRate || item.mrp || 0,
+        product: item.name || item.itemName || "",
+        mrp: item.mrp || item.price || 0,
+        rate: item.purchasePrice || item.purchaseRate || item.mrp || item.price || 0,
         packing: item.packing || "",
         batchId: "", // Reset batch when item changes
         batch: "",
       };
+      console.log("Updated item:", updatedItem);
+      newItems[selectedItemRowIndex] = updatedItem;
       setForm((prev) => ({ ...prev, items: newItems }));
       setSelectedItemRowIndex(null);
+      setShowItemDialog(false);
     }
   };
 
@@ -140,8 +159,10 @@ const PurchaseBillForm = () => {
       items: [
         ...prev.items,
         {
+          itemId: "",
           product: "",
           packing: "",
+          batchId: "",
           batch: "",
           expDate: "",
           unit1: "",
@@ -150,6 +171,7 @@ const PurchaseBillForm = () => {
           rate: 0,
           quantity: 1,
           discountPercent: 0,
+          amount: 0,
         },
       ],
     }));
@@ -250,6 +272,11 @@ const PurchaseBillForm = () => {
         }}
         onSelectBatch={handleBatchSelect}
         itemId={selectedItemIdForBatch}
+        itemName={
+          selectedBatchRowIndex !== null
+            ? form.items[selectedBatchRowIndex]?.product || "Unknown Item"
+            : "Unknown Item"
+        }
       />
 
       <div className="max-w-full mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
@@ -377,14 +404,14 @@ const PurchaseBillForm = () => {
                       <td className="px-3 py-2">
                         <input
                           type="text"
-                          value={item.product}
+                          value={item.product || ""}
                           onFocus={() => {
                             setSelectedItemRowIndex(idx);
                             setShowItemDialog(true);
                           }}
                           readOnly
                           placeholder="Click to select"
-                          className="w-full px-2 py-1 border border-gray-300 rounded bg-gray-50 cursor-pointer text-xs focus:outline-none focus:ring-2 focus:ring-green-500"
+                          className="w-full px-2 py-1 border border-gray-300 rounded bg-gray-50 cursor-pointer text-xs text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-500"
                         />
                       </td>
                       <td className="px-3 py-2">
@@ -449,7 +476,7 @@ const PurchaseBillForm = () => {
                         />
                       </td>
                       <td className="px-3 py-2 text-right font-semibold text-xs text-gray-900">
-                        ₹{formatCurrency(item.amount || 0)}
+                        ₹{formatCurrency(calculations.items?.[idx]?.amount || 0)}
                       </td>
                       <td className="px-3 py-2 text-center">
                         <button
@@ -533,6 +560,100 @@ const PurchaseBillForm = () => {
               rows="3"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
             />
+          </div>
+
+          {/* Payment Mode Section */}
+          <div className="pb-6 border-b border-gray-200">
+            <h3 className="text-lg font-bold text-gray-800 mb-4">Payment Details</h3>
+            
+            <div className="mb-4">
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Payment Mode
+              </label>
+              <div className="flex gap-4">
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    value="cash"
+                    checked={paymentMode === "cash"}
+                    onChange={(e) => setPaymentMode(e.target.value)}
+                    className="mr-2"
+                  />
+                  <span className="text-gray-700">Cash</span>
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    value="online"
+                    checked={paymentMode === "online"}
+                    onChange={(e) => setPaymentMode(e.target.value)}
+                    className="mr-2"
+                  />
+                  <span className="text-gray-700">Online</span>
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    value="cheque"
+                    checked={paymentMode === "cheque"}
+                    onChange={(e) => setPaymentMode(e.target.value)}
+                    className="mr-2"
+                  />
+                  <span className="text-gray-700">Cheque</span>
+                </label>
+                <label className="flex items-center">
+                  <input
+                    type="radio"
+                    value="credit"
+                    checked={paymentMode === "credit"}
+                    onChange={(e) => setPaymentMode(e.target.value)}
+                    className="mr-2"
+                  />
+                  <span className="text-gray-700">Credit</span>
+                </label>
+              </div>
+            </div>
+
+            {paymentMode === "cash" && (
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-3">
+                  Cash Denominations
+                </label>
+                <div className="grid grid-cols-5 gap-3">
+                  {Object.keys(cashDenominations).map((denomination) => (
+                    <div key={denomination}>
+                      <label className="block text-xs text-gray-600 mb-1">
+                        ₹{denomination}
+                      </label>
+                      <input
+                        type="number"
+                        min="0"
+                        value={cashDenominations[denomination]}
+                        onChange={(e) =>
+                          setCashDenominations({
+                            ...cashDenominations,
+                            [denomination]: parseInt(e.target.value) || 0,
+                          })
+                        }
+                        className="w-full px-2 py-1 border border-gray-300 rounded text-sm text-center focus:outline-none focus:ring-2 focus:ring-green-500"
+                        placeholder="0"
+                      />
+                      <div className="text-xs text-gray-600 mt-1 text-center">
+                        = ₹{(denomination * cashDenominations[denomination]).toFixed(2)}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+                  <div className="text-sm font-semibold text-gray-800">
+                    Total Cash: ₹
+                    {Object.keys(cashDenominations)
+                      .reduce((sum, denom) => sum + denom * cashDenominations[denom], 0)
+                      .toFixed(2)}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Action Buttons */}
