@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import Modal from "../../../componets/common/Modal.jsx";
-import DataTable from "../../../componets/common/DataTable.jsx";
-import StatusBadge from "../../../componets/common/StatusBadge.jsx";
-import { useGetPurchaseMastersQuery } from "../../../services/purchaseMasterApi.js";
-import { useDebounce } from "../../../utils/useDebounce.js";
-import Pagination from "../../../componets/common/Pagination.jsx";
-import Input from "../../../componets/common/Input.jsx";
+import Modal from "../../../../componets/common/Modal.jsx";
+import DataTable from "../../../../componets/common/DataTable.jsx";
+import StatusBadge from "../../../../componets/common/StatusBadge.jsx";
+import { useGetPurchaseMastersQuery } from "../../../../services/purchaseMasterApi.js";
+import { useDebounce } from "../../../../utils/useDebounce.js";
+import Pagination from "../../../../componets/common/Pagination.jsx";
+import Input from "../../../../componets/common/Input.jsx";
 
 const PurchaseMasterListModal = ({ open, onClose, onSelectPurchaseMaster }) => {
   const [search, setSearch] = useState("");

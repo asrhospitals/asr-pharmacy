@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { X, Search, Plus } from "lucide-react";
-import { useGetBatchesByItemQuery, useCreateBatchMutation } from "../../../services/batchApi";
+import { useGetBatchesByItemQuery, useCreateBatchMutation } from "../../../../services/batchApi";
 import toast from "react-hot-toast";
 
 const BatchSelectionDialog = ({ open, onClose, onSelectBatch, itemId, itemName }) => {
