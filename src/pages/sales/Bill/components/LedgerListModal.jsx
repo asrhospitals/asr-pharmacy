@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import Modal from "../../../componets/common/Modal.jsx";
-import DataTable from "../../../componets/common/DataTable.jsx";
-import StatusBadge from "../../../componets/common/StatusBadge.jsx";
-import { useGetLedgersQuery } from "../../../services/ledgerApi.js";
-import { useDebounce } from "../../../utils/useDebounce.js";
-import Pagination from "../../../componets/common/Pagination.jsx";
-import Input from "../../../componets/common/Input.jsx";
-import Select from "../../../componets/common/Select.jsx";
+import Modal from "../../../../componets/common/Modal.jsx";
+import DataTable from "../../../../componets/common/DataTable.jsx";
+import StatusBadge from "../../../../componets/common/StatusBadge.jsx";
+import { useGetLedgersQuery } from "../../../../services/ledgerApi.js";
+import { useDebounce } from "../../../../utils/useDebounce.js";
+import Pagination from "../../../../componets/common/Pagination.jsx";
+import Input from "../../../../componets/common/Input.jsx";
+import Select from "../../../../componets/common/Select.jsx";
 
 const LedgerListModal = ({ open, onClose, onSelectLedger }) => {
   const [search, setSearch] = useState("");

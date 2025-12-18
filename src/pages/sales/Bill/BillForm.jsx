@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Trash2, Plus, Save, X } from "lucide-react";
+import { Save, X } from "lucide-react";
 import {
   useCreateBillMutation,
   useUpdateBillMutation,
@@ -8,10 +8,17 @@ import {
 } from "../../../services/salesBillApi";
 import PatientListModal from "../../masters/other/prescription/PatientListModal";
 import DoctorListModal from "../../masters/other/doctor/DoctorListModal";
-import LedgerListModal from "./LedgerListModal";
+import LedgerListModal from "../Bill/components/LedgerListModal";
 import SelectItemDialog from "../../../componets/common/SelectItemDialog";
+import Button from "../../../componets/common/Button";
 import { calculateBillTotals, formatCurrency } from "../../../utils/billCalculations";
 import toast from "react-hot-toast";
+
+import SaleBillHeaderSection from "../Bill/components/SaleBillHeaderSection";
+import PartyDetailsSection from "../Bill/components/PartyDetailsSection";
+import SaleItemsTableSection from "../Bill/components/SaleItemsTableSection";
+import SaleCalculationsSection from "../Bill/components/SaleCalculationsSection";
+import SaleTotalSection from "../Bill/components/SaleTotalSection";
 
 const BillForm = () => {
   const navigate = useNavigate();
@@ -227,342 +234,42 @@ const BillForm = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          {/* Bill Header Section */}
-          <div className="grid grid-cols-4 gap-4 pb-6 border-b border-gray-200">
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Bill No.
-              </label>
-              <input
-                type="text"
-                value={form.billNo}
-                onChange={(e) => setForm({ ...form, billNo: e.target.value })}
-                placeholder="Auto-generated"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Date
-              </label>
-              <input
-                type="date"
-                value={form.date}
-                onChange={(e) => setForm({ ...form, date: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                required
-              />
-            </div>
-            <div className="col-span-2">
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Party Name
-              </label>
-              <input
-                type="text"
-                value={form.partyName}
-                onClick={() => setShowLedgerDialog(true)}
-                readOnly
-                placeholder="Click to select party"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-          </div>
+          <SaleBillHeaderSection
+            form={form}
+            setForm={setForm}
+            onShowLedgerDialog={() => setShowLedgerDialog(true)}
+          />
 
-          {/* Patient & Doctor Section */}
-          <div className="grid grid-cols-4 gap-4 pb-6 border-b border-gray-200">
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Patient Mob./ID
-              </label>
-              <input
-                type="text"
-                value={form.patientId}
-                onClick={() => setShowPatientDialog(true)}
-                readOnly
-                placeholder="Click to select patient"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Patient Name
-              </label>
-              <input
-                type="text"
-                value={form.patientName}
-                onClick={() => setShowPatientDialog(true)}
-                readOnly
-                placeholder="Click to select patient"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Doctor Mob./ID
-              </label>
-              <input
-                type="text"
-                value={form.doctorId}
-                placeholder="Doctor ID"
-                onFocus={() => setShowDoctorDialog(true)}
-                readOnly
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Doctor Name
-              </label>
-              <input
-                type="text"
-                value={form.doctorName}
-                placeholder="Doctor Name"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                onChange={(e) => setForm({ ...form, doctorName: e.target.value })}
-              />
-            </div>
-          </div>
+          <PartyDetailsSection
+            form={form}
+            setForm={setForm}
+            onShowPatientDialog={() => setShowPatientDialog(true)}
+            onShowDoctorDialog={() => setShowDoctorDialog(true)}
+          />
 
-          {/* Address Section */}
-          <div className="pb-6 border-b border-gray-200">
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Address
-            </label>
-            <input
-              type="text"
-              value={form.address}
-              placeholder="Address"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              onChange={(e) => setForm({ ...form, address: e.target.value })}
-            />
-          </div>
+          <SaleItemsTableSection
+            items={form.items}
+            onItemChange={handleItemChange}
+            onAddItem={addItem}
+            onRemoveItem={removeItem}
+            onSelectItem={(idx) => {
+              setSelectedItemRowIndex(idx);
+              setShowItemDialog(true);
+            }}
+            formatCurrency={formatCurrency}
+          />
 
-          {/* Items Table */}
-          <div>
-            <h2 className="text-lg font-bold text-gray-800 mb-4">Products</h2>
-            <div className="overflow-x-auto border border-gray-200 rounded-lg">
-              <table className="w-full text-sm">
-                <thead className="bg-blue-50 border-b border-gray-200">
-                  <tr>
-                    <th className="px-3 py-3 text-left font-semibold text-gray-700">Product</th>
-                    <th className="px-3 py-3 text-left font-semibold text-gray-700">Packing</th>
-                    <th className="px-3 py-3 text-left font-semibold text-gray-700">Batch</th>
-                    <th className="px-3 py-3 text-left font-semibold text-gray-700">Exp. Date</th>
-                    <th className="px-3 py-3 text-center font-semibold text-gray-700">Unit-2</th>
-                    <th className="px-3 py-3 text-center font-semibold text-gray-700">Unit-1</th>
-                    <th className="px-3 py-3 text-right font-semibold text-gray-700">Rate</th>
-                    <th className="px-3 py-3 text-center font-semibold text-gray-700">Qty</th>
-                    <th className="px-3 py-3 text-center font-semibold text-gray-700">Disc %</th>
-                    <th className="px-3 py-3 text-right font-semibold text-gray-700">Amount</th>
-                    <th className="px-3 py-3 text-center font-semibold text-gray-700">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {form.items.map((item, idx) => (
-                    <tr key={idx} className="border-b border-gray-200 hover:bg-blue-50 transition">
-                      <td className="px-3 py-2">
-                        <input
-                          type="text"
-                          value={item.product}
-                          onFocus={() => {
-                            setSelectedItemRowIndex(idx);
-                            setShowItemDialog(true);
-                          }}
-                          readOnly
-                          placeholder="Click to select"
-                          className="w-full px-2 py-1 border border-gray-300 rounded bg-gray-50 cursor-pointer text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                      </td>
-                      <td className="px-3 py-2">
-                        <input
-                          type="text"
-                          value={item.packing}
-                          onChange={(e) =>
-                            handleItemChange(idx, "packing", e.target.value)
-                          }
-                          className="w-full px-2 py-1 border border-gray-300 rounded text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                      </td>
-                      <td className="px-3 py-2">
-                        <input
-                          type="text"
-                          value={item.batch}
-                          onChange={(e) =>
-                            handleItemChange(idx, "batch", e.target.value)
-                          }
-                          className="w-full px-2 py-1 border border-gray-300 rounded text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                      </td>
-                      <td className="px-3 py-2">
-                        <input
-                          type="date"
-                          value={item.expDate}
-                          onChange={(e) =>
-                            handleItemChange(idx, "expDate", e.target.value)
-                          }
-                          className="w-full px-2 py-1 border border-gray-300 rounded text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                      </td>
-                      <td className="px-3 py-2">
-                        <input
-                          type="text"
-                          value={item.unit2}
-                          onChange={(e) =>
-                            handleItemChange(idx, "unit2", e.target.value)
-                          }
-                          className="w-full px-2 py-1 border border-gray-300 rounded text-xs text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                      </td>
-                      <td className="px-3 py-2">
-                        <input
-                          type="text"
-                          value={item.unit1}
-                          onChange={(e) =>
-                            handleItemChange(idx, "unit1", e.target.value)
-                          }
-                          className="w-full px-2 py-1 border border-gray-300 rounded text-xs text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                      </td>
-                      <td className="px-3 py-2">
-                        <input
-                          type="number"
-                          value={item.rate}
-                          onChange={(e) =>
-                            handleItemChange(idx, "rate", parseFloat(e.target.value) || 0)
-                          }
-                          className="w-full px-2 py-1 border border-gray-300 rounded text-xs text-right focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          step="0.01"
-                        />
-                      </td>
-                      <td className="px-3 py-2">
-                        <input
-                          type="number"
-                          value={item.quantity}
-                          onChange={(e) =>
-                            handleItemChange(idx, "quantity", parseFloat(e.target.value) || 1)
-                          }
-                          className="w-full px-2 py-1 border border-gray-300 rounded text-xs text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          step="0.01"
-                        />
-                      </td>
-                      <td className="px-3 py-2">
-                        <input
-                          type="number"
-                          value={item.discountPercent}
-                          onChange={(e) =>
-                            handleItemChange(idx, "discountPercent", parseFloat(e.target.value) || 0)
-                          }
-                          className="w-full px-2 py-1 border border-gray-300 rounded text-xs text-center focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          step="0.01"
-                        />
-                      </td>
-                      <td className="px-3 py-2 text-right font-semibold text-xs text-gray-900">
-                        ₹{formatCurrency(item.amount || 0)}
-                      </td>
-                      <td className="px-3 py-2 text-center">
-                        <button
-                          type="button"
-                          onClick={() => removeItem(idx)}
-                          className="text-red-600 hover:text-red-800 transition"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <button
-              type="button"
-              onClick={addItem}
-              className="mt-3 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2 text-sm font-semibold transition"
-            >
-              <Plus size={16} /> Add Product
-            </button>
-          </div>
+          <SaleCalculationsSection
+            form={form}
+            setForm={setForm}
+            calculations={calculations}
+            formatCurrency={formatCurrency}
+          />
 
-          {/* Calculations Section */}
-          <div className="grid grid-cols-4 gap-4">
-            <div className="p-4 bg-gray-25 rounded-lg border border-gray-200">
-              <div className="text-xs text-gray-600 font-semibold mb-2">Discount Info</div>
-              <div className="text-sm font-semibold text-gray-900">
-                Item Disc: ₹{formatCurrency(calculations.itemDiscount)}
-              </div>
-            </div>
-            <div className="p-4 bg-gray-25 rounded-lg border border-gray-200">
-              <div className="text-xs text-gray-600 font-semibold mb-2">Tax Info</div>
-              <div className="text-xs space-y-1 text-gray-700">
-                <div>CGST: {form.cgstPercent}% = ₹{formatCurrency(calculations.cgstAmount)}</div>
-                <div>SGST: {form.sgstPercent}% = ₹{formatCurrency(calculations.sgstAmount)}</div>
-              </div>
-            </div>
-            <div className="p-4 bg-gray-25 rounded-lg border border-gray-200">
-              <label className="text-xs text-gray-600 font-semibold mb-2 block">Bill Discount %</label>
-              <input
-                type="number"
-                value={form.billDiscountPercent}
-                onChange={(e) =>
-                  setForm({ ...form, billDiscountPercent: parseFloat(e.target.value) || 0 })
-                }
-                className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                step="0.01"
-              />
-            </div>
-            <div className="p-4 bg-gray-25 rounded-lg border border-gray-200">
-              <label className="text-xs text-gray-600 font-semibold mb-2 block">Tax %</label>
-              <div className="flex gap-2">
-                <input
-                  type="number"
-                  value={form.cgstPercent}
-                  onChange={(e) =>
-                    setForm({ ...form, cgstPercent: parseFloat(e.target.value) || 0 })
-                  }
-                  placeholder="CGST"
-                  className="flex-1 px-2 py-1 border border-gray-300 rounded text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  step="0.01"
-                />
-                <input
-                  type="number"
-                  value={form.sgstPercent}
-                  onChange={(e) =>
-                    setForm({ ...form, sgstPercent: parseFloat(e.target.value) || 0 })
-                  }
-                  placeholder="SGST"
-                  className="flex-1 px-2 py-1 border border-gray-300 rounded text-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  step="0.01"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Total Section */}
-          <div className="flex justify-end">
-            <div className="p-6 w-96 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg border-2 border-blue-200">
-              <div className="space-y-3 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-gray-700">Subtotal:</span>
-                  <span className="font-semibold text-gray-900">₹{formatCurrency(calculations.subtotal)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-700">Total Discount:</span>
-                  <span className="font-semibold text-gray-900">
-                    -₹{formatCurrency(calculations.itemDiscount + calculations.billDiscountAmount)}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-700">Total Tax:</span>
-                  <span className="font-semibold text-gray-900">
-                    ₹{formatCurrency(calculations.cgstAmount + calculations.sgstAmount)}
-                  </span>
-                </div>
-                <div className="border-t border-blue-300 pt-3 flex justify-between text-lg font-bold text-blue-700">
-                  <span>Invoice Value:</span>
-                  <span>₹{formatCurrency(calculations.totalAmount)}</span>
-                </div>
-              </div>
-            </div>
-          </div>
+          <SaleTotalSection
+            calculations={calculations}
+            formatCurrency={formatCurrency}
+          />
 
           {/* Notes Section */}
           <div className="pb-6 border-b border-gray-200">
@@ -580,20 +287,21 @@ const BillForm = () => {
 
           {/* Action Buttons */}
           <div className="flex gap-3 justify-end">
-            <button
+            <Button
               type="button"
               onClick={() => navigate("/sales/bill")}
-              className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 font-semibold text-gray-700 flex items-center gap-2 transition"
+              variant="outline"
+              className="flex items-center gap-2"
             >
               <X size={18} /> Cancel
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
               disabled={isLoading}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold flex items-center gap-2 disabled:opacity-50 transition"
+              className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2 disabled:opacity-50"
             >
               <Save size={18} /> {isLoading ? "Saving..." : isEdit ? "Update Bill" : "Create Bill"}
-            </button>
+            </Button>
           </div>
         </form>
       </div>
