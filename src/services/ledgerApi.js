@@ -154,12 +154,29 @@ export const ledgerApi = createApi({
     getDefaultLedgers: builder.query({
       query: ({ groupId, companyId } = {}) => ({
         url: `/ledger/v1/default-ledgers${
-          groupId ? `?groupId=${groupId}` : ""
+          groupId ? `?groupId=${groupId}&companyId=${companyId}` : `?companyId=${companyId}`
         }`,
         method: "GET",
       }),
       providesTags: ["DefaultLedgers"],
       transformResponse: (response) => response.data || [],
+    }),
+
+    getLedgersByGroup: builder.query({
+      query: ({ groupId, companyId } = {}) => ({
+        url: `/ledger/v1/group/${groupId}?companyId=${companyId}`,
+        method: "GET",
+      }),
+      providesTags: ["Ledger"],
+      transformResponse: (response) => response.data || [],
+    }),
+
+    validateLedger: builder.mutation({
+      query: (data) => ({
+        url: "/ledger/v1/validate",
+        method: "POST",
+        body: data,
+      }),
     }),
   }),
   overrideExisting: false,
@@ -177,4 +194,6 @@ export const {
   useGetLedgerDetailsQuery,
   useUpdateOpeningBalanceMutation,
   useGetDefaultLedgersQuery,
+  useGetLedgersByGroupQuery,
+  useValidateLedgerMutation,
 } = ledgerApi;
