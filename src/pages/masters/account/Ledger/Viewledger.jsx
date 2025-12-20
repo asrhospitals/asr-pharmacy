@@ -143,7 +143,7 @@ const Viewledger = () => {
   }, [data, selectedRow]);
 
   const handleAddLedger = () => {
-    navigate("/master/account/ledger/create");
+    navigate("/master/account/ledger/add");
   };
 
   const handleEdit = (row) => {

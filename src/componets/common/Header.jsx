@@ -166,7 +166,7 @@ export default function DefaultHeader({ title, onMenuClick }) {
                 </div>
                 <div className="text-xs text-gray-500 mb-2">Demo Licence</div>
                 <div className="text-center font-bold text-lg text-gray-800 mb-1 truncate w-full">
-                  {currentCompany?.companyname || "-"}
+                  {currentCompany?.companyName || "-"}
                 </div>
                 <div className="text-xs text-gray-500 mb-1">
                   F.Y.: {currentCompany?.financialYearFrom} to{" "}

@@ -18,16 +18,8 @@ const CompanyList = () => {
   const { data: userCompanies } = useGetUserCompaniesQuery(userId);
 
   useEffect(() => {
-    if (userCompanies?.data?.length !== 0) {
-      const primaryCompany = userCompanies?.data.find(
-        (company) => company.isPrimary
-      );
-      if (primaryCompany) {
-        dispatch(setCurrentCompany(primaryCompany));
-        navigate("/dashboard");
-        return;
-      }
-    } else {
+    // Only redirect if there are no companies
+    if (userCompanies?.data?.length === 0) {
       navigate("/create-company");
     }
   }, [userCompanies, navigate]);
