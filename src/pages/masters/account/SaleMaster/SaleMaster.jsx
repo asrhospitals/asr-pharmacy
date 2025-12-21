@@ -13,11 +13,13 @@ const SaleMaster = () => {
   const [search, setSearch] = useState("");
   const [selectedRow, setSelectedRow] = useState(null);
   const [page, setPage] = useState(1);
+  const [allData, setAllData] = useState([]);
   const limit = 10;
 
   const { 
     data: saleMastersData, 
     isLoading,
+    isFetching,
     refetch 
   } = useGetSaleMastersQuery({
     page,
@@ -36,14 +38,20 @@ const SaleMaster = () => {
 
   useEffect(() => {
     if (saleMastersData?.data && saleMastersData.data.length > 0) {
-      setSelectedRow((prev) => {
-        if (!prev || !saleMastersData.data.find((r) => r.id === prev.id)) {
-          return saleMastersData.data[0];
-        }
-        return prev;
-      });
+      if (page === 1) {
+        setAllData(saleMastersData.data);
+        setSelectedRow(saleMastersData.data[0]);
+      } else {
+        setAllData((prev) => {
+          const existingIds = new Set(prev.map((item) => item.id));
+          const newItems = saleMastersData.data.filter(
+            (item) => !existingIds.has(item.id)
+          );
+          return [...prev, ...newItems];
+        });
+      }
     }
-  }, [saleMastersData]);
+  }, [saleMastersData, page]);
 
   const handleAdd = () => navigate("/master/accounts/sale/create");
 
@@ -57,6 +65,18 @@ const SaleMaster = () => {
     } catch (error) {
       showToast(error?.data?.message || "Failed to delete sale master", "error");
     }
+  };
+
+  const handleLoadMore = () => {
+    if (saleMastersData?.totalPages && page < saleMastersData.totalPages && !isFetching) {
+      setPage((prev) => prev + 1);
+    }
+  };
+
+  const handleSearchChange = (e) => {
+    setSearch(e.target.value);
+    setPage(1);
+    setAllData([]);
   };
 
   const columns = [
@@ -185,22 +205,20 @@ const SaleMaster = () => {
         title="Sale Master (Sales Only)"
         actions={actions}
         search={search}
-        onSearchChange={(e) => {
-          setSearch(e.target.value);
-          setPage(1);
-        }}
-        tableData={saleMastersData?.data || []}
+        onSearchChange={handleSearchChange}
+        tableData={allData}
         columns={columns}
         isLoading={isLoading}
+        isFetching={isFetching}
         selectedRow={selectedRow}
         onRowSelect={setSelectedRow}
         onAdd={handleAdd}
         onEdit={handleEdit}
         onDelete={(row) => showConfirmation(() => handleDelete(row))}
         rowInfoPanel={rowInfoPanel}
-        page={page}
-        totalPages={saleMastersData?.totalPages || 1}
-        onPageChange={setPage}
+        enableInfiniteScroll={true}
+        hasMore={saleMastersData?.totalPages ? page < saleMastersData.totalPages : false}
+        onLoadMore={handleLoadMore}
       />
 
       <ConfirmationModal
