@@ -219,6 +219,7 @@ const Viewledger = () => {
       onEdit={handleEdit}
       onDelete={(row) => handleDelete(row)}
       onArrowNavigation={handleKeyDown}
+      enableInfiniteScroll={true}
     />
   );
 };

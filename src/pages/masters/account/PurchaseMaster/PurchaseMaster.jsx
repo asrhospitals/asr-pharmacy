@@ -13,11 +13,13 @@ const PurchaseMaster = () => {
   const [search, setSearch] = useState("");
   const [selectedRow, setSelectedRow] = useState(null);
   const [page, setPage] = useState(1);
+  const [allData, setAllData] = useState([]);
   const limit = 10;
 
   const { 
     data: purchaseMastersData, 
     isLoading,
+    isFetching,
     refetch 
   } = useGetPurchaseMastersQuery({
     page,
@@ -36,14 +38,20 @@ const PurchaseMaster = () => {
 
   useEffect(() => {
     if (purchaseMastersData?.data && purchaseMastersData.data.length > 0) {
-      setSelectedRow((prev) => {
-        if (!prev || !purchaseMastersData.data.find((r) => r.id === prev.id)) {
-          return purchaseMastersData.data[0];
-        }
-        return prev;
-      });
+      if (page === 1) {
+        setAllData(purchaseMastersData.data);
+        setSelectedRow(purchaseMastersData.data[0]);
+      } else {
+        setAllData((prev) => {
+          const existingIds = new Set(prev.map((item) => item.id));
+          const newItems = purchaseMastersData.data.filter(
+            (item) => !existingIds.has(item.id)
+          );
+          return [...prev, ...newItems];
+        });
+      }
     }
-  }, [purchaseMastersData]);
+  }, [purchaseMastersData, page]);
 
   const handleAdd = () => navigate("/master/accounts/purchase/create");
 
@@ -57,6 +65,18 @@ const PurchaseMaster = () => {
     } catch (error) {
       showToast(error?.data?.message || "Failed to delete purchase master", "error");
     }
+  };
+
+  const handleLoadMore = () => {
+    if (purchaseMastersData?.totalPages && page < purchaseMastersData.totalPages && !isFetching) {
+      setPage((prev) => prev + 1);
+    }
+  };
+
+  const handleSearchChange = (e) => {
+    setSearch(e.target.value);
+    setPage(1);
+    setAllData([]);
   };
 
   const columns = [
@@ -185,22 +205,20 @@ const PurchaseMaster = () => {
         title="Purchase Master (Purchase Only)"
         actions={actions}
         search={search}
-        onSearchChange={(e) => {
-          setSearch(e.target.value);
-          setPage(1);
-        }}
-        tableData={purchaseMastersData?.data || []}
+        onSearchChange={handleSearchChange}
+        tableData={allData}
         columns={columns}
         isLoading={isLoading}
+        isFetching={isFetching}
         selectedRow={selectedRow}
         onRowSelect={setSelectedRow}
         onAdd={handleAdd}
         onEdit={handleEdit}
         onDelete={(row) => showConfirmation(() => handleDelete(row))}
         rowInfoPanel={rowInfoPanel}
-        page={page}
-        totalPages={purchaseMastersData?.totalPages || 1}
-        onPageChange={setPage}
+        enableInfiniteScroll={true}
+        hasMore={purchaseMastersData?.totalPages ? page < purchaseMastersData.totalPages : false}
+        onLoadMore={handleLoadMore}
       />
 
       <ConfirmationModal
