@@ -1,19 +1,18 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { useCreateSaleMasterMutation, useUpdateSaleMasterMutation, useGetSaleMasterByIdQuery } from "../../../../services/saleMasterApi";
 import { useGetLedgersQuery } from "../../../../services/ledgerApi";
-import {showToast} from "../../../../componets/common/Toast";
+import { showToast } from "../../../../componets/common/Toast";
 import { ArrowLeft, Save, RefreshCw, X } from "lucide-react";
-import Button from "../../../../componets/common/Button";
 import Input from "../../../../componets/common/Input";
-import Select from "../../../../componets/common/Select";
-import Card from "../../../../componets/common/Card";
 import SearchableSelect from "../../../../componets/common/SearchableSelect";
 
 const CreateSaleMaster = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEditMode = !!id;
+  const { currentCompany } = useSelector((state) => state.user);
 
   const [formData, setFormData] = useState({
     salesType: "",
@@ -43,9 +42,10 @@ const CreateSaleMaster = () => {
   });
 
   const { data: ledgersData, isLoading: isLoadingLedgers } = useGetLedgersQuery({ 
+    companyId: currentCompany?.id,
     limit: 100,
     isActive: true 
-  });
+  }, { skip: !currentCompany?.id });
 
   useEffect(() => {
     if (isEditMode && saleMasterData) {
@@ -72,42 +72,79 @@ const CreateSaleMaster = () => {
   }, [isEditMode, saleMasterData]);
 
   const handleInputChange = (field, value) => {
+    // Handle SearchableSelect which passes an object with value property
+    const actualValue = value && typeof value === 'object' ? value.value : value;
     setFormData(prev => ({
       ...prev,
-      [field]: value
+      [field]: actualValue
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    if (!formData.salesType) {
+      showToast("Sales Type is required", "error");
+      return;
+    }
+    if (!formData.localSalesLedgerId) {
+      showToast("Local Sales Ledger is required", "error");
+      return;
+    }
+    if (!formData.centralSalesLedgerId) {
+      showToast("Central Sales Ledger is required", "error");
+      return;
+    }
+    if (!formData.igstLedgerId) {
+      showToast("IGST Ledger is required", "error");
+      return;
+    }
+    if (!formData.cgstLedgerId) {
+      showToast("CGST Ledger is required", "error");
+      return;
+    }
+    if (!formData.sgstLedgerId) {
+      showToast("SGST Ledger is required", "error");
+      return;
+    }
+    if (!formData.cessLedgerId) {
+      showToast("CESS Ledger is required", "error");
+      return;
+    }
+    
     try {
       const submitData = {
-        ...formData,
-        igstPercentage: parseFloat(formData.igstPercentage),
-        cgstPercentage: parseFloat(formData.cgstPercentage),
-        sgstPercentage: parseFloat(formData.sgstPercentage),
-        cessPercentage: parseFloat(formData.cessPercentage),
-        sortOrder: parseInt(formData.sortOrder),
-        localSalesLedgerId: parseInt(formData.localSalesLedgerId),
-        centralSalesLedgerId: parseInt(formData.centralSalesLedgerId),
-        igstLedgerId: parseInt(formData.igstLedgerId),
-        cgstLedgerId: parseInt(formData.cgstLedgerId),
-        sgstLedgerId: parseInt(formData.sgstLedgerId),
-        cessLedgerId: parseInt(formData.cessLedgerId)
+        salesType: formData.salesType,
+        localSalesLedgerId: formData.localSalesLedgerId,
+        centralSalesLedgerId: formData.centralSalesLedgerId,
+        igstPercentage: parseFloat(formData.igstPercentage) || 0,
+        cgstPercentage: parseFloat(formData.cgstPercentage) || 0,
+        sgstPercentage: parseFloat(formData.sgstPercentage) || 0,
+        cessPercentage: parseFloat(formData.cessPercentage) || 0,
+        natureOfTransaction: formData.natureOfTransaction,
+        taxability: formData.taxability,
+        igstLedgerId: formData.igstLedgerId,
+        cgstLedgerId: formData.cgstLedgerId,
+        sgstLedgerId: formData.sgstLedgerId,
+        cessLedgerId: formData.cessLedgerId,
+        description: formData.description,
+        sortOrder: parseInt(formData.sortOrder) || 0,
       };
+
+      console.log("Submitting sale master data:", submitData);
 
       if (isEditMode) {
         await updateSaleMaster({ id, ...submitData }).unwrap();
-        showToast("Sale master updated successfully");
+        showToast("Sale master updated successfully", "success");
       } else {
         await createSaleMaster(submitData).unwrap();
-        showToast("Sale master created successfully");
+        showToast("Sale master created successfully", "success");
       }
       
       navigate("/master/accounts/sale");
     } catch (error) {
-      Toast.error(error?.data?.message || `Failed to ${isEditMode ? 'update' : 'create'} sale master`);
+      console.error("Sale master error:", error);
+      showToast(error?.data?.message || `Failed to ${isEditMode ? 'update' : 'create'} sale master`, "error");
     }
   };
 
@@ -137,237 +174,252 @@ const CreateSaleMaster = () => {
     navigate("/master/accounts/sale");
   };
 
-  const ledgerOptions = ledgersData?.data?.map(ledger => ({
+  const ledgersData_list = useMemo(() => ledgersData?.data || [], [ledgersData?.data]);
+
+  // Find the "Sales" ledger for display
+  const salesLedger = ledgersData_list.find(ledger => 
+    ledger.ledgerName?.toLowerCase() === "sales"
+  );
+
+  // Filter ledgers for tax-related (Output for Sales)
+  const taxLedgerOptions = ledgersData_list.filter(ledger => {
+    const ledgerName = ledger.ledgerName?.toLowerCase() || "";
+    // Allow only tax output ledgers for sales
+    return ledgerName.includes("output") || ledgerName.includes("cess");
+  }).map(ledger => ({
     value: ledger.id,
     label: ledger.ledgerName
-  })) || [];
+  }));
+
+  // Auto-select default ledgers when data loads (only for create mode)
+  useEffect(() => {
+    if (!isEditMode && ledgersData_list.length > 0 && !formData.localSalesLedgerId) {
+      const salesLedgerFound = ledgersData_list.find(ledger => 
+        ledger.ledgerName?.toLowerCase() === "sales"
+      );
+      const igstLedger = ledgersData_list.find(l => l.ledgerName?.toLowerCase() === "igst output");
+      const cgstLedger = ledgersData_list.find(l => l.ledgerName?.toLowerCase() === "cgst output");
+      const sgstLedger = ledgersData_list.find(l => l.ledgerName?.toLowerCase() === "sgst output");
+      // For CESS, try to find a specific CESS output ledger, otherwise use IGST Output as fallback
+      const cessLedger = ledgersData_list.find(l => 
+        l.ledgerName?.toLowerCase().includes("cess") && l.ledgerName?.toLowerCase().includes("output")
+      ) || igstLedger;
+
+      setFormData(prev => ({
+        ...prev,
+        localSalesLedgerId: salesLedgerFound?.id || "",
+        centralSalesLedgerId: salesLedgerFound?.id || "",
+        igstLedgerId: igstLedger?.id || "",
+        cgstLedgerId: cgstLedger?.id || "",
+        sgstLedgerId: sgstLedger?.id || "",
+        cessLedgerId: cessLedger?.id || "",
+      }));
+    }
+  }, [ledgersData_list, isEditMode, formData.localSalesLedgerId]);
 
   if (isLoadingSaleMaster) {
     return <div className="flex justify-center items-center h-64">Loading...</div>;
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="secondary"
-              onClick={handleClose}
-              className="flex items-center gap-2"
-            >
-              <ArrowLeft size={16} />
-              Back
-            </Button>
+    <div className="w-full max-w-6xl mx-auto h-full bg-gray-50 p-4">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleClose}
+            className="flex items-center gap-2 px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50"
+          >
+            <ArrowLeft size={16} />
+            Back
+          </button>
+          <h1 className="text-lg font-medium">
+            {isEditMode ? "Edit Sale Master" : "Create Sale Master"}
+          </h1>
+        </div>
+        <div className="flex gap-2">
+          <button
+            onClick={handleSubmit}
+            className="px-4 py-1 text-sm bg-teal-600 text-white rounded hover:bg-teal-700 flex items-center gap-1"
+          >
+            <Save size={16} /> F10 Save
+          </button>
+          <button
+            onClick={handleClear}
+            className="px-4 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50 flex items-center gap-1"
+          >
+            <RefreshCw size={16} /> F9 Clear
+          </button>
+          <button
+            onClick={handleClose}
+            className="px-4 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50 flex items-center gap-1"
+          >
+            <X size={16} /> Esc Close
+          </button>
+        </div>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Sales Type Section */}
+        <div className="bg-white rounded border border-gray-200 p-4">
+          <h3 className="text-sm font-semibold text-gray-900 mb-4">Sales Type</h3>
+          <Input
+            label="Sales Type *"
+            name="salesType"
+            value={formData.salesType}
+            onChange={(e) => handleInputChange("salesType", e.target.value)}
+            placeholder="Enter sales type (e.g., GST Sale - 12%)"
+            required
+          />
+        </div>
+
+        {/* Sales Ledger Section */}
+        <div className="bg-white rounded border border-gray-200 p-4">
+          <h3 className="text-sm font-semibold text-gray-900 mb-4">Sales Ledger *</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">
-                {isEditMode ? "Edit Sale Master" : "Create Sale Master"}
-              </h1>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Local Sales Ledger</label>
+              <input
+                type="text"
+                value={salesLedger?.ledgerName || "Sales"}
+                disabled
+                className="w-full border border-gray-300 rounded-lg p-2 bg-gray-100 text-gray-600 text-xs"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Central Sales Ledger</label>
+              <input
+                type="text"
+                value={salesLedger?.ledgerName || "Sales"}
+                disabled
+                className="w-full border border-gray-300 rounded-lg p-2 bg-gray-100 text-gray-600 text-xs"
+              />
             </div>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Sales Type */}
-          <Card>
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900">Sales Type</h3>
-              <Input
-                label="Sales Type *"
-                value={formData.salesType}
-                onChange={(e) => handleInputChange("salesType", e.target.value)}
-                placeholder="Enter sales type (e.g., GST Sale - 12%)"
-                required
-              />
-            </div>
-          </Card>
-
-          {/* Sales Ledger */}
-          <Card>
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900">Sales Ledger</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <SearchableSelect
-                  label="Local *"
-                  value={formData.localSalesLedgerId}
-                  onChange={(value) => handleInputChange("localSalesLedgerId", value)}
-                  options={ledgerOptions}
-                  placeholder="Select local sales ledger"
-                  isLoading={isLoadingLedgers}
-                  required
-                />
-                <SearchableSelect
-                  label="Central *"
-                  value={formData.centralSalesLedgerId}
-                  onChange={(value) => handleInputChange("centralSalesLedgerId", value)}
-                  options={ledgerOptions}
-                  placeholder="Select central sales ledger"
-                  isLoading={isLoadingLedgers}
-                  required
-                />
-              </div>
-            </div>
-          </Card>
-
-          {/* Tax Type */}
-          <Card>
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900">Tax Type</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <Input
-                  label="IGST % *"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  max="100"
-                  value={formData.igstPercentage}
-                  onChange={(e) => handleInputChange("igstPercentage", e.target.value)}
-                  required
-                />
-                <Input
-                  label="CGST % *"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  max="100"
-                  value={formData.cgstPercentage}
-                  onChange={(e) => handleInputChange("cgstPercentage", e.target.value)}
-                  required
-                />
-                <Input
-                  label="SGST % *"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  max="100"
-                  value={formData.sgstPercentage}
-                  onChange={(e) => handleInputChange("sgstPercentage", e.target.value)}
-                  required
-                />
-                <Input
-                  label="CESS % *"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  max="100"
-                  value={formData.cessPercentage}
-                  onChange={(e) => handleInputChange("cessPercentage", e.target.value)}
-                  required
-                />
-              </div>
-            </div>
-          </Card>
-
-
-
-          {/* Taxability */}
-          <Card>
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900">Taxability *</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <label className="flex items-center gap-2">
-                  <input
-                    type="radio"
-                    name="taxability"
-                    value="Taxable"
-                    checked={formData.taxability === "Taxable"}
-                    onChange={(e) => handleInputChange("taxability", e.target.value)}
-                    className="text-blue-600"
-                  />
-                  <span>Taxable</span>
-                </label>
-                <label className="flex items-center gap-2">
-                  <input
-                    type="radio"
-                    name="taxability"
-                    value="Exempted"
-                    checked={formData.taxability === "Exempted"}
-                    onChange={(e) => handleInputChange("taxability", e.target.value)}
-                    className="text-blue-600"
-                  />
-                  <span>Exempted</span>
-                </label>
-                <label className="flex items-center gap-2">
-                  <input
-                    type="radio"
-                    name="taxability"
-                    value="Nil Rated"
-                    checked={formData.taxability === "Nil Rated"}
-                    onChange={(e) => handleInputChange("taxability", e.target.value)}
-                    className="text-blue-600"
-                  />
-                  <span>Nil Rated</span>
-                </label>
-                <label className="flex items-center gap-2">
-                  <input
-                    type="radio"
-                    name="taxability"
-                    value="Zero Rated"
-                    checked={formData.taxability === "Zero Rated"}
-                    onChange={(e) => handleInputChange("taxability", e.target.value)}
-                    className="text-blue-600"
-                  />
-                  <span>Zero Rated</span>
-                </label>
-              </div>
-            </div>
-          </Card>
-
-
-          {/* Additional Fields */}
-          <Card>
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900">Additional Information</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Input
-                  label="Description"
-                  value={formData.description}
-                  onChange={(e) => handleInputChange("description", e.target.value)}
-                  placeholder="Enter description"
-                />
-                <Input
-                  label="Sort Order"
-                  type="number"
-                  value={formData.sortOrder}
-                  onChange={(e) => handleInputChange("sortOrder", e.target.value)}
-                  placeholder="Enter sort order"
-                />
-              </div>
-            </div>
-          </Card>
-
-          {/* Footer Buttons */}
-          <div className="flex justify-end gap-4 pt-6 border-t">
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={handleClear}
-              className="flex items-center gap-2"
-            >
-              <RefreshCw size={16} />
-              F9 Clear
-            </Button>
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={handleClose}
-              className="flex items-center gap-2"
-            >
-              <X size={16} />
-              Esc Close
-            </Button>
-            <Button
-              type="submit"
-              variant="primary"
-              className="flex items-center gap-2"
-            >
-              <Save size={16} />
-              F10 Save
-            </Button>
+        {/* Tax Percentages Section */}
+        <div className="bg-white rounded border border-gray-200 p-4">
+          <h3 className="text-sm font-semibold text-gray-900 mb-4">Tax Percentages</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Input
+              label="IGST %"
+              type="number"
+              step="0.01"
+              min="0"
+              max="100"
+              value={formData.igstPercentage}
+              onChange={(e) => handleInputChange("igstPercentage", e.target.value)}
+            />
+            <Input
+              label="CGST %"
+              type="number"
+              step="0.01"
+              min="0"
+              max="100"
+              value={formData.cgstPercentage}
+              onChange={(e) => handleInputChange("cgstPercentage", e.target.value)}
+            />
+            <Input
+              label="SGST %"
+              type="number"
+              step="0.01"
+              min="0"
+              max="100"
+              value={formData.sgstPercentage}
+              onChange={(e) => handleInputChange("sgstPercentage", e.target.value)}
+            />
+            <Input
+              label="CESS %"
+              type="number"
+              step="0.01"
+              min="0"
+              max="100"
+              value={formData.cessPercentage}
+              onChange={(e) => handleInputChange("cessPercentage", e.target.value)}
+            />
           </div>
-        </form>
-      </div>
+        </div>
+
+        {/* Tax Ledgers Section */}
+        <div className="bg-white rounded border border-gray-200 p-4">
+          <h3 className="text-sm font-semibold text-gray-900 mb-4">Tax Ledgers *</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <SearchableSelect
+              label="IGST Ledger"
+              value={formData.igstLedgerId}
+              onChange={(value) => handleInputChange("igstLedgerId", value)}
+              options={taxLedgerOptions}
+              placeholder="Select IGST Output ledger"
+              isLoading={isLoadingLedgers}
+            />
+            <SearchableSelect
+              label="CGST Ledger"
+              value={formData.cgstLedgerId}
+              onChange={(value) => handleInputChange("cgstLedgerId", value)}
+              options={taxLedgerOptions}
+              placeholder="Select CGST Output ledger"
+              isLoading={isLoadingLedgers}
+            />
+            <SearchableSelect
+              label="SGST Ledger"
+              value={formData.sgstLedgerId}
+              onChange={(value) => handleInputChange("sgstLedgerId", value)}
+              options={taxLedgerOptions}
+              placeholder="Select SGST Output ledger"
+              isLoading={isLoadingLedgers}
+            />
+            <SearchableSelect
+              label="CESS Ledger"
+              value={formData.cessLedgerId}
+              onChange={(value) => handleInputChange("cessLedgerId", value)}
+              options={taxLedgerOptions}
+              placeholder="Select CESS Output ledger"
+              isLoading={isLoadingLedgers}
+            />
+          </div>
+        </div>
+
+        {/* Taxability Section */}
+        <div className="bg-white rounded border border-gray-200 p-4">
+          <h3 className="text-sm font-semibold text-gray-900 mb-4">Taxability *</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {["Taxable", "Exempted", "Nil Rated", "Zero Rated"].map((option) => (
+              <label key={option} className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="taxability"
+                  value={option}
+                  checked={formData.taxability === option}
+                  onChange={(e) => handleInputChange("taxability", e.target.value)}
+                  className="w-4 h-4 text-teal-600"
+                />
+                <span className="text-sm text-gray-700">{option}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+
+        {/* Additional Information Section */}
+        <div className="bg-white rounded border border-gray-200 p-4">
+          <h3 className="text-sm font-semibold text-gray-900 mb-4">Additional Information</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Input
+              label="Description"
+              value={formData.description}
+              onChange={(e) => handleInputChange("description", e.target.value)}
+              placeholder="Enter description"
+            />
+            <Input
+              label="Sort Order"
+              type="number"
+              value={formData.sortOrder}
+              onChange={(e) => handleInputChange("sortOrder", e.target.value)}
+              placeholder="Enter sort order"
+            />
+          </div>
+        </div>
+      </form>
     </div>
   );
 };
