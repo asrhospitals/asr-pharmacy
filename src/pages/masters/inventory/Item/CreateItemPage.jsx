@@ -20,6 +20,7 @@ import AddRack from "../rack/AddRack";
 import { useGetPurchaseMastersQuery } from "../../../../services/purchaseMasterApi";
 import { useSelector } from "react-redux";
 import ConfirmPopUp from "./ConfirmPopUp"; //added import for popup
+import OpeningStock from "./OpeningStock";
 
 const ADVANCE_TABS = ["Discount", "Quantity", "Other Info"];
 
@@ -40,6 +41,10 @@ export default function CreateItemPage() {
   const [isHSNModalOpen, setIsHSNModalOpen] = useState(false);
   const [isRackModalOpen, setIsRackModalOpen] = useState(false);
   const [isPopupOpen,setIsPopupOpen] = useState(false); // added state for Pop Up Notification
+  const [showOpeningStock,setShowOpeningStock] = useState(false);
+  const [createdItemId,setCreatedItemId] = useState(null);
+  const [createdItemName,setCreatedItemName] = useState("");
+
 
   const { data: rackData } = useGetRacksQuery();
   const { data: companyData } = useGetCompaniesQuery();
@@ -126,7 +131,7 @@ export default function CreateItemPage() {
         unit1: "Unit",
         hsnsac: "HSN/SAC",
         taxcategory: "Tax Category",
-        company: "Company"
+        company: "Company",
       };
 
       const missingFields = [];
@@ -137,22 +142,39 @@ export default function CreateItemPage() {
       }
 
       if (missingFields.length > 0) {
-        showToast(`Please fill required fields: ${missingFields.join(", ")}`, { type: "error" });
+        showToast(`Please fill required fields: ${missingFields.join(", ")}`, {
+          type: "error",
+        });
         return;
       }
 
-      await addItem(data).unwrap();
+      const response = await addItem(data).unwrap();
       showToast("Data saved successfully", { type: "success" });
       //reset();
-      setIsPopupOpen(true); // added line here
+      //console.log(response)
+      const itemId = response?.id || response?.data?.id; // added lines here
+      const itemName = response?.productname || response?.data?.productname;
+
+      if (!itemId) {
+        showToast("Item ID not received from server", "error");
+        return;
+      }
+
+      setCreatedItemId(itemId);
+      setCreatedItemName(itemName);
+
+      showToast("Saved successfully", { type: "success" });
+      setIsPopupOpen(true);
     } catch (error) {
+      console.log(error);
       showToast(error?.data?.message || "Failed to save item", { type: "error" });
     }
   };
   //adding functionality for Opening stock YES/NO
   const handleOpeningStock=()=>{
     setIsPopupOpen(false);
-    navigate('/master/inventory/items/opening-stock');
+    setShowOpeningStock(true);
+    // navigate('/master/inventory/items/');
 
   }
 
@@ -169,6 +191,7 @@ export default function CreateItemPage() {
 
   const handleBack = () => navigate("/master/inventory/items");
   const handleClose = () => navigate("/master/inventory/items");
+  
 
   return (
     <div className="flex flex-col overflow-hidden no-scrollbar">
@@ -377,6 +400,17 @@ export default function CreateItemPage() {
           </div>
         </div>
       </form>
+      {showOpeningStock && (
+            <OpeningStock 
+              open={showOpeningStock}
+              itemId={createdItemId}
+              itemName={createdItemName}
+              onSuccess={()=>{
+                navigate("/master/inventory/items");
+              }}
+              onCancle={gotoItems} />
+            )
+          }
       <ConfirmPopUp
         open={isPopupOpen}
         onYes={handleOpeningStock}

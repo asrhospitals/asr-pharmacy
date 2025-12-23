@@ -5,7 +5,7 @@ function ConfirmPopUp({ open, onYes, onNo }) {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 backdrop-blur-2xl flex items-start justify-center z-50">
+    <div className="fixed inset-0 backdrop-blur bg-black/30 flex items-start justify-center z-50">
       <div className="bg-white w-[380px] rounded-2xl shadow-lg p-6 m-10 text-center">
         <div
           className="mx-auto w-12 h-12 rounded-full border border-blue-500 

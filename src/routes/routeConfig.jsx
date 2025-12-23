@@ -2,6 +2,7 @@ import React from "react";
 import HierarchicalGroupManager from "../pages/masters/account/group/HierarchicalGroupManager";
 import Group from "../pages/masters/account/group/Group";
 import Station from "../pages/masters/other/station/Station";
+import OpeningStock from "../pages/masters/inventory/Item/OpeningStock";
 
 const Dashboard = React.lazy(() => import("../pages/Dashboard"));
 const GenericPage = React.lazy(() => import("../pages/GenericPage"));
@@ -12,6 +13,9 @@ const ItemsPage = React.lazy(() =>
 const ItemDetails = React.lazy(() =>
   import("../pages/masters/inventory/Item/ItemDetails")
 );
+// const OpeningStock = React.lazy(() =>
+//   import("../pages/masters/inventory/Item/ItemDetails")
+// );
 const StorePage = React.lazy(() =>
   import("../pages/masters/inventory/store/Store")
 );
@@ -240,6 +244,7 @@ export const routeConfig = [
     path: "/master/inventory/items/:id",
     module: "inventory",
     action: "V",
+    //element: <OpeningStock />
     element: <ItemDetails />,
   },
   {
