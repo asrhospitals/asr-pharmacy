@@ -1,19 +1,18 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { useCreatePurchaseMasterMutation, useUpdatePurchaseMasterMutation, useGetPurchaseMasterByIdQuery } from "../../../../services/purchaseMasterApi";
 import { useGetLedgersQuery } from "../../../../services/ledgerApi";
-import {showToast} from "../../../../componets/common/Toast";
+import { showToast } from "../../../../componets/common/Toast";
 import { ArrowLeft, Save, RefreshCw, X } from "lucide-react";
-import Button from "../../../../componets/common/Button";
 import Input from "../../../../componets/common/Input";
-import Select from "../../../../componets/common/Select";
-import Card from "../../../../componets/common/Card";
 import SearchableSelect from "../../../../componets/common/SearchableSelect";
 
 const CreatePurchaseMaster = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEditMode = !!id;
+  const { currentCompany } = useSelector((state) => state.user);
 
   const [formData, setFormData] = useState({
     purchaseType: "",
@@ -43,9 +42,10 @@ const CreatePurchaseMaster = () => {
   });
 
   const { data: ledgersData, isLoading: isLoadingLedgers } = useGetLedgersQuery({ 
+    companyId: currentCompany?.id,
     limit: 100,
     isActive: true 
-  });
+  }, { skip: !currentCompany?.id });
 
   useEffect(() => {
     if (isEditMode && purchaseMasterData) {
@@ -72,42 +72,79 @@ const CreatePurchaseMaster = () => {
   }, [isEditMode, purchaseMasterData]);
 
   const handleInputChange = (field, value) => {
+    // Handle SearchableSelect which passes an object with value property
+    const actualValue = value && typeof value === 'object' ? value.value : value;
     setFormData(prev => ({
       ...prev,
-      [field]: value
+      [field]: actualValue
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    if (!formData.purchaseType) {
+      showToast("Purchase Type is required", "error");
+      return;
+    }
+    if (!formData.localPurchaseLedgerId) {
+      showToast("Local Purchase Ledger is required", "error");
+      return;
+    }
+    if (!formData.centralPurchaseLedgerId) {
+      showToast("Central Purchase Ledger is required", "error");
+      return;
+    }
+    if (!formData.igstLedgerId) {
+      showToast("IGST Ledger is required", "error");
+      return;
+    }
+    if (!formData.cgstLedgerId) {
+      showToast("CGST Ledger is required", "error");
+      return;
+    }
+    if (!formData.sgstLedgerId) {
+      showToast("SGST Ledger is required", "error");
+      return;
+    }
+    if (!formData.cessLedgerId) {
+      showToast("CESS Ledger is required", "error");
+      return;
+    }
+    
     try {
       const submitData = {
-        ...formData,
-        igstPercentage: parseFloat(formData.igstPercentage),
-        cgstPercentage: parseFloat(formData.cgstPercentage),
-        sgstPercentage: parseFloat(formData.sgstPercentage),
-        cessPercentage: parseFloat(formData.cessPercentage),
-        sortOrder: parseInt(formData.sortOrder),
-        localPurchaseLedgerId: parseInt(formData.localPurchaseLedgerId),
-        centralPurchaseLedgerId: parseInt(formData.centralPurchaseLedgerId),
-        igstLedgerId: parseInt(formData.igstLedgerId),
-        cgstLedgerId: parseInt(formData.cgstLedgerId),
-        sgstLedgerId: parseInt(formData.sgstLedgerId),
-        cessLedgerId: parseInt(formData.cessLedgerId)
+        purchaseType: formData.purchaseType,
+        localPurchaseLedgerId: formData.localPurchaseLedgerId,
+        centralPurchaseLedgerId: formData.centralPurchaseLedgerId,
+        igstPercentage: parseFloat(formData.igstPercentage) || 0,
+        cgstPercentage: parseFloat(formData.cgstPercentage) || 0,
+        sgstPercentage: parseFloat(formData.sgstPercentage) || 0,
+        cessPercentage: parseFloat(formData.cessPercentage) || 0,
+        natureOfTransaction: formData.natureOfTransaction,
+        taxability: formData.taxability,
+        igstLedgerId: formData.igstLedgerId,
+        cgstLedgerId: formData.cgstLedgerId,
+        sgstLedgerId: formData.sgstLedgerId,
+        cessLedgerId: formData.cessLedgerId,
+        description: formData.description,
+        sortOrder: parseInt(formData.sortOrder) || 0,
       };
+
+      console.log("Submitting purchase master data:", submitData);
 
       if (isEditMode) {
         await updatePurchaseMaster({ id, ...submitData }).unwrap();
-        showToast("Purchase master updated successfully");
+        showToast("Purchase master updated successfully", "success");
       } else {
         await createPurchaseMaster(submitData).unwrap();
-        showToast("Purchase master created successfully");
+        showToast("Purchase master created successfully", "success");
       }
       
       navigate("/master/accounts/purchase");
     } catch (error) {
-      Toast.error(error?.data?.message || `Failed to ${isEditMode ? 'update' : 'create'} purchase master`);
+      console.error("Purchase master error:", error);
+      showToast(error?.data?.message || `Failed to ${isEditMode ? 'update' : 'create'} purchase master`, "error");
     }
   };
 
@@ -137,234 +174,252 @@ const CreatePurchaseMaster = () => {
     navigate("/master/accounts/purchase");
   };
 
-  const ledgerOptions = ledgersData?.data?.map(ledger => ({
+  const ledgersData_list = useMemo(() => ledgersData?.data || [], [ledgersData?.data]);
+
+  // Find the "Purchase" ledger for display
+  const purchaseLedger = ledgersData_list.find(ledger => 
+    ledger.ledgerName?.toLowerCase() === "purchase"
+  );
+
+  // Filter ledgers for tax-related (Input for Purchase)
+  const taxLedgerOptions = ledgersData_list.filter(ledger => {
+    const ledgerName = ledger.ledgerName?.toLowerCase() || "";
+    // Allow only tax input ledgers for purchase
+    return ledgerName.includes("input") || ledgerName.includes("cess");
+  }).map(ledger => ({
     value: ledger.id,
     label: ledger.ledgerName
-  })) || [];
+  }));
+
+  // Auto-select default ledgers when data loads (only for create mode)
+  useEffect(() => {
+    if (!isEditMode && ledgersData_list.length > 0 && !formData.localPurchaseLedgerId) {
+      const purchaseLedgerFound = ledgersData_list.find(ledger => 
+        ledger.ledgerName?.toLowerCase() === "purchase"
+      );
+      const igstLedger = ledgersData_list.find(l => l.ledgerName?.toLowerCase() === "igst input");
+      const cgstLedger = ledgersData_list.find(l => l.ledgerName?.toLowerCase() === "cgst input");
+      const sgstLedger = ledgersData_list.find(l => l.ledgerName?.toLowerCase() === "sgst input");
+      // For CESS, try to find a specific CESS input ledger, otherwise use IGST Input as fallback
+      const cessLedger = ledgersData_list.find(l => 
+        l.ledgerName?.toLowerCase().includes("cess") && l.ledgerName?.toLowerCase().includes("input")
+      ) || igstLedger;
+
+      setFormData(prev => ({
+        ...prev,
+        localPurchaseLedgerId: purchaseLedgerFound?.id || "",
+        centralPurchaseLedgerId: purchaseLedgerFound?.id || "",
+        igstLedgerId: igstLedger?.id || "",
+        cgstLedgerId: cgstLedger?.id || "",
+        sgstLedgerId: sgstLedger?.id || "",
+        cessLedgerId: cessLedger?.id || "",
+      }));
+    }
+  }, [ledgersData_list, isEditMode, formData.localPurchaseLedgerId]);
 
   if (isLoadingPurchaseMaster) {
     return <div className="flex justify-center items-center h-64">Loading...</div>;
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="secondary"
-              onClick={handleClose}
-              className="flex items-center gap-2"
-            >
-              <ArrowLeft size={16} />
-              Back
-            </Button>
+    <div className="w-full max-w-6xl mx-auto h-full bg-gray-50 p-4">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleClose}
+            className="flex items-center gap-2 px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50"
+          >
+            <ArrowLeft size={16} />
+            Back
+          </button>
+          <h1 className="text-lg font-medium">
+            {isEditMode ? "Edit Purchase Master" : "Create Purchase Master"}
+          </h1>
+        </div>
+        <div className="flex gap-2">
+          <button
+            onClick={handleSubmit}
+            className="px-4 py-1 text-sm bg-teal-600 text-white rounded hover:bg-teal-700 flex items-center gap-1"
+          >
+            <Save size={16} /> F10 Save
+          </button>
+          <button
+            onClick={handleClear}
+            className="px-4 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50 flex items-center gap-1"
+          >
+            <RefreshCw size={16} /> F9 Clear
+          </button>
+          <button
+            onClick={handleClose}
+            className="px-4 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50 flex items-center gap-1"
+          >
+            <X size={16} /> Esc Close
+          </button>
+        </div>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Purchase Type Section */}
+        <div className="bg-white rounded border border-gray-200 p-4">
+          <h3 className="text-sm font-semibold text-gray-900 mb-4">Purchase Type</h3>
+          <Input
+            label="Purchase Type *"
+            name="purchaseType"
+            value={formData.purchaseType}
+            onChange={(e) => handleInputChange("purchaseType", e.target.value)}
+            placeholder="Enter purchase type (e.g., GST Purchase - 12%)"
+            required
+          />
+        </div>
+
+        {/* Purchase Ledger Section */}
+        <div className="bg-white rounded border border-gray-200 p-4">
+          <h3 className="text-sm font-semibold text-gray-900 mb-4">Purchase Ledger *</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">
-                {isEditMode ? "Edit Purchase Master" : "Create Purchase Master"}
-              </h1>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Local Purchase Ledger</label>
+              <input
+                type="text"
+                value={purchaseLedger?.ledgerName || "Purchase"}
+                disabled
+                className="w-full border border-gray-300 rounded-lg p-2 bg-gray-100 text-gray-600 text-xs"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Central Purchase Ledger</label>
+              <input
+                type="text"
+                value={purchaseLedger?.ledgerName || "Purchase"}
+                disabled
+                className="w-full border border-gray-300 rounded-lg p-2 bg-gray-100 text-gray-600 text-xs"
+              />
             </div>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Purchase Type */}
-          <Card>
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900">Purchase Type</h3>
-              <Input
-                label="Purchase Type *"
-                value={formData.purchaseType}
-                onChange={(e) => handleInputChange("purchaseType", e.target.value)}
-                placeholder="Enter purchase type (e.g., GST Purchase - 12%)"
-                required
-              />
-            </div>
-          </Card>
-
-          {/* Purchase Ledger */}
-          <Card>
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900">Purchase Ledger</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <SearchableSelect
-                  label="Local *"
-                  value={formData.localPurchaseLedgerId}
-                  onChange={(value) => handleInputChange("localPurchaseLedgerId", value)}
-                  options={ledgerOptions}
-                  placeholder="Select local purchase ledger"
-                  isLoading={isLoadingLedgers}
-                  required
-                />
-                <SearchableSelect
-                  label="Central *"
-                  value={formData.centralPurchaseLedgerId}
-                  onChange={(value) => handleInputChange("centralPurchaseLedgerId", value)}
-                  options={ledgerOptions}
-                  placeholder="Select central purchase ledger"
-                  isLoading={isLoadingLedgers}
-                  required
-                />
-              </div>
-            </div>
-          </Card>
-
-          {/* Tax Type */}
-          <Card>
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900">Tax Type</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <Input
-                  label="IGST % *"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  max="100"
-                  value={formData.igstPercentage}
-                  onChange={(e) => handleInputChange("igstPercentage", e.target.value)}
-                  required
-                />
-                <Input
-                  label="CGST % *"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  max="100"
-                  value={formData.cgstPercentage}
-                  onChange={(e) => handleInputChange("cgstPercentage", e.target.value)}
-                  required
-                />
-                <Input
-                  label="SGST % *"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  max="100"
-                  value={formData.sgstPercentage}
-                  onChange={(e) => handleInputChange("sgstPercentage", e.target.value)}
-                  required
-                />
-                <Input
-                  label="CESS % *"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  max="100"
-                  value={formData.cessPercentage}
-                  onChange={(e) => handleInputChange("cessPercentage", e.target.value)}
-                  required
-                />
-              </div>
-            </div>
-          </Card>
-
-          {/* Taxability */}
-          <Card>
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900">Taxability *</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <label className="flex items-center gap-2">
-                  <input
-                    type="radio"
-                    name="taxability"
-                    value="Taxable"
-                    checked={formData.taxability === "Taxable"}
-                    onChange={(e) => handleInputChange("taxability", e.target.value)}
-                    className="text-blue-600"
-                  />
-                  <span>Taxable</span>
-                </label>
-                <label className="flex items-center gap-2">
-                  <input
-                    type="radio"
-                    name="taxability"
-                    value="Exempted"
-                    checked={formData.taxability === "Exempted"}
-                    onChange={(e) => handleInputChange("taxability", e.target.value)}
-                    className="text-blue-600"
-                  />
-                  <span>Exempted</span>
-                </label>
-                <label className="flex items-center gap-2">
-                  <input
-                    type="radio"
-                    name="taxability"
-                    value="Nil Rated"
-                    checked={formData.taxability === "Nil Rated"}
-                    onChange={(e) => handleInputChange("taxability", e.target.value)}
-                    className="text-blue-600"
-                  />
-                  <span>Nil Rated</span>
-                </label>
-                <label className="flex items-center gap-2">
-                  <input
-                    type="radio"
-                    name="taxability"
-                    value="Zero Rated"
-                    checked={formData.taxability === "Zero Rated"}
-                    onChange={(e) => handleInputChange("taxability", e.target.value)}
-                    className="text-blue-600"
-                  />
-                  <span>Zero Rated</span>
-                </label>
-              </div>
-            </div>
-          </Card>
-
-          {/* Additional Fields */}
-          <Card>
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900">Additional Information</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Input
-                  label="Description"
-                  value={formData.description}
-                  onChange={(e) => handleInputChange("description", e.target.value)}
-                  placeholder="Enter description"
-                />
-                <Input
-                  label="Sort Order"
-                  type="number"
-                  value={formData.sortOrder}
-                  onChange={(e) => handleInputChange("sortOrder", e.target.value)}
-                  placeholder="Enter sort order"
-                />
-              </div>
-            </div>
-          </Card>
-
-          {/* Footer Buttons */}
-          <div className="flex justify-end gap-4 pt-6 border-t">
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={handleClear}
-              className="flex items-center gap-2"
-            >
-              <RefreshCw size={16} />
-              F9 Clear
-            </Button>
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={handleClose}
-              className="flex items-center gap-2"
-            >
-              <X size={16} />
-              Esc Close
-            </Button>
-            <Button
-              type="submit"
-              variant="primary"
-              className="flex items-center gap-2"
-            >
-              <Save size={16} />
-              F10 Save
-            </Button>
+        {/* Tax Percentages Section */}
+        <div className="bg-white rounded border border-gray-200 p-4">
+          <h3 className="text-sm font-semibold text-gray-900 mb-4">Tax Percentages</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Input
+              label="IGST %"
+              type="number"
+              step="0.01"
+              min="0"
+              max="100"
+              value={formData.igstPercentage}
+              onChange={(e) => handleInputChange("igstPercentage", e.target.value)}
+            />
+            <Input
+              label="CGST %"
+              type="number"
+              step="0.01"
+              min="0"
+              max="100"
+              value={formData.cgstPercentage}
+              onChange={(e) => handleInputChange("cgstPercentage", e.target.value)}
+            />
+            <Input
+              label="SGST %"
+              type="number"
+              step="0.01"
+              min="0"
+              max="100"
+              value={formData.sgstPercentage}
+              onChange={(e) => handleInputChange("sgstPercentage", e.target.value)}
+            />
+            <Input
+              label="CESS %"
+              type="number"
+              step="0.01"
+              min="0"
+              max="100"
+              value={formData.cessPercentage}
+              onChange={(e) => handleInputChange("cessPercentage", e.target.value)}
+            />
           </div>
-        </form>
-      </div>
+        </div>
+
+        {/* Tax Ledgers Section */}
+        <div className="bg-white rounded border border-gray-200 p-4">
+          <h3 className="text-sm font-semibold text-gray-900 mb-4">Tax Ledgers *</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <SearchableSelect
+              label="IGST Ledger"
+              value={formData.igstLedgerId}
+              onChange={(value) => handleInputChange("igstLedgerId", value)}
+              options={taxLedgerOptions}
+              placeholder="Select IGST Input ledger"
+              isLoading={isLoadingLedgers}
+            />
+            <SearchableSelect
+              label="CGST Ledger"
+              value={formData.cgstLedgerId}
+              onChange={(value) => handleInputChange("cgstLedgerId", value)}
+              options={taxLedgerOptions}
+              placeholder="Select CGST Input ledger"
+              isLoading={isLoadingLedgers}
+            />
+            <SearchableSelect
+              label="SGST Ledger"
+              value={formData.sgstLedgerId}
+              onChange={(value) => handleInputChange("sgstLedgerId", value)}
+              options={taxLedgerOptions}
+              placeholder="Select SGST Input ledger"
+              isLoading={isLoadingLedgers}
+            />
+            <SearchableSelect
+              label="CESS Ledger"
+              value={formData.cessLedgerId}
+              onChange={(value) => handleInputChange("cessLedgerId", value)}
+              options={taxLedgerOptions}
+              placeholder="Select CESS Input ledger"
+              isLoading={isLoadingLedgers}
+            />
+          </div>
+        </div>
+
+        {/* Taxability Section */}
+        <div className="bg-white rounded border border-gray-200 p-4">
+          <h3 className="text-sm font-semibold text-gray-900 mb-4">Taxability *</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {["Taxable", "Exempted", "Nil Rated", "Zero Rated"].map((option) => (
+              <label key={option} className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="taxability"
+                  value={option}
+                  checked={formData.taxability === option}
+                  onChange={(e) => handleInputChange("taxability", e.target.value)}
+                  className="w-4 h-4 text-teal-600"
+                />
+                <span className="text-sm text-gray-700">{option}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+
+        {/* Additional Information Section */}
+        <div className="bg-white rounded border border-gray-200 p-4">
+          <h3 className="text-sm font-semibold text-gray-900 mb-4">Additional Information</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Input
+              label="Description"
+              value={formData.description}
+              onChange={(e) => handleInputChange("description", e.target.value)}
+              placeholder="Enter description"
+            />
+            <Input
+              label="Sort Order"
+              type="number"
+              value={formData.sortOrder}
+              onChange={(e) => handleInputChange("sortOrder", e.target.value)}
+              placeholder="Enter sort order"
+            />
+          </div>
+        </div>
+      </form>
     </div>
   );
 };
