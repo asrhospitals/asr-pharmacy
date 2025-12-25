@@ -30,8 +30,8 @@ const OpeningStock = ({ open, itemId, itemName, onSuccess, onCancle }) => {
           saleRate: "",
           storeId: "",
           quantity: "",
-          freeQuantity: "0",
-          conversion: "1",
+          freeQuantity: "",
+          conversion: "",
         },
       ],
     },
@@ -50,9 +50,9 @@ const OpeningStock = ({ open, itemId, itemName, onSuccess, onCancle }) => {
     for (const row of data.stocks) {
       try {
         if (!row.batchNumber || !row.quantity) {
-        showToast("Batch No and Quantity are required", "error");
-        return;
-      }
+          showToast("Batch No and Quantity are required", "error");
+          return;
+        }
         //this is for maping UI fields to backend and also if want store more fields in notes as JSON
         // const notesData = {
         //   storeId: row.storeId,
@@ -69,14 +69,14 @@ const OpeningStock = ({ open, itemId, itemName, onSuccess, onCancle }) => {
           mrp: Number(row.mrp || 0),
           purchaseRate: Number(row.purchaseRate),
           notes: JSON.stringify({
-              storeId: row.storeId,
-              saleRate: row.saleRate || 0,
-              freeQty: row.freeQuantity || 0,
-              conversion: row.conversion || 1,
+            storeId: row.storeId,
+            saleRate: row.saleRate || 0,
+            freeQty: row.freeQuantity || 0,
+            conversion: row.conversion || 1,
           }),
         };
 
-        console.log(payload)
+        //console.log(payload);
         await createBatch(payload).unwrap();
         successCount++;
       } catch (error) {
@@ -87,48 +87,49 @@ const OpeningStock = ({ open, itemId, itemName, onSuccess, onCancle }) => {
     setIsProccessing(false);
     if (failCount === 0 && successCount > 0) {
       showToast("Opening Stock Added Successfully", "success");
-      // if (onSuccess) onSuccess();
+      if (onSuccess) onSuccess();
     } else if (failCount > 0) {
-      showToast(`Saved ${successCount} batches. ${failCount} failed.`, "error");
+      showToast(`Saved ${successCount} batches. ${failCount} failed.`, "warning");
       if (onSuccess) onSuccess();
     } else {
       showToast("No valid stock data to save", "error");
     }
   };
 
-  if(!open) return null;
+  if (!open) return null;
 
   return (
     <div className="fixed inset-0 backdrop-blur-sm bg-black/30 z-50 flex items-center justify-center">
-      <div className="bg-white w-[95%] max-w-6xl rounded-xl shadow-xl p-3">
+      <div className="bg-white w-[95%] max-w-6xl rounded-xl shadow-xl p-6">
         {/* Header part */}
         <div className="flex justify-between items-center mb-3">
           <h2 className="text-lg font-bold text-blue-700">
             Add Opening Stock: <span className="text-gray-700">{itemName}</span>
           </h2>
           <Button
-            variant="secondary"
+            variant="danger"
             onClick={onCancle}
-            className="text-lg font-bold bg-red-500 hover:bg-red-600"
+            className="text-ms font-bold"
           >
             Skip/Close
           </Button>
         </div>
         {/* Form part */}
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="overflow-x-auto border rounded-lg mb-4">
+          <div className="overflow-x-auto border border-gray-200 rounded-lg mb-4">
             <table className="w-full text-sm text-left">
-              <thead className="bg-gray-100 text-gray-700 font-bold uppercase text-xs">
+              <thead className="bg-blue-50 text-gray-700 font-semibold text-xs">
                 <tr>
-                  <th className="p-2 min-w-[120px]">Batch No *</th>
-                  <th className="p-2 min-w-[110px]">Expiry</th>
+                  <th className="p-2 min-w-[120px]">Batch. No *</th>
+                  <th className="p-2 min-w-[110px]">Exp. Date</th>
                   <th className="p-2 min-w-[80px]">MRP</th>
                   <th className="p-2 min-w-[80px]">P.Rate</th>
                   <th className="p-2 min-w-[80px]">S.Rate</th>
                   <th className="p-2 min-w-[150px]">Store</th>
                   <th className="p-2 min-w-[80px]">Qty *</th>
-                  <th className="p-2 min-w-[70px]">Free Qty</th>
-                  <th className="p-2 min-w-[60px]">Conv</th>
+                  <th className="p-2 min-w-[70px]">Free. Qty</th>
+                  <th className="p-2 min-w-[60px]">Conversion</th>
+                  <th className="p-2 min-w-[60px]">Action</th>
                   {/* <th className="p-2 text-center w-10"></th> */}
                 </tr>
               </thead>
@@ -205,7 +206,7 @@ const OpeningStock = ({ open, itemId, itemName, onSuccess, onCancle }) => {
                         {...register(`stocks.${index}.quantity`, {
                           required: true,
                         })}
-                        className="h-8 text-xs font-bold text-blue-700"
+                        className="h-8 text-xs "
                         placeholder="0"
                       />
                     </td>
@@ -226,13 +227,13 @@ const OpeningStock = ({ open, itemId, itemName, onSuccess, onCancle }) => {
                       />
                     </td>
                     <td className="p-2 text-center">
-                      <Button
+                      <button
                         type="button"
                         onClick={() => remove(index)}
-                        className="text-red-500 hover:text-red-700 transition-colors"
+                        className="text-red-600 hover:text-red-800"
                       >
-                        <Trash2 size={20} />
-                      </Button>
+                        <Trash2 size={16} />
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -242,7 +243,6 @@ const OpeningStock = ({ open, itemId, itemName, onSuccess, onCancle }) => {
           <div className="flex justify-between items-center bg-gray-50 p-3 rounded border border-dashed border-gray-300">
             <Button
               type="button"
-              variant="secondary"
               onClick={() =>
                 append({
                   batchNumber: "",
@@ -256,17 +256,16 @@ const OpeningStock = ({ open, itemId, itemName, onSuccess, onCancle }) => {
                   storeId: "",
                 })
               }
-              startIcon={<Plus size={14} />}
+              startIcon={<Plus size={16} />}
               className="text-ms"
             >
               Add Batch
             </Button>
             <Button
-              variant="secondary"
               type="submit"
               loading={isSaving || isProcessing}
-              startIcon={<Save size={14} />}
-              className="text-lg hover:bg-green-500 duration-300"
+              startIcon={<Save size={18} />}
+              className="text-ms bg-green-600 hover:bg-green-700 duration-300"
             >
               Save
             </Button>
